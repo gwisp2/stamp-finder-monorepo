@@ -1,0 +1,21 @@
+.stamp-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.stamp-card {
+    border: 1px black solid;
+    padding: 5px;
+    margin: 5px;
+}
+
+.stamp-card-id {
+    font-weight: bold;
+}
+
+img.stamp-image {
+    width: 300px;
+    height: 300px;
+    object-fit: contain;
+}

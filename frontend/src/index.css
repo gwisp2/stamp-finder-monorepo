@@ -1,0 +1,32 @@
+body {
+    margin: 0;
+}
+
+#root {
+    width: 100%;
+}
+
+.root-container {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 200px 1fr;
+}
+
+.header {
+    grid-column: 1 / 3;
+    padding: 15px 5px 5px 10px;
+    background: black;
+    font-size: 36px;
+}
+
+.header a {
+    color: white;
+    text-decoration: none;
+}
+
+.search-options-panel {
+    border-right: black 1px solid;
+    border-bottom: black 1px solid;
+    padding: 5px;
+    height: 100vh;
+}
