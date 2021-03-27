@@ -1,0 +1,13 @@
+.stamp-card {
+    padding: 5px;
+}
+
+.stamp-card-id {
+    font-weight: bold;
+}
+
+img.stamp-image {
+    width: 300px;
+    height: 300px;
+    object-fit: contain;
+}

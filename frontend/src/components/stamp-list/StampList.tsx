@@ -2,6 +2,7 @@ import React from "react";
 import {Stamp} from "../../model/stamps";
 import './StampList.css'
 import InfiniteScroll from "react-infinite-scroll-component";
+import {StampCard} from "../stamp-card/StampCard";
 
 export interface StampListProps {
     stamps: Array<Stamp>
@@ -48,13 +49,7 @@ export class StampList extends React.Component<StampListProps, StampListState> {
         >
             <div className="stamp-list">
                 {this.state.shownItems.map((s) => {
-                    return (<div key={s.id} className="stamp-card">
-                        <div className="stamp-card-id">№ {s.id} [{s.value}₽] // {s.year}</div>
-                        <div>
-                            <img draggable="false" alt={"Image of stamp " + s.id} className="stamp-image"
-                                 src={(s.imageUrl ?? new URL("empty.png", document.baseURI)).toString()}/>
-                        </div>
-                    </div>)
+                    return (<StampCard stamp={s} key={s.id}/>)
                 })}
             </div>
         </InfiniteScroll>);
