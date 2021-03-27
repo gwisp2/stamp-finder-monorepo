@@ -35,8 +35,6 @@ export class RangeSelector extends React.Component<RangeSelectorProps, RangeSele
             <div className="range-selector-row">
                 <label>От: </label>
                 <NumericInput name="startStr" value={this.state.startStr} onChange={this.handleNumberChange}/>
-            </div>
-            <div className="range-selector-row">
                 <label>До: </label>
                 <NumericInput name="endStr" value={this.state.endStr} onChange={this.handleNumberChange}/>
             </div>

@@ -53,7 +53,9 @@ export class StampList extends React.Component<StampListProps, StampListState> {
         >
             <div className="stamp-list">
                 {this.state.shownItems.map((s) => {
-                    return (<StampCard stamp={s} key={s.id}/>)
+                    return (<div className="stamp-card-container">
+                        <StampCard stamp={s} key={s.id}/>
+                    </div>)
                 })}
             </div>
         </InfiniteScroll>);

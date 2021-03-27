@@ -2,9 +2,27 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    margin-left: -5px;
+    margin-right: -5px;
 }
 
-.stamp-list .stamp-card {
-    border: 1px black solid;
-    margin: 5px;
+.stamp-card-container {
+    box-sizing: border-box;
+    padding: 5px;
+    flex: 0 0 100%;
+    max-width: 100%;
+}
+
+@media (min-width: 576px) {
+    .stamp-card-container {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+@media (min-width: 768px) {
+    .stamp-card-container {
+        flex: 0 0 33.3333333%;
+        max-width: 33.3333333%;
+    }
 }
