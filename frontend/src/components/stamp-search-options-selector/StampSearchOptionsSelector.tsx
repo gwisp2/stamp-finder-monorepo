@@ -14,7 +14,7 @@ interface State {
     valueRange: NumberRange,
     yearRange: NumberRange,
     presenceRequired: boolean,
-    sort: StampSort
+    sortIndex: number
 }
 
 const AllSorts = Array<StampSort>(
@@ -35,7 +35,7 @@ export class StampSearchOptionsSelector extends React.Component<Props, State> {
             valueRange: this.props.defaultOptions.value,
             yearRange: this.props.defaultOptions.year,
             presenceRequired: this.props.defaultOptions.presenceRequired,
-            sort: this.props.defaultOptions.sort
+            sortIndex: _.findIndex(AllSorts, this.props.defaultOptions.sort)
         };
     }
 
@@ -45,7 +45,7 @@ export class StampSearchOptionsSelector extends React.Component<Props, State> {
                 this.state.valueRange,
                 this.state.yearRange,
                 this.state.presenceRequired,
-                this.state.sort
+                AllSorts[this.state.sortIndex]
             ));
         });
     }
@@ -67,10 +67,11 @@ export class StampSearchOptionsSelector extends React.Component<Props, State> {
                 <div>Сортировка:</div>
                 <div>
                     <select className="stamp-search-options-sort-chooser"
-                            onChange={(e) => this.setStateAndFireOnChange({sort: AllSorts[Number(e.target.value)]})}>
+                            value={this.state.sortIndex}
+                            onChange={(e) => this.setStateAndFireOnChange({sortIndex: Number(e.target.value)})}>
                         {
                             _.range(0, AllSorts.length).map((i) => {
-                                return (<option value={i} selected={_.isEqual(AllSorts[i], this.state.sort)}>{AllSortsNames[i]}</option>);
+                                return (<option key={i} value={i}>{AllSortsNames[i]}</option>);
                             })
                         }
                     </select>

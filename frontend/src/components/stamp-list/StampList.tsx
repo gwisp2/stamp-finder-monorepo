@@ -18,6 +18,10 @@ export class StampList extends React.Component<StampListProps, StampListState> {
 
     constructor(props: StampListProps) {
         super(props);
+        this.state = {
+            allItems: Array<Stamp>(),
+            shownItems: Array<Stamp>()
+        }
         this.showMoreItems = this.showMoreItems.bind(this);
     }
 
