@@ -53,8 +53,8 @@ export class StampList extends React.Component<StampListProps, StampListState> {
         >
             <div className="stamp-list">
                 {this.state.shownItems.map((s) => {
-                    return (<div className="stamp-card-container">
-                        <StampCard stamp={s} key={s.id}/>
+                    return (<div className="stamp-card-container" key={s.id}>
+                        <StampCard stamp={s}/>
                     </div>)
                 })}
             </div>

@@ -27,6 +27,7 @@ export class SearchOptions {
 export class Stamp {
     constructor(
         readonly id: number,
+        readonly page: URL,
         readonly imageUrl: URL | null,
         readonly value: number | null,
         readonly year: number | null,

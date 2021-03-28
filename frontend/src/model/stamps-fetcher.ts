@@ -5,6 +5,7 @@ interface StampsJson {
 }
 
 interface StampsJsonEntry {
+    readonly page: string
     readonly image: string | null
     readonly value: number | null
     readonly year: number | null
@@ -18,7 +19,7 @@ export async function fetchStampsDb(url: URL): Promise<StampDb> {
     Object.keys(stampsJson).forEach((k) => {
         const entry = stampsJson[k]
         const image = entry.image ? new URL(entry.image, url) : null
-        stampArray.push(new Stamp(Number(k), image, entry.value, entry.year, entry.present))
+        stampArray.push(new Stamp(Number(k), new URL(entry.page), image, entry.value, entry.year, entry.present))
     });
     return new StampDb(stampArray)
 }
