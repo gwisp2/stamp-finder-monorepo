@@ -60,7 +60,7 @@ export class StampSearchOptionsSelector extends React.Component<Props, State> {
                 <RangeSelector defaultRange={this.props.defaultOptions.year}
                                onChange={(r) => this.setStateAndFireOnChange({yearRange: r})}/>
                 <div>
-                    <input name="presenceRequired" type="checkbox" checked={this.state.presenceRequired}
+                    <input name="presenceRequired" id="presenceRequired" type="checkbox" checked={this.state.presenceRequired}
                            onChange={(e) => this.setStateAndFireOnChange({presenceRequired: e.target.checked})}/>
                     <label htmlFor="presenceRequired">В наличии</label>
                 </div>
