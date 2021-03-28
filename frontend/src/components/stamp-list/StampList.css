@@ -11,16 +11,23 @@
     max-width: 100%;
 }
 
-@media (min-width: 576px) {
+@media (min-width: 256px) {
     .stamp-card-container {
         flex: 0 0 50%;
         max-width: 50%;
     }
 }
 
+@media (min-width: 512px) {
+    .stamp-card-container {
+        flex: 0 0 33.33333333%;
+        max-width: 33.33333333%;
+    }
+}
+
 @media (min-width: 768px) {
     .stamp-card-container {
-        flex: 0 0 33.3333333%;
-        max-width: 33.3333333%;
+        flex: 0 0 25%;
+        max-width: 25%;
     }
 }
