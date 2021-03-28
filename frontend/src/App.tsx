@@ -51,6 +51,7 @@ class App extends React.Component<{}, AppState> {
                     Использованы иконки от <a href="https://www.flaticon.com/authors/pixel-perfect"
                                               title="Pixel perfect">Pixel perfect</a> и <a
                     href="https://www.freepik.com" title="Freepik">Freepik</a>.
+                    Изображения марок взяты с <a href="https://rusmarka.ru/">rusmarka.ru</a>.
                 </div>
             </div>
         );
