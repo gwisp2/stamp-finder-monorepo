@@ -42,7 +42,7 @@ class App extends React.Component<{}, AppState> {
                         onChange={(newOptions) => this.setState({searchOptions: newOptions})}>
                     </StampSearchOptionsSelector>
                 </div>
-                <div>
+                <div className="stamp-list-panel">
                     <StampList stamps={stamps}/>
                 </div>
             </div>

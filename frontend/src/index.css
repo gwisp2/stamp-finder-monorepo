@@ -33,7 +33,10 @@ body {
 }
 
 .search-options-panel {
-    border-right: black 1px solid;
     border-bottom: black 1px solid;
     padding: 5px;
+}
+
+.stamp-list-panel {
+    margin-top: 10px;
 }
