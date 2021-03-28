@@ -17,7 +17,7 @@ export class StampCard extends React.Component<Props, {}> {
                 <img draggable="false" alt={"Image of stamp " + s.id} className="stamp-image"
                      src={(s.imageUrl ?? EmptyImage).toString()}/>
             </div>
-            <a className={"stamp-card-link " + (s.present ? "present" : "absent")} href={s.page.toString()} target="_blank">{s.present ? "Купить" : "Нет в наличии"}</a>
+            <a className={"stamp-card-link " + (s.present ? "present" : "absent")} href={s.page.toString()} target="_blank" rel="noreferrer">{s.present ? "Купить" : "Нет в наличии"}</a>
         </div>);
     }
 }
