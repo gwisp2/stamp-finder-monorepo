@@ -26,7 +26,7 @@ class App extends React.Component<{}, AppState> {
     }
 
     componentDidMount() {
-        fetchStampsDb(new URL("stamps.json", document.baseURI))
+        fetchStampsDb(new URL("data/stamps.json", document.baseURI))
             .then((db) => this.setState({stampDb: db}))
     }
 
