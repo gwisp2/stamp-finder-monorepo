@@ -13,7 +13,6 @@ export class StampCard extends React.Component<Props, {}> {
             <div className="stamp-card-id">№ {this.props.stamp.id} [{this.props.stamp.value}₽] // {this.props.stamp.year}</div>
             <div className="stamp-card-image-container">
                 <div className="stamp-card-image-container-dummy"/>
-                {/*<div className="stamp-image">AAAAX</div>*/}
                 <img draggable="false" alt={"Image of stamp " + this.props.stamp.id} className="stamp-image"
                      src={(this.props.stamp.imageUrl ?? EmptyImage).toString()}/>
             </div>
