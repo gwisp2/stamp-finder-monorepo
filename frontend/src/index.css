@@ -40,3 +40,13 @@ body {
 .stamp-list-panel {
     margin-top: 10px;
 }
+
+.footer {
+    background-color: black;
+    color: white;
+    padding: 5px;
+}
+
+.footer a {
+    color: white;
+}

@@ -45,6 +45,13 @@ class App extends React.Component<{}, AppState> {
                 <div className="stamp-list-panel">
                     <StampList stamps={stamps}/>
                 </div>
+                <div className="footer">
+                    Сделано <a href="https://www.postcrossing.com/user/gwisp">@gwisp</a> в 2021 году
+                    для посткроссеров.<br/>
+                    Использованы иконки от <a href="https://www.flaticon.com/authors/pixel-perfect"
+                                              title="Pixel perfect">Pixel perfect</a> и <a
+                    href="https://www.freepik.com" title="Freepik">Freepik</a>.
+                </div>
             </div>
         );
     }
