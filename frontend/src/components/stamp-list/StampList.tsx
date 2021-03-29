@@ -1,8 +1,8 @@
 import React from "react";
 import {Stamp} from "../../model/stamps";
 import './StampList.css'
-import InfiniteScroll from "react-infinite-scroll-component";
 import {StampCard} from "../stamp-card/StampCard";
+import InfiniteScroll from 'react-infinite-scroller';
 
 export interface StampListProps {
     stamps: Array<Stamp>
@@ -25,7 +25,7 @@ export class StampList extends React.Component<StampListProps, StampListState> {
         this.showMoreItems = this.showMoreItems.bind(this);
     }
 
-    static getDerivedStateFromProps(props: StampListProps, currentState: StampListState|null) {
+    static getDerivedStateFromProps(props: StampListProps, currentState: StampListState | null) {
         if (currentState === null || props.stamps !== currentState.allItems) {
             return {
                 allItems: props.stamps,
@@ -45,19 +45,18 @@ export class StampList extends React.Component<StampListProps, StampListState> {
     }
 
     render() {
-        return (<InfiniteScroll
-            hasMore={this.state.shownItems.length !== this.props.stamps.length}
-            dataLength={this.state.shownItems.length}
-            loader={<h4>Загрузка...</h4>}
-            next={this.showMoreItems}
-        >
-            <div className="stamp-list">
+        return (<div className="stamp-list">
+            <InfiniteScroll
+                hasMore={this.state.shownItems.length !== this.props.stamps.length}
+                loader={<h4>Загрузка...</h4>}
+                loadMore={this.showMoreItems}
+            >
                 {this.state.shownItems.map((s) => {
                     return (<div className="stamp-card-container" key={s.id}>
                         <StampCard stamp={s}/>
                     </div>)
                 })}
-            </div>
-        </InfiniteScroll>);
+            </InfiniteScroll>
+        </div>);
     }
 }
