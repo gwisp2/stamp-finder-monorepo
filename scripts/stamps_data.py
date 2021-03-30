@@ -38,7 +38,6 @@ class StampsJson:
         entries_dict = {}
         for entry in self.entries:
             entries_dict[entry.id] = {
-                'id': entry.id,
                 'image': entry.image,
                 'value': entry.value,
                 'year': entry.year,
