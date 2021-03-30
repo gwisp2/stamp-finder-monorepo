@@ -1,0 +1,40 @@
+name: Build and deploy
+
+on:
+  push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Install dependencies
+      run: yarn install
+    - name: Build the project
+      run: yarn build
+    - name: Upload the artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: stamp-finder
+        path: build/**
+  deploy:
+    environment: prod
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download the artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: stamp-finder
+        path: stamp-finder/
+    - name: Install SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+        config: ${{ secrets.SSH_CONFIG }} 
+        if_key_exists: fail
+    - name: Rsync over ssh
+      run: rsync --rsync-path="sudo rsync" -r stamp-finder/ prod:/srv/stamp-finder/root --delete &>/dev/null
