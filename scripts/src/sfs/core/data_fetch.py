@@ -1,9 +1,7 @@
-import asyncio
 import re
 from dataclasses import dataclass
 from decimal import Decimal
 from typing import List, Set
-
 import bs4
 import progressbar
 import requests
