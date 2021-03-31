@@ -37,4 +37,4 @@ jobs:
         config: ${{ secrets.SSH_CONFIG }} 
         if_key_exists: fail
     - name: Rsync over ssh
-      run: rsync --rsync-path="sudo rsync" -r stamp-finder/ prod:/srv/stamp-finder/root --delete &>/dev/null
+      run: rsync -r stamp-finder/ prod:webroot/app --delete &>/dev/null
