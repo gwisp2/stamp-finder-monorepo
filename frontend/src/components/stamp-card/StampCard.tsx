@@ -10,14 +10,14 @@ export interface Props {
 export class StampCard extends React.Component<Props, {}> {
     render() {
         const s = this.props.stamp;
-        return (<div className="stamp-card">
-            <div className="stamp-card-id">№ {s.id} [{s.value}₽] // {s.year}</div>
+        return (<div className="position-relative shadow-sm bg-light border border-secondary rounded p-2">
             <div className="stamp-card-image-container">
                 <div className="stamp-card-image-container-dummy"/>
                 <img draggable="false" alt={"Image of stamp " + s.id} className="stamp-image"
                      src={(s.imageUrl ?? EmptyImage).toString()}/>
             </div>
-            <a className={"stamp-card-link " + (s.present ? "present" : "absent")} href={s.page.toString()} target="_blank" rel="noreferrer">{s.present ? "Купить" : "Нет в наличии"}</a>
+            <div className="stamp-card-id">№ {s.id} [{s.value}₽] // {s.year}</div>
+            <a className={"stamp-card-link btn " + (s.present ? "btn-success" : "btn-secondary")} href={s.page.toString()} target="_blank" rel="noreferrer">{s.present ? "Купить" : "Нет в наличии"}</a>
         </div>);
     }
 }

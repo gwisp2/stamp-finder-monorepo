@@ -1,9 +1,10 @@
-import React from "react";
-import NumericInput from "react-numeric-input";
-import './RangeSelector.css'
+import React, {ChangeEvent} from "react";
 import {NumberRange} from "../../model/number-range";
+import {Form} from "react-bootstrap";
+import "./RangeSelector.css"
 
 export interface RangeSelectorProps {
+    label?: string
     defaultRange?: NumberRange,
     onChange?: (range: NumberRange) => void
 }
@@ -31,19 +32,20 @@ export class RangeSelector extends React.Component<RangeSelectorProps, RangeSele
     }
 
     render() {
-        return (<div>
-            <div className="range-selector-row">
-                <label>От: </label>
-                <NumericInput name="startStr" value={this.state.startStr} onChange={this.handleNumberChange}/>
-                <label>До: </label>
-                <NumericInput name="endStr" value={this.state.endStr} onChange={this.handleNumberChange}/>
-            </div>
-        </div>);
+        return (<Form.Group>
+            <Form.Label>{this.props.label}</Form.Label>
+            <Form inline={true} className="range-selector-row">
+                <Form.Label className="mr-1">От: </Form.Label>
+                <Form.Control name="startStr" type="number" value={this.state.startStr} onChange={this.handleNumberChange}/>
+                <Form.Label className="mr-1 ml-1">До: </Form.Label>
+                <Form.Control name="endStr" type="number" value={this.state.endStr} onChange={this.handleNumberChange}/>
+            </Form>
+        </Form.Group>);
     }
 
-    private handleNumberChange(n: number | null, v: string, e: HTMLInputElement) {
+    private handleNumberChange(e: ChangeEvent<HTMLInputElement>) {
         this.setState({
-            [e.name]: v
+            [e.target.name]: e.target.value
         } as any, () => {
             if (this.props.onChange !== undefined) {
                 const newRange = new NumberRange(

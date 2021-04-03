@@ -1,6 +1,5 @@
 import React from "react";
 import {Stamp} from "../../model/stamps";
-import './StampList.css'
 import {StampCard} from "../stamp-card/StampCard";
 import InfiniteScroll from 'react-infinite-scroller';
 
@@ -14,7 +13,7 @@ export interface StampListState {
 }
 
 export class StampList extends React.Component<StampListProps, StampListState> {
-    static BatchSize = 50
+    static BatchSize = 20
 
     constructor(props: StampListProps) {
         super(props);
@@ -45,18 +44,19 @@ export class StampList extends React.Component<StampListProps, StampListState> {
     }
 
     render() {
-        return (<div className="stamp-list">
+        return (
             <InfiniteScroll
                 hasMore={this.state.shownItems.length !== this.props.stamps.length}
                 loader={<h4>Загрузка...</h4>}
                 loadMore={this.showMoreItems}
+                className="row"
             >
                 {this.state.shownItems.map((s) => {
-                    return (<div className="stamp-card-container" key={s.id}>
+                    return (<div className="col-sm-6 col-md-4 mb-2" key={s.id}>
                         <StampCard stamp={s}/>
                     </div>)
                 })}
             </InfiniteScroll>
-        </div>);
+        );
     }
 }
