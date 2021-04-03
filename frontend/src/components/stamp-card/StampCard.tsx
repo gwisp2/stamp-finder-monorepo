@@ -19,7 +19,7 @@ export class StampCard extends React.Component<Props, {}> {
                      src={(s.imageUrl ?? EmptyImage).toString()}/>
             </div>
             <a className={"w-100 btn " + (s.present ? "btn-success" : "btn-secondary")} href={s.page.toString()}
-               target="_blank" rel="noreferrer">{s.present ? <span><ShoppingBasket/> Купить</span> : "Нет в наличии"}</a>
+               target="_blank" rel="noreferrer">{s.present ? <span><ShoppingBasket fontSize={"small"}/> Купить</span> : "Нет в наличии"}</a>
         </div>);
     }
 }
