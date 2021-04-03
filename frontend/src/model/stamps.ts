@@ -17,6 +17,7 @@ export class SearchOptions {
     constructor(
         readonly value: NumberRange,
         readonly year: NumberRange,
+        readonly category: string|null,
         readonly presenceRequired: boolean,
         readonly sort: StampSort
     ) {
@@ -31,6 +32,7 @@ export class Stamp {
         readonly imageUrl: URL | null,
         readonly value: number | null,
         readonly year: number | null,
+        readonly categories: Array<string>,
         readonly present: boolean
     ) {
     }
@@ -43,7 +45,8 @@ export class StampDb {
     findStamps(searchOptions: SearchOptions): Array<Stamp> {
         const filteredStamps = this.stamps.filter((s) => {
             return searchOptions.year.contains(s.year) && searchOptions.value.contains(s.value) &&
-                (!searchOptions.presenceRequired || s.present);
+                (!searchOptions.presenceRequired || s.present) &&
+                (searchOptions.category === null || s.categories.includes(searchOptions.category));
         });
         return filteredStamps.sort((a, b) => {
             let v = 0;

@@ -17,6 +17,7 @@ class App extends React.Component<{}, AppState> {
     private static DefaultSearchOptions = new SearchOptions(
         new NumberRange(null, null),
         new NumberRange(1998, null),
+        null,
         false, new StampSort(StampField.Id, SortOrder.Reversed)
     );
 
@@ -40,6 +41,10 @@ class App extends React.Component<{}, AppState> {
         const knownYears = stampDb.stamps.map((v) => v.year).filter((y) => y !== null);
         const minYear = knownYears.length >= 1 ? _.min(knownYears) as number : 2020;
         const maxYear = knownYears.length >= 1 ? _.max(knownYears) as number : 2020;
+
+        const listOfCategories = Array.from(new Set(stampDb.stamps.flatMap((s) => s.categories)));
+        listOfCategories.sort();
+
         return (
             <div className="container">
                 <nav className="navbar navbar-expand navbar-dark bg-dark mb-3">
@@ -65,6 +70,7 @@ class App extends React.Component<{}, AppState> {
                                 defaultOptions={App.DefaultSearchOptions}
                                 startYear={minYear}
                                 endYear={maxYear}
+                                listOfCategories={listOfCategories}
                                 numberOfFoundStamps={stamps.length}
                                 onChange={(newOptions) => this.setState({searchOptions: newOptions})}>
                             </StampSearchOptionsSelector>

@@ -9,6 +9,7 @@ interface StampsJsonEntry {
     readonly image: string | null
     readonly value: number | null
     readonly year: number | null
+    readonly categories: Array<string> | null
     readonly present: boolean
 }
 
@@ -19,7 +20,8 @@ export async function fetchStampsDb(url: URL): Promise<StampDb> {
     Object.keys(stampsJson).forEach((k) => {
         const entry = stampsJson[k]
         const image = entry.image ? new URL(entry.image, url) : null
-        stampArray.push(new Stamp(Number(k), new URL(entry.page), image, entry.value, entry.year, entry.present))
+        const categories = entry.categories ?? Array<string>();
+        stampArray.push(new Stamp(Number(k), new URL(entry.page), image, entry.value, entry.year, categories, entry.present))
     });
     return new StampDb(stampArray)
 }

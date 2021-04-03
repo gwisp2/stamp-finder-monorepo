@@ -15,6 +15,7 @@ interface Props {
     endYear: number
     defaultOptions: SearchOptions
     numberOfFoundStamps?: number
+    listOfCategories: Array<string>
     onChange: (newOptions: SearchOptions) => void
 }
 
@@ -23,6 +24,7 @@ interface State {
     yearRange: NumberRange,
     presenceRequired: boolean,
     sortIndex: number
+    category: string|null
 }
 
 const AllSorts = Array<StampSort>(
@@ -46,7 +48,8 @@ export class StampSearchOptionsSelector extends React.Component<Props, State> {
             valueRange: this.props.defaultOptions.value,
             yearRange: this.props.defaultOptions.year,
             presenceRequired: this.props.defaultOptions.presenceRequired,
-            sortIndex: _.findIndex(AllSorts, this.props.defaultOptions.sort)
+            sortIndex: _.findIndex(AllSorts, this.props.defaultOptions.sort),
+            category: this.props.defaultOptions.category
         };
     }
 
@@ -55,6 +58,7 @@ export class StampSearchOptionsSelector extends React.Component<Props, State> {
             this.props.onChange(new SearchOptions(
                 this.state.valueRange,
                 this.state.yearRange,
+                this.state.category,
                 this.state.presenceRequired,
                 AllSorts[this.state.sortIndex]
             ));
@@ -72,6 +76,19 @@ export class StampSearchOptionsSelector extends React.Component<Props, State> {
                                    endYear={this.props.endYear}
                                    defaultRange={this.props.defaultOptions.year}
                                    onChange={(r) => this.setStateAndFireOnChange({yearRange: r})}/>
+                <Form.Group>
+                    <Form.Label>Рубрика:</Form.Label>
+                    <DropdownButton variant="custom-white" title={this.state.category ?? "[не задана]"}>
+                        <Dropdown.Item onSelect={() => this.setStateAndFireOnChange({category: null})}>[не задана]</Dropdown.Item>
+                        {
+                            this.props.listOfCategories.map((cat) => {
+                                return (<Dropdown.Item key={cat} onSelect={() =>
+                                    this.setStateAndFireOnChange({category: cat})
+                                }>{cat}</Dropdown.Item>);
+                            })
+                        }
+                    </DropdownButton>
+                </Form.Group>
                 <Form.Group controlId="soss-present">
                     <Form.Check type="checkbox" label="В наличии"
                                 onChange={(e) => this.setStateAndFireOnChange({presenceRequired: e.target.checked})}/>
