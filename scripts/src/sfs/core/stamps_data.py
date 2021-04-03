@@ -1,4 +1,5 @@
 import json
+import re
 from dataclasses import dataclass
 from typing import List, Optional
 
@@ -10,7 +11,15 @@ class StampEntry:
     value: float
     year: int
     page: str
+    categories: List[str]
     present: Optional[bool] = None
+
+    def position_id(self) -> int:
+        m = re.search(r'(\d+)', self.page)
+        if m:
+            return int(m.group(1))
+        else:
+            raise RuntimeError(f"Can't find position id in {self.page}")
 
 
 class StampsJson:
@@ -30,20 +39,22 @@ class StampsJson:
                 value=float(entry_json['value']),
                 year=int(entry_json['year']),
                 page=entry_json['page'],
+                categories=entry_json.get('cats') or [],
                 present=entry_json['present']
             ))
         return StampsJson(entries)
 
-    def save(self, path):
+    def save(self, path: str):
         entries_dict = {}
         for entry in self.entries:
             entries_dict[entry.id] = {
                 'image': entry.image,
                 'value': entry.value,
                 'year': entry.year,
-                'page': entry.page
+                'page': entry.page,
+                'categories': entry.categories
             }
             if entry.present is not None:
                 entries_dict[entry.id]['present'] = entry.present
         with open(path, 'wt') as f:
-            json.dump(entries_dict, f, indent=2)
+            json.dump(entries_dict, f, indent=2, ensure_ascii=False)

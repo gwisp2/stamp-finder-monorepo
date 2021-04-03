@@ -1,7 +1,7 @@
 import re
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import List, Set
+from typing import List, Set, Dict
 import bs4
 import progressbar
 import requests
@@ -33,6 +33,35 @@ def find_all_position_ids() -> Set[int]:
     # Visit all pages
     position_ids_lists = [fetch_position_ids(f'https://rusmarka.ru/catalog/marki/year/0/p/{page}.aspx') for
                           page in progressbar.progressbar(range(0, max_page_index + 1))]
+    return set(i for pos_id_list in position_ids_lists for i in pos_id_list)
+
+
+def find_categories() -> Dict[int, str]:
+    soup = bs4.BeautifulSoup(requests.get('https://rusmarka.ru/catalog/marki/year/0.aspx').content,
+                             features="html.parser")
+    category_select = soup.find('select', attrs={'name': 'category'})
+    d = {}
+    for option in category_select.find_all('option'):
+        val = option['value']
+        text = option.text
+        if len(val) != 0:
+            d[int(val)] = text
+    return d
+
+
+def find_position_ids_for_category(cat_id: int) -> Set[int]:
+    # Find max page index
+    max_page_index = 0
+    url = f'https://rusmarka.ru/catalog/marki/year/0/cat/{cat_id}/p/0.aspx'
+    soup = bs4.BeautifulSoup(requests.get(url).content, features='html.parser')
+    for a in soup.find_all('a', class_="page-link"):
+        m = re.match(r'/catalog/marki/year/0/cat/' + str(cat_id) + r'/p/(\d+).aspx', a["href"])
+        if m:
+            max_page_index = max(max_page_index, int(m.group(1)))
+
+    # Visit all pages
+    position_ids_lists = [fetch_position_ids(f'https://rusmarka.ru/catalog/marki/year/0/cat/{cat_id}/p/{page}.aspx')
+                          for page in range(0, max_page_index + 1)]
     return set(i for pos_id_list in position_ids_lists for i in pos_id_list)
 
 
