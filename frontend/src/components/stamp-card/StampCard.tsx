@@ -2,6 +2,7 @@ import React from "react";
 import {Stamp} from "../../model/stamps";
 import "./StampCard.css"
 import EmptyImage from "./empty.png"
+import ShoppingBasket from '@material-ui/icons/ShoppingBasket';
 
 export interface Props {
     stamp: Stamp
@@ -17,7 +18,8 @@ export class StampCard extends React.Component<Props, {}> {
                 <img draggable="false" alt={"Image of stamp " + s.id} className="stamp-image"
                      src={(s.imageUrl ?? EmptyImage).toString()}/>
             </div>
-            <a className={"w-100 btn " + (s.present ? "btn-success" : "btn-secondary")} href={s.page.toString()} target="_blank" rel="noreferrer">{s.present ? "Купить" : "Нет в наличии"}</a>
+            <a className={"w-100 btn " + (s.present ? "btn-success" : "btn-secondary")} href={s.page.toString()}
+               target="_blank" rel="noreferrer">{s.present ? <span><ShoppingBasket/> Купить</span> : "Нет в наличии"}</a>
         </div>);
     }
 }
