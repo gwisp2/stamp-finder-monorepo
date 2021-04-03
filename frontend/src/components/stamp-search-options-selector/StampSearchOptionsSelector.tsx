@@ -8,11 +8,13 @@ import {YearRangeSelector} from "../year-selector/YearRangeSelector";
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import "./StampSearchOptionsSelector.css";
+import plural from 'plural-ru'
 
 interface Props {
     startYear: number
     endYear: number
     defaultOptions: SearchOptions
+    numberOfFoundStamps?: number
     onChange: (newOptions: SearchOptions) => void
 }
 
@@ -86,6 +88,13 @@ export class StampSearchOptionsSelector extends React.Component<Props, State> {
                         }
                     </DropdownButton>
                 </Form.Group>
+                {
+                    this.props.numberOfFoundStamps !== undefined ? (
+                        <Form.Text>По запросу найдено {this.props.numberOfFoundStamps} {
+                            plural(this.props.numberOfFoundStamps, "марка", "марки", "марок")
+                        }.</Form.Text>
+                    ): ""
+                }
             </div>);
     }
 }

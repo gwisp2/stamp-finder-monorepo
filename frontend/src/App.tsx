@@ -65,6 +65,7 @@ class App extends React.Component<{}, AppState> {
                                 defaultOptions={App.DefaultSearchOptions}
                                 startYear={minYear}
                                 endYear={maxYear}
+                                numberOfFoundStamps={stamps.length}
                                 onChange={(newOptions) => this.setState({searchOptions: newOptions})}>
                             </StampSearchOptionsSelector>
                         </div>
