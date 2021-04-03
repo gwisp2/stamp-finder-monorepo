@@ -1,3 +1,11 @@
+.search-options-column {
+    /*
+     * Dropdown in settings has to be rendered on top of stamp cards.
+     * Because of that this column has to be _above_ column with stamp cards.
+     */
+    z-index: 1;
+}
+
 .search-options-container {
     position: sticky;
     top: 2rem;

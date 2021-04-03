@@ -3,8 +3,11 @@ import {NumberRange} from "../../model/number-range";
 import {SearchOptions, SortOrder, StampField, StampSort} from "../../model/stamps";
 import {RangeSelector} from "../range-selector/RangeSelector";
 import _ from "underscore";
-import {Form} from "react-bootstrap";
+import {Dropdown, DropdownButton, Form} from "react-bootstrap";
 import {YearRangeSelector} from "../year-selector/YearRangeSelector";
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+import "./StampSearchOptionsSelector.css";
 
 interface Props {
     startYear: number
@@ -26,8 +29,11 @@ const AllSorts = Array<StampSort>(
     new StampSort(StampField.Value, SortOrder.Natural),
     new StampSort(StampField.Value, SortOrder.Reversed)
 );
-const AllSortsNames = Array<String>(
-    "По номеру [вверх]", "По номеру [вниз]", "По номиналу [вверх]", "По номиналу [вниз]"
+const AllSortsNames = Array<React.ReactNode>(
+    <span>По номеру <ArrowUpwardIcon/></span>,
+    <span>По номеру <ArrowDownwardIcon/></span>,
+    <span>По номиналу <ArrowUpwardIcon/></span>,
+    <span>По номиналу <ArrowDownwardIcon/></span>
 );
 
 export class StampSearchOptionsSelector extends React.Component<Props, State> {
@@ -64,20 +70,21 @@ export class StampSearchOptionsSelector extends React.Component<Props, State> {
                                    endYear={this.props.endYear}
                                    defaultRange={this.props.defaultOptions.year}
                                    onChange={(r) => this.setStateAndFireOnChange({yearRange: r})}/>
-                <Form.Group controlId="ssos-presenceRequired">
+                <Form.Group>
                     <Form.Check type="checkbox" label="В наличии"
                                 onChange={(e) => this.setStateAndFireOnChange({presenceRequired: e.target.checked})}/>
                 </Form.Group>
-                <Form.Group controlId="ssos-sortSelect">
+                <Form.Group>
                     <Form.Label>Сортировка:</Form.Label>
-                    <Form.Control as="select" value={this.state.sortIndex}
-                                  onChange={(e) => this.setStateAndFireOnChange({sortIndex: Number(e.target.value)})}>
+                    <DropdownButton variant="custom-white" title={AllSortsNames[this.state.sortIndex]}>
                         {
                             _.range(0, AllSorts.length).map((i) => {
-                                return (<option key={i} value={i}>{AllSortsNames[i]}</option>);
+                                return (<Dropdown.Item key={i} onSelect={() =>
+                                    this.setStateAndFireOnChange({sortIndex: i})
+                                }>{AllSortsNames[i]}</Dropdown.Item>);
                             })
                         }
-                    </Form.Control>
+                    </DropdownButton>
                 </Form.Group>
             </div>);
     }

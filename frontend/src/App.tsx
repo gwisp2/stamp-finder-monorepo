@@ -59,7 +59,7 @@ class App extends React.Component<{}, AppState> {
                     </ul>
                 </nav>
                 <div className="row">
-                    <div className="col-xl-3 mb-3">
+                    <div className="search-options-column col-xl-3 mb-3">
                         <div className="search-options-container position-sticky bg-light p-2 rounded border shadow-sm border-secondary">
                             <StampSearchOptionsSelector
                                 defaultOptions={App.DefaultSearchOptions}
