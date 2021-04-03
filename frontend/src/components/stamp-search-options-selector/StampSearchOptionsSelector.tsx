@@ -72,7 +72,7 @@ export class StampSearchOptionsSelector extends React.Component<Props, State> {
                                    endYear={this.props.endYear}
                                    defaultRange={this.props.defaultOptions.year}
                                    onChange={(r) => this.setStateAndFireOnChange({yearRange: r})}/>
-                <Form.Group>
+                <Form.Group controlId="soss-present">
                     <Form.Check type="checkbox" label="В наличии"
                                 onChange={(e) => this.setStateAndFireOnChange({presenceRequired: e.target.checked})}/>
                 </Form.Group>
