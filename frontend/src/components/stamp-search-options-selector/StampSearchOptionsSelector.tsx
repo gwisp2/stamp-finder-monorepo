@@ -24,7 +24,7 @@ const AllSorts = Array<StampSort>(
     new StampSort(StampField.Value, SortOrder.Reversed)
 );
 const AllSortsNames = Array<String>(
-    "По номеру", "По номеру (убывающая)", "По номиналу", "По номиналу (убывающая)"
+    "По номеру [вверх]", "По номеру [вниз]", "По номиналу [вверх]", "По номиналу [вниз]"
 );
 
 export class StampSearchOptionsSelector extends React.Component<Props, State> {
