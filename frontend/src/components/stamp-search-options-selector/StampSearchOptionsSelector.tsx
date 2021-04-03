@@ -4,8 +4,11 @@ import {SearchOptions, SortOrder, StampField, StampSort} from "../../model/stamp
 import {RangeSelector} from "../range-selector/RangeSelector";
 import _ from "underscore";
 import {Form} from "react-bootstrap";
+import {YearRangeSelector} from "../year-selector/YearRangeSelector";
 
 interface Props {
+    startYear: number
+    endYear: number
     defaultOptions: SearchOptions
     onChange: (newOptions: SearchOptions) => void
 }
@@ -52,13 +55,15 @@ export class StampSearchOptionsSelector extends React.Component<Props, State> {
 
     render() {
         return (
-            <Form>
+            <div>
                 <RangeSelector label="Номинал:"
                                defaultRange={this.props.defaultOptions.value}
                                onChange={(r) => this.setStateAndFireOnChange({valueRange: r})}/>
-                <RangeSelector label="Год выпуска:"
-                               defaultRange={this.props.defaultOptions.year}
-                               onChange={(r) => this.setStateAndFireOnChange({yearRange: r})}/>
+                <YearRangeSelector label="Год выпуска:"
+                                   startYear={this.props.startYear}
+                                   endYear={this.props.endYear}
+                                   defaultRange={this.props.defaultOptions.year}
+                                   onChange={(r) => this.setStateAndFireOnChange({yearRange: r})}/>
                 <Form.Group controlId="ssos-presenceRequired">
                     <Form.Check type="checkbox" label="В наличии"
                                 onChange={(e) => this.setStateAndFireOnChange({presenceRequired: e.target.checked})}/>
@@ -74,6 +79,6 @@ export class StampSearchOptionsSelector extends React.Component<Props, State> {
                         }
                     </Form.Control>
                 </Form.Group>
-            </Form>);
+            </div>);
     }
 }

@@ -6,6 +6,7 @@ import {NumberRange} from "./model/number-range";
 import {StampSearchOptionsSelector} from "./components/stamp-search-options-selector/StampSearchOptionsSelector";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import SearchRounded from '@material-ui/icons/SearchRounded';
+import _ from "underscore";
 
 interface AppState {
     searchOptions: SearchOptions,
@@ -35,6 +36,10 @@ class App extends React.Component<{}, AppState> {
     render() {
         const stampDb = this.state.stampDb ? this.state.stampDb : new StampDb(Array<Stamp>());
         const stamps = stampDb.findStamps(this.state.searchOptions);
+
+        const knownYears = stampDb.stamps.map((v) => v.year).filter((y) => y !== null);
+        const minYear = knownYears.length >= 1 ? _.min(knownYears) as number : 2020;
+        const maxYear = knownYears.length >= 1 ? _.max(knownYears) as number : 2020;
         return (
             <div className="container">
                 <nav className="navbar navbar-expand navbar-dark bg-dark mb-3">
@@ -58,6 +63,8 @@ class App extends React.Component<{}, AppState> {
                         <div className="search-options-container position-sticky bg-light p-2 rounded border shadow-sm border-secondary">
                             <StampSearchOptionsSelector
                                 defaultOptions={App.DefaultSearchOptions}
+                                startYear={minYear}
+                                endYear={maxYear}
                                 onChange={(newOptions) => this.setState({searchOptions: newOptions})}>
                             </StampSearchOptionsSelector>
                         </div>
