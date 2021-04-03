@@ -39,7 +39,7 @@ class StampsJson:
                 value=float(entry_json['value']),
                 year=int(entry_json['year']),
                 page=entry_json['page'],
-                categories=entry_json.get('cats') or [],
+                categories=entry_json.get('categories') or [],
                 present=entry_json['present']
             ))
         return StampsJson(entries)
