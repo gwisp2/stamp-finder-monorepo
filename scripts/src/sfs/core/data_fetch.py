@@ -78,6 +78,9 @@ def load_buy_offers(position_id: int):
 
 
 def extract_buy_offers(content: bytes):
+    # TODO: remove code duplication with PositionPageParser
+    # Note that PositionPageParser is aimed to work only with new pages, it may crash on old ones.
+    # So we can't use PositionPageParser here.
     soup = bs4.BeautifulSoup(content, features='html.parser')
     options = []
     for table_container in soup.find_all('div', class_='marka-post'):

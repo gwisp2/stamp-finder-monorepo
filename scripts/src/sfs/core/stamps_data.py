@@ -26,6 +26,12 @@ class StampsJson:
     def __init__(self, entries: List[StampEntry]):
         self.entries = entries
 
+    def add_entry(self, entry: StampEntry):
+        self.entries.append(entry)
+
+    def sort_entries(self):
+        self.entries.sort(key=lambda e: e.id)
+
     @staticmethod
     def load(path) -> "StampsJson":
         entries: List[StampEntry] = []
