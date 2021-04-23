@@ -66,7 +66,7 @@ class App extends React.Component<AppProps, AppState> {
                         <div
                             className="search-options-container position-sticky bg-light p-2 rounded border shadow-sm border-secondary">
                             <StampSearchOptionsSelector
-                                defaultOptions={SearchOptions.Default}
+                                options={searchOptions}
                                 startYear={minYear}
                                 endYear={maxYear}
                                 listOfCategories={listOfCategories}
@@ -84,8 +84,9 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     private onSearchOptionsChange(newOptions: SearchOptions) {
-        const params = newOptions.toUrlParams()
-        this.props.history.push("/search?" + params.toString())
+        const params = newOptions.toUrlParams();
+        this.props.history.push("/search?" + params.toString());
+        window.scrollTo(0, 0);
     }
 }
 

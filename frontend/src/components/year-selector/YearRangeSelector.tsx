@@ -8,30 +8,26 @@ export interface YearRangeSelectorProps {
     label?: string
     startYear: number
     endYear: number
-    defaultRange: NumberRange
+    value: NumberRange
     onChange?: (range: NumberRange) => void
 }
 
-interface YearRangeSelectorPropsState {
-    selectedStartYear: number | null
-    selectedEndYear: number | null
-}
-
-export class YearRangeSelector extends React.Component<YearRangeSelectorProps, YearRangeSelectorPropsState> {
+export class YearRangeSelector extends React.Component<YearRangeSelectorProps, {}> {
     constructor(props: YearRangeSelectorProps) {
         super(props);
-        this.state = {
-            selectedStartYear: this.props.defaultRange.start,
-            selectedEndYear: this.props.defaultRange.end
-        };
         this.runOnChangeHandler = this.runOnChangeHandler.bind(this);
     }
 
-    private runOnChangeHandler() {
+    private runOnChangeHandler(change: Partial<{start: number|null, end: number|null}>) {
+        let range = {
+            start: this.props.value.start,
+            end: this.props.value.end,
+            ...change
+        };
         if (this.props.onChange) {
             this.props.onChange(new NumberRange(
-                this.state.selectedStartYear,
-                this.state.selectedEndYear
+                range.start,
+                range.end
             ));
         }
     }
@@ -41,22 +37,14 @@ export class YearRangeSelector extends React.Component<YearRangeSelectorProps, Y
             <Form.Label>{this.props.label}</Form.Label>
             <Form inline={true} className="year-range-selector-row">
                 <Form.Label className="mr-1">От: </Form.Label>
-                <YearSelector startYear={this.props.startYear} endYear={this.state.selectedEndYear ?? this.props.endYear}
-                              defaultYear={this.props.defaultRange.start}
-                              onChange={(v) => {
-                                  this.setState({
-                                      selectedStartYear: v
-                                  }, this.runOnChangeHandler);
-                              }}
+                <YearSelector startYear={this.props.startYear} endYear={this.props.value.end ?? this.props.endYear}
+                              value={this.props.value.start}
+                              onChange={(v) => this.runOnChangeHandler({start: v})}
                 />
                 <Form.Label className="mr-1 ml-1">До: </Form.Label>
-                <YearSelector startYear={this.state.selectedStartYear ?? this.props.startYear} endYear={this.props.endYear}
-                              defaultYear={this.props.defaultRange.end}
-                              onChange={(v) => {
-                                  this.setState({
-                                      selectedEndYear: v
-                                  }, this.runOnChangeHandler);
-                              }}/>
+                <YearSelector startYear={this.props.value.start ?? this.props.startYear} endYear={this.props.endYear}
+                              value={this.props.value.end}
+                              onChange={(v) => this.runOnChangeHandler({end: v})}/>
             </Form>
         </Form.Group>);
     }

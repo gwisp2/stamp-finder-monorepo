@@ -1,5 +1,4 @@
 import React from "react";
-import {NumberRange} from "../../model/number-range";
 import {SearchOptions, SortOrder, StampField, StampSort} from "../../model/stamps";
 import {RangeSelector} from "../range-selector/RangeSelector";
 import _ from "underscore";
@@ -9,22 +8,15 @@ import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import "./StampSearchOptionsSelector.css";
 import plural from 'plural-ru'
+import {NumberRange} from "../../model/number-range";
 
 interface Props {
     startYear: number
     endYear: number
-    defaultOptions: SearchOptions
+    options: SearchOptions
     numberOfFoundStamps?: number
     listOfCategories: Array<string>
     onChange: (newOptions: SearchOptions) => void
-}
-
-interface State {
-    valueRange: NumberRange,
-    yearRange: NumberRange,
-    presenceRequired: boolean,
-    sortIndex: number
-    category: string|null
 }
 
 const AllSorts = Array<StampSort>(
@@ -40,50 +32,47 @@ const AllSortsNames = Array<React.ReactNode>(
     <span>По номиналу <ArrowDownwardIcon/></span>
 );
 
-export class StampSearchOptionsSelector extends React.Component<Props, State> {
-
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            valueRange: this.props.defaultOptions.value,
-            yearRange: this.props.defaultOptions.year,
-            presenceRequired: this.props.defaultOptions.presenceRequired,
-            sortIndex: _.findIndex(AllSorts, this.props.defaultOptions.sort),
-            category: this.props.defaultOptions.category
+export class StampSearchOptionsSelector extends React.Component<Props, {}> {
+    private onChange(change: Partial<{
+        valueRange: NumberRange,
+        yearRange: NumberRange,
+        category: string|null,
+        presenceRequired: boolean,
+        sort: StampSort
+    }>) {
+        let options = {
+            valueRange: this.props.options.value,
+            yearRange: this.props.options.year,
+            category: this.props.options.category,
+            presenceRequired: this.props.options.presenceRequired,
+            sort: this.props.options.sort,
+            ...change
         };
-    }
-
-    private setStateAndFireOnChange<K extends keyof State>(p: Pick<State, K>) {
-        this.setState(p, () => {
-            this.props.onChange(new SearchOptions(
-                this.state.valueRange,
-                this.state.yearRange,
-                this.state.category,
-                this.state.presenceRequired,
-                AllSorts[this.state.sortIndex]
-            ));
-        });
+        this.props.onChange(new SearchOptions(
+            options.valueRange, options.yearRange, options.category, options.presenceRequired, options.sort
+        ))
     }
 
     render() {
+        const sortIndex = _.findIndex(AllSorts, this.props.options.sort);
         return (
             <div>
                 <RangeSelector label="Номинал:"
-                               defaultRange={this.props.defaultOptions.value}
-                               onChange={(r) => this.setStateAndFireOnChange({valueRange: r})}/>
+                               value={this.props.options.value}
+                               onChange={(r) => this.onChange({valueRange: r})}/>
                 <YearRangeSelector label="Год выпуска:"
                                    startYear={this.props.startYear}
                                    endYear={this.props.endYear}
-                                   defaultRange={this.props.defaultOptions.year}
-                                   onChange={(r) => this.setStateAndFireOnChange({yearRange: r})}/>
+                                   value={this.props.options.year}
+                                   onChange={(r) => this.onChange({yearRange: r})}/>
                 <Form.Group>
                     <Form.Label>Рубрика:</Form.Label>
-                    <DropdownButton variant="custom-white" title={this.state.category ?? "[не задана]"}>
-                        <Dropdown.Item onSelect={() => this.setStateAndFireOnChange({category: null})}>[не задана]</Dropdown.Item>
+                    <DropdownButton variant="custom-white" title={this.props.options.category ?? "[не задана]"}>
+                        <Dropdown.Item onSelect={() => this.onChange({category: null})}>[не задана]</Dropdown.Item>
                         {
                             this.props.listOfCategories.map((cat) => {
                                 return (<Dropdown.Item key={cat} onSelect={() =>
-                                    this.setStateAndFireOnChange({category: cat})
+                                    this.onChange({category: cat})
                                 }>{cat}</Dropdown.Item>);
                             })
                         }
@@ -91,15 +80,16 @@ export class StampSearchOptionsSelector extends React.Component<Props, State> {
                 </Form.Group>
                 <Form.Group controlId="soss-present">
                     <Form.Check type="checkbox" label="В наличии"
-                                onChange={(e) => this.setStateAndFireOnChange({presenceRequired: e.target.checked})}/>
+                                checked={this.props.options.presenceRequired}
+                                onChange={(e) => this.onChange({presenceRequired: e.target.checked})}/>
                 </Form.Group>
                 <Form.Group>
                     <Form.Label>Сортировка:</Form.Label>
-                    <DropdownButton variant="custom-white" title={AllSortsNames[this.state.sortIndex]}>
+                    <DropdownButton variant="custom-white" title={AllSortsNames[sortIndex]}>
                         {
                             _.range(0, AllSorts.length).map((i) => {
                                 return (<Dropdown.Item key={i} onSelect={() =>
-                                    this.setStateAndFireOnChange({sortIndex: i})
+                                    this.onChange({sort: AllSorts[i]})
                                 }>{AllSortsNames[i]}</Dropdown.Item>);
                             })
                         }
@@ -110,7 +100,7 @@ export class StampSearchOptionsSelector extends React.Component<Props, State> {
                         <Form.Text>По запросу найдено {this.props.numberOfFoundStamps} {
                             plural(this.props.numberOfFoundStamps, "марка", "марки", "марок")
                         }.</Form.Text>
-                    ): ""
+                    ) : ""
                 }
             </div>);
     }

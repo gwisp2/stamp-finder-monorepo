@@ -5,26 +5,19 @@ import _ from "underscore";
 export interface YearSelectorProps {
     startYear: number
     endYear: number
-    defaultYear: number | null
+    value: number | null
     onChange?: (year: number | null) => void
 }
 
-interface YearSelectorState {
-    selectedYear: number | null
-}
-
-export class YearSelector extends React.Component<YearSelectorProps, YearSelectorState> {
+export class YearSelector extends React.Component<YearSelectorProps, {}> {
     constructor(props: YearSelectorProps) {
         super(props);
-        this.state = {
-            selectedYear: props.defaultYear
-        }
         this.handleYearSelection = this.handleYearSelection.bind(this);
     }
 
     render() {
         return (
-            <Form.Control as="select" value={this.state.selectedYear?.toString() ?? "null"}
+            <Form.Control as="select" value={this.props.value?.toString() ?? "null"}
                           onChange={this.handleYearSelection}>
                 <option key="null" value="null"/>
                 {
@@ -36,13 +29,9 @@ export class YearSelector extends React.Component<YearSelectorProps, YearSelecto
     }
 
     private handleYearSelection(e: ChangeEvent<HTMLInputElement>) {
-        this.setState({
-            selectedYear: YearSelector.parseNumber(e.target.value)
-        }, () => {
-            if (this.props.onChange !== undefined) {
-                this.props.onChange(this.state.selectedYear);
-            }
-        });
+        if (this.props.onChange !== undefined) {
+            this.props.onChange(YearSelector.parseNumber(e.target.value));
+        }
     }
 
     private static parseNumber(s: string): number | null {
