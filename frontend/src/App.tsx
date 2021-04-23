@@ -1,32 +1,29 @@
 import React from 'react';
-import {SearchOptions, SortOrder, Stamp, StampDb, StampField, StampSort} from "./model/stamps";
-import {StampList} from "./components/stamp-list/StampList";
+import {SearchOptions, Stamp, StampDb} from "./model/stamps";
 import {fetchStampsDb} from "./model/stamps-fetcher";
-import {NumberRange} from "./model/number-range";
 import {StampSearchOptionsSelector} from "./components/stamp-search-options-selector/StampSearchOptionsSelector";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import SearchRounded from '@material-ui/icons/SearchRounded';
 import _ from "underscore";
+import {History as RHistory} from "history";
+import {StampList} from "./components/stamp-list/StampList";
+
+interface AppProps {
+    history: RHistory
+}
 
 interface AppState {
-    searchOptions: SearchOptions,
     stampDb: StampDb | null
 }
 
-class App extends React.Component<{}, AppState> {
-    private static DefaultSearchOptions = new SearchOptions(
-        new NumberRange(null, null),
-        new NumberRange(1998, null),
-        null,
-        false, new StampSort(StampField.Id, SortOrder.Reversed)
-    );
+class App extends React.Component<AppProps, AppState> {
 
-    constructor(props: {}) {
+    constructor(props: AppProps) {
         super(props);
         this.state = {
-            searchOptions: App.DefaultSearchOptions,
             stampDb: null
         };
+        this.onSearchOptionsChange = this.onSearchOptionsChange.bind(this);
     }
 
     componentDidMount() {
@@ -36,7 +33,8 @@ class App extends React.Component<{}, AppState> {
 
     render() {
         const stampDb = this.state.stampDb ? this.state.stampDb : new StampDb(Array<Stamp>());
-        const stamps = stampDb.findStamps(this.state.searchOptions);
+        const searchOptions = SearchOptions.fromUrlParams(new URLSearchParams(this.props.history.location.search));
+        const stamps = stampDb.findStamps(searchOptions);
 
         const knownYears = stampDb.stamps.map((v) => v.year).filter((y) => y !== null);
         const minYear = knownYears.length >= 1 ? _.min(knownYears) as number : 2020;
@@ -65,14 +63,15 @@ class App extends React.Component<{}, AppState> {
                 </nav>
                 <div className="row">
                     <div className="search-options-column col-xl-3 mb-3">
-                        <div className="search-options-container position-sticky bg-light p-2 rounded border shadow-sm border-secondary">
+                        <div
+                            className="search-options-container position-sticky bg-light p-2 rounded border shadow-sm border-secondary">
                             <StampSearchOptionsSelector
-                                defaultOptions={App.DefaultSearchOptions}
+                                defaultOptions={SearchOptions.Default}
                                 startYear={minYear}
                                 endYear={maxYear}
                                 listOfCategories={listOfCategories}
                                 numberOfFoundStamps={stamps.length}
-                                onChange={(newOptions) => this.setState({searchOptions: newOptions})}>
+                                onChange={(options) => this.onSearchOptionsChange(options)}>
                             </StampSearchOptionsSelector>
                         </div>
                     </div>
@@ -82,6 +81,11 @@ class App extends React.Component<{}, AppState> {
                 </div>
             </div>
         );
+    }
+
+    private onSearchOptionsChange(newOptions: SearchOptions) {
+        const params = newOptions.toUrlParams()
+        this.props.history.push("/search?" + params.toString())
     }
 }
 

@@ -1,4 +1,5 @@
 import {NumberRange} from "./number-range";
+import _ from "underscore";
 
 export enum StampField {
     Id, Value
@@ -14,6 +15,13 @@ export class StampSort {
 }
 
 export class SearchOptions {
+    static Default = new SearchOptions(
+        new NumberRange(null, null),
+        new NumberRange(1998, null),
+        null,
+        false, new StampSort(StampField.Id, SortOrder.Reversed)
+    );
+
     constructor(
         readonly value: NumberRange,
         readonly year: NumberRange,
@@ -22,6 +30,59 @@ export class SearchOptions {
         readonly sort: StampSort
     ) {
 
+    }
+
+    static fromUrlParams(params: URLSearchParams): SearchOptions {
+        const valueStr = params.get("value");
+        const yearStr = params.get("year");
+        const categoryStr = params.get("category");
+        const presentStr = params.get("present");
+        const sortStr = params.get("sort");
+        const value = valueStr !== null ? SearchOptions.fromUrlParam(valueStr) : SearchOptions.Default.value;
+        const year = yearStr !== null ? SearchOptions.fromUrlParam(yearStr) : SearchOptions.Default.year;
+        const category = categoryStr !== null ? (categoryStr !== "<null>" ? categoryStr : null) : SearchOptions.Default.category;
+        const present = presentStr !== null ? Boolean(presentStr) : SearchOptions.Default.presenceRequired;
+        let sort = SearchOptions.Default.sort;
+        if (sortStr !== null) {
+            const sortParts = sortStr.split("-");
+            const field = Number(sortParts[0]);
+            const order = Number(sortParts[1]);
+            sort = new StampSort(field, order);
+        }
+        return new SearchOptions(value, year, category, present, sort);
+    }
+
+    private static fromUrlParam(p: string): NumberRange {
+        const parts = p.split("~")
+        const start = parts[0] !== "" ? Number(parts[0]) : null;
+        const end = parts[1] !== "" ? Number(parts[1]) : null;
+        return new NumberRange(start, end)
+    }
+
+    toUrlParams(): URLSearchParams {
+        const params = new URLSearchParams();
+        if (!_.isEqual(SearchOptions.Default.value, this.value)) {
+            params.set("value", SearchOptions.toUrlParam(this.value))
+        }
+        if (!_.isEqual(SearchOptions.Default.year, this.year)) {
+            params.set("year", SearchOptions.toUrlParam(this.year))
+        }
+        if (this.category !== SearchOptions.Default.category) {
+            params.set("category", this.category ?? "<null>");
+        }
+        if (this.presenceRequired !== SearchOptions.Default.presenceRequired) {
+            params.set("present", "" + this.presenceRequired)
+        }
+        if (!_.isEqual(this.sort, SearchOptions.Default.sort)) {
+            params.set("sort", this.sort.field + "-" + this.sort.order)
+        }
+        return params
+    }
+
+    private static toUrlParam(range: NumberRange): string {
+        const startStr = range.start !== null ? "" + range.start : ""
+        const endStr = range.end !== null ? "" + range.end : ""
+        return startStr + "~" + endStr
     }
 }
 
