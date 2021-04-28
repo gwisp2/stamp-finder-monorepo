@@ -97,7 +97,11 @@ export class StampSearchOptionsSelector extends React.Component<Props, {}> {
                 </Form.Group>
                 {
                     this.props.numberOfFoundStamps !== undefined ? (
-                        <Form.Text>По запросу найдено {this.props.numberOfFoundStamps} {
+                        <Form.Text>По запросу {
+                            plural(this.props.numberOfFoundStamps, "найдена", "найдено", "найдено")
+                        } {
+                            this.props.numberOfFoundStamps
+                        } {
                             plural(this.props.numberOfFoundStamps, "марка", "марки", "марок")
                         }.</Form.Text>
                     ) : ""
