@@ -2,7 +2,7 @@ import React from "react";
 import {SearchOptions, SortOrder, StampField, StampSort} from "../../model/stamps";
 import {RangeSelector} from "../range-selector/RangeSelector";
 import _ from "underscore";
-import {Dropdown, DropdownButton, Form} from "react-bootstrap";
+import {Button, ButtonGroup, Dropdown, DropdownButton, Form} from "react-bootstrap";
 import {YearRangeSelector} from "../year-selector/YearRangeSelector";
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
@@ -54,10 +54,14 @@ export class StampSearchOptionsSelector extends React.Component<Props, {}> {
     }
 
     render() {
+        const valueButtons = [18, 52].map(value => (
+            <Button variant="outline-secondary" onClick={(r) => this.onChange({valueRange: new NumberRange(value, value)})}>{value}</Button>
+        ))
+        valueButtons.push(<Button variant="outline-secondary" className="btn btn-outline-secondary" onClick={(r) => this.onChange({valueRange: new NumberRange(null, null)})}>Все</Button>);
         const sortIndex = _.findIndex(AllSorts, this.props.options.sort);
         return (
             <div>
-                <RangeSelector label="Номинал:"
+                <RangeSelector label={<span>Номинал: <button className="d-none">For some reason the first button becomes dark when any button is hovered, this hidden button hides this issue</button><ButtonGroup size="sm" aria-label="Номиналы">{valueButtons}</ButtonGroup></span>}
                                value={this.props.options.value}
                                onChange={(r) => this.onChange({valueRange: r})}/>
                 <YearRangeSelector label="Год выпуска:"

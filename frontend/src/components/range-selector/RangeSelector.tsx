@@ -4,7 +4,7 @@ import {Form} from "react-bootstrap";
 import "./RangeSelector.css"
 
 export interface RangeSelectorProps {
-    label?: string
+    label?: React.ReactNode,
     value: NumberRange,
     onChange?: (range: NumberRange) => void
 }
