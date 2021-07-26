@@ -12,6 +12,8 @@ class StampEntry:
     year: int
     page: str
     categories: List[str]
+    series: Optional[str] = None
+    name: Optional[str] = None
     present: Optional[bool] = None
 
     def position_id(self) -> int:
@@ -35,7 +37,7 @@ class StampsJson:
     @staticmethod
     def load(path) -> "StampsJson":
         entries: List[StampEntry] = []
-        with open(path, 'rt') as f:
+        with open(path, 'rt', encoding='utf-8') as f:
             entries_json = json.load(f)
         for k in entries_json:
             entry_json = entries_json[k]
@@ -46,6 +48,8 @@ class StampsJson:
                 year=int(entry_json['year']),
                 page=entry_json['page'],
                 categories=entry_json.get('categories') or [],
+                series=entry_json.get('series'),
+                name=entry_json.get('name'),
                 present=entry_json['present']
             ))
         return StampsJson(entries)
@@ -58,9 +62,11 @@ class StampsJson:
                 'value': entry.value,
                 'year': entry.year,
                 'page': entry.page,
-                'categories': entry.categories
+                'categories': entry.categories,
+                'series': entry.series,
+                'name': entry.name
             }
             if entry.present is not None:
                 entries_dict[entry.id]['present'] = entry.present
-        with open(path, 'wt') as f:
+        with open(path, 'wt', encoding='utf-8') as f:
             json.dump(entries_dict, f, indent=2, ensure_ascii=False)
