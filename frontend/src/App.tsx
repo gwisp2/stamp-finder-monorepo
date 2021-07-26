@@ -8,7 +8,7 @@ import AttachMoney from '@material-ui/icons/AttachMoney';
 import _ from "underscore";
 import {History as RHistory} from "history";
 import {StampList} from "./components/stamp-list/StampList";
-import { Container, Nav, Navbar, Row } from 'react-bootstrap';
+import { Container, Nav, Navbar, Row, Col } from 'react-bootstrap';
 
 interface AppProps {
     history: RHistory
@@ -52,7 +52,7 @@ class App extends React.Component<AppProps, AppState> {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="mr-auto"/>
-                        <Nav>
+                        <Nav className="align-items-end">
                             <Nav.Link href="https://github.com/gwisp2/stamp-finder">
                                 <span className="link-with-icon">
                                     <img alt="Github logo" className="github-logo" src="github-logo.png"/>
@@ -69,7 +69,7 @@ class App extends React.Component<AppProps, AppState> {
                     </Navbar.Collapse>
                 </Navbar>
                 <Row>
-                    <div className="search-options-column col-xl-3 mb-3">
+                    <Col xl={3} className="search-options-column mb-3">
                         <div
                             className="search-options-container position-sticky bg-light p-2 rounded border shadow-sm border-secondary">
                             <StampSearchOptionsSelector
@@ -81,10 +81,10 @@ class App extends React.Component<AppProps, AppState> {
                                 onChange={(options) => this.onSearchOptionsChange(options)}>
                             </StampSearchOptionsSelector>
                         </div>
-                    </div>
-                    <div className="col-xl-9">
+                    </Col>
+                    <Col xl={9}>
                         <StampList stamps={stamps}/>
-                    </div>
+                    </Col>
                 </Row>
             </Container>
         );
