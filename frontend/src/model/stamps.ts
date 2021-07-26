@@ -19,7 +19,7 @@ export class SearchOptions {
         new NumberRange(null, null),
         new NumberRange(1998, null),
         null,
-        false, new StampSort(StampField.Id, SortOrder.Reversed)
+        false, "", new StampSort(StampField.Id, SortOrder.Reversed)
     );
 
     constructor(
@@ -27,6 +27,7 @@ export class SearchOptions {
         readonly year: NumberRange,
         readonly category: string|null,
         readonly presenceRequired: boolean,
+        readonly contains: string,
         readonly sort: StampSort
     ) {
 
@@ -36,6 +37,7 @@ export class SearchOptions {
         const valueStr = params.get("value");
         const yearStr = params.get("year");
         const categoryStr = params.get("category");
+        const containsStr = params.get("contains");
         const presentStr = params.get("present");
         const sortStr = params.get("sort");
         const value = valueStr !== null ? SearchOptions.fromUrlParam(valueStr) : SearchOptions.Default.value;
@@ -49,7 +51,7 @@ export class SearchOptions {
             const order = Number(sortParts[1]);
             sort = new StampSort(field, order);
         }
-        return new SearchOptions(value, year, category, present, sort);
+        return new SearchOptions(value, year, category, present, containsStr || "", sort);
     }
 
     private static fromUrlParam(p: string): NumberRange {
@@ -76,6 +78,9 @@ export class SearchOptions {
         if (!_.isEqual(this.sort, SearchOptions.Default.sort)) {
             params.set("sort", this.sort.field + "-" + this.sort.order)
         }
+        if (!_.isEqual(this.contains, SearchOptions.Default.contains)) {
+            params.set("contains", this.contains)
+        }
         return params
     }
 
@@ -87,6 +92,8 @@ export class SearchOptions {
 }
 
 export class Stamp {
+    readonly nameAndSeries: string;
+
     constructor(
         readonly id: number,
         readonly page: URL,
@@ -98,6 +105,7 @@ export class Stamp {
         readonly name: string | null,
         readonly present: boolean
     ) {
+        this.nameAndSeries = ((name || "") + "|" + (series || "")).toLowerCase();
     }
 }
 
@@ -106,10 +114,12 @@ export class StampDb {
     }
 
     findStamps(searchOptions: SearchOptions): Array<Stamp> {
+        const containsLowered = searchOptions.contains.toLowerCase();
         const filteredStamps = this.stamps.filter((s) => {
             return searchOptions.year.contains(s.year) && searchOptions.value.contains(s.value) &&
                 (!searchOptions.presenceRequired || s.present) &&
-                (searchOptions.category === null || s.categories.includes(searchOptions.category));
+                (searchOptions.category === null || s.categories.includes(searchOptions.category)) &&
+                (s.nameAndSeries.indexOf(containsLowered) >= 0);
         });
         return filteredStamps.sort((a, b) => {
             let v = 0;
