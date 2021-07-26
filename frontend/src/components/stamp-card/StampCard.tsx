@@ -4,7 +4,7 @@ import "./StampCard.css"
 import EmptyImage from "./empty.png"
 import ShoppingBasket from '@material-ui/icons/ShoppingBasket';
 import ArrowDropDown from '@material-ui/icons/ArrowDropDown';
-import { Dropdown, NavDropdown } from "react-bootstrap";
+import { Dropdown } from "react-bootstrap";
 
 export interface Props {
     stamp: Stamp
@@ -28,6 +28,7 @@ export class StampCardDropdown extends React.Component<Props, {}> {
         return (<Dropdown>
             <Dropdown.Toggle as={CustomToggle}></Dropdown.Toggle>
             <Dropdown.Menu align="right" className="stamp-card-dropdown">
+                {s.categories.length !== 0 && (<div className="stamp-card-labelvalue"><span className="label">Категории</span><span className="value">{s.categories.join(', ')}</span></div>) }
                 {s.series && (<div className="stamp-card-labelvalue"><span className="label">Серия</span><span className="value">{s.series}</span></div>)}
                 {s.name && (<div className="stamp-card-labelvalue"><span className="label">Название</span><span className="value">{s.name}</span></div>)}
             </Dropdown.Menu>
