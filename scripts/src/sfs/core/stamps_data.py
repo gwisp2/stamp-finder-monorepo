@@ -1,7 +1,7 @@
 import json
 import re
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 
 @dataclass
@@ -27,6 +27,9 @@ class StampEntry:
 class StampsJson:
     def __init__(self, entries: List[StampEntry]):
         self.entries = entries
+
+    def entry_dict(self) -> Dict[int, StampEntry]:
+        return {e.id : e for e in self.entries}
 
     def add_entry(self, entry: StampEntry):
         self.entries.append(entry)

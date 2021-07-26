@@ -4,6 +4,7 @@ from .command_update_present_field import CommandUpdatePresentField
 from .command_update_cats import CommandUpdateCats
 from .command_add_new import CommandAddNew
 from .command_reformat import CommandReformat
+from .command_parse_names import CommandParseNames
 
 command_list = [
     CommandUpdatePresentField(),
@@ -11,5 +12,6 @@ command_list = [
     CommandResizeImages(),
     CommandUpdateCats(),
     CommandAddNew(),
-    CommandReformat()
+    CommandReformat(),
+    CommandParseNames()
 ]
