@@ -22,9 +22,10 @@ class Section:
 
 
 class SectionHeader(Section):
-    def __init__(self, text: str, stamp_id_or_range: Optional[Union[int, Tuple[int, int]]]):
+    def __init__(self, text: str, stamp_id_or_range: Optional[Union[int, Tuple[int, int]]], title: str):
         self.text = text
         self.stamp_id_or_range = stamp_id_or_range
+        self.title = title
 
 
 class SectionDateOrAuthor(Section):
@@ -55,6 +56,8 @@ class StampBaseInfo:
     image_url: Optional[str] = None
     value: Optional[Decimal] = None
     year: Optional[int] = None
+    series: Optional[str] = None
+    name: Optional[str] = None
     present: Optional[bool] = None
 
 
@@ -78,11 +81,11 @@ class PositionPageParser:
             if isinstance(section, SectionHeader):
                 if section.stamp_id_or_range is not None:
                     if isinstance(section.stamp_id_or_range, int):
-                        info(section.stamp_id_or_range)
+                        info(section.stamp_id_or_range).name = section.title
                         last_id = section.stamp_id_or_range
                     else:
                         for x in range(section.stamp_id_or_range[0], section.stamp_id_or_range[1] + 1):
-                            info(x)
+                            info(x).series = section.title
             elif isinstance(section, SectionDateOrAuthor):
                 if section.date:
                     year = section.date.year
@@ -128,18 +131,18 @@ class PositionPageParser:
                 # Header
                 if '№' not in h.text:
                     # No stamps ids here
-                    sections.append(SectionHeader(h.text, None))
+                    sections.append(SectionHeader(h.text, None, h.text))
                 else:
                     # Parse stamp ids
-                    id_range_match = re.search(r'^№\s*(\d+)А?-(\d+)А?([\s.]\s*.*$|$)', h.text.strip())
-                    id_match = re.search(r'^№\s*(\d+)([\s.]\s*.*$|$)', h.text.strip())
+                    id_range_match = re.search(r'^№\s*(\d+)А?-(\d+)А?[\s.](\s*.*$|$)', h.text.strip())
+                    id_match = re.search(r'^№\s*(\d+)[\s.](\s*.*$|$)', h.text.strip())
                     if id_range_match:
                         stamp_id_start = int(id_range_match.group(1))
                         stamp_id_end = int(id_range_match.group(2))
-                        sections.append(SectionHeader(h.text, (stamp_id_start, stamp_id_end)))
+                        sections.append(SectionHeader(h.text, (stamp_id_start, stamp_id_end), id_range_match.group(3).strip()))
                     elif id_match:
                         stamp_id = int(id_match.group(1))
-                        sections.append(SectionHeader(h.text, stamp_id))
+                        sections.append(SectionHeader(h.text, stamp_id, id_match.group(2).strip()))
             elif date_product or author_product:
                 # Date or author
                 date = None

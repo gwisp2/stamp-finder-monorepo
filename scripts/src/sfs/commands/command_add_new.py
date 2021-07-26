@@ -52,12 +52,15 @@ class CommandAddNew(Command):
                         image.save(os.path.join(args.datadir, image_path))
                     else:
                         image_path = None
+
                     stamps_json.add_entry(StampEntry(
                         id=stamp_info.id,
                         value=float(stamp_info.value or 0.0),
                         year=stamp_info.year,
                         page=data_fetch.position_page_url(position_id),
                         categories=[],
+                        name=stamp_info.name,
+                        series=stamp_info.series,
                         present=stamp_info.present,
                         image=image_path
                     ))
