@@ -8,6 +8,7 @@ import AttachMoney from '@material-ui/icons/AttachMoney';
 import _ from "underscore";
 import {History as RHistory} from "history";
 import {StampList} from "./components/stamp-list/StampList";
+import { Container, Nav, Navbar, Row } from 'react-bootstrap';
 
 interface AppProps {
     history: RHistory
@@ -45,32 +46,29 @@ class App extends React.Component<AppProps, AppState> {
         listOfCategories.sort();
 
         return (
-            <div className="container">
-                <nav className="navbar navbar-expand navbar-dark bg-dark mb-3">
-                    <a className="navbar-brand" href="/"><SearchRounded/> Stamp Finder</a>
-                    <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul className="navbar-nav mr-auto"/>
-                    </div>
-                    <ul className="navbar-nav mr-auto">
-                        <li className="nav-item active">
-                            <a className="nav-link" href="https://github.com/gwisp2/stamp-finder">
+            <Container>
+                <Navbar expand="sm" variant="dark" bg="dark" className="mb-3">
+                    <Navbar.Brand href="/"><SearchRounded/> Stamp Finder</Navbar.Brand>
+                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                    <Navbar.Collapse id="basic-navbar-nav">
+                        <Nav className="mr-auto"/>
+                        <Nav>
+                            <Nav.Link href="https://github.com/gwisp2/stamp-finder">
                                 <span className="link-with-icon">
                                     <img alt="Github logo" className="github-logo" src="github-logo.png"/>
                                     <span>Github</span>
                                 </span>
-                            </a>
-                        </li>
-                        <li className="nav-item active">
-                            <a className="nav-link" href="https://github.com/gwisp2/gwisp2/blob/main/DONATE.md">
+                            </Nav.Link>
+                            <Nav.Link href="https://github.com/gwisp2/gwisp2/blob/main/DONATE.md">
                                 <span className="link-with-icon">
                                     <AttachMoney/>
                                     <span>Donate</span>
                                 </span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-                <div className="row">
+                            </Nav.Link>
+                        </Nav>
+                    </Navbar.Collapse>
+                </Navbar>
+                <Row>
                     <div className="search-options-column col-xl-3 mb-3">
                         <div
                             className="search-options-container position-sticky bg-light p-2 rounded border shadow-sm border-secondary">
@@ -87,8 +85,8 @@ class App extends React.Component<AppProps, AppState> {
                     <div className="col-xl-9">
                         <StampList stamps={stamps}/>
                     </div>
-                </div>
-            </div>
+                </Row>
+            </Container>
         );
     }
 
