@@ -4,6 +4,7 @@ import {fetchStampsDb} from "./model/stamps-fetcher";
 import {StampSearchOptionsSelector} from "./components/stamp-search-options-selector/StampSearchOptionsSelector";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import SearchRounded from '@material-ui/icons/SearchRounded';
+import AttachMoney from '@material-ui/icons/AttachMoney';
 import _ from "underscore";
 import {History as RHistory} from "history";
 import {StampList} from "./components/stamp-list/StampList";
@@ -53,10 +54,18 @@ class App extends React.Component<AppProps, AppState> {
                     <ul className="navbar-nav mr-auto">
                         <li className="nav-item active">
                             <a className="nav-link" href="https://github.com/gwisp2/stamp-finder">
-                                <div className="github-link">
+                                <span className="link-with-icon">
                                     <img alt="Github logo" className="github-logo" src="github-logo.png"/>
                                     <span>Github</span>
-                                </div>
+                                </span>
+                            </a>
+                        </li>
+                        <li className="nav-item active">
+                            <a className="nav-link" href="https://github.com/gwisp2/gwisp2/blob/main/DONATE.md">
+                                <span className="link-with-icon">
+                                    <AttachMoney/>
+                                    <span>Donate</span>
+                                </span>
                             </a>
                         </li>
                     </ul>
