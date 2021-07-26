@@ -92,7 +92,7 @@ export class SearchOptions {
 }
 
 export class Stamp {
-    readonly nameAndSeries: string;
+    readonly idNameAndSeries: string;
 
     constructor(
         readonly id: number,
@@ -105,7 +105,7 @@ export class Stamp {
         readonly name: string | null,
         readonly present: boolean
     ) {
-        this.nameAndSeries = ((name || "") + "|" + (series || "")).toLowerCase();
+        this.idNameAndSeries = (id + "|" + (name || "") + "|" + (series || "")).toLowerCase();
     }
 }
 
@@ -119,7 +119,7 @@ export class StampDb {
             return searchOptions.year.contains(s.year) && searchOptions.value.contains(s.value) &&
                 (!searchOptions.presenceRequired || s.present) &&
                 (searchOptions.category === null || s.categories.includes(searchOptions.category)) &&
-                (s.nameAndSeries.indexOf(containsLowered) >= 0);
+                (s.idNameAndSeries.indexOf(containsLowered) >= 0);
         });
         return filteredStamps.sort((a, b) => {
             let v = 0;
