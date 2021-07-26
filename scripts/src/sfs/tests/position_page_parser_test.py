@@ -62,6 +62,22 @@ class TestPositionPageParsing(unittest.TestCase):
                           image_url='https://rusmarka.ru//files/sitedata/401/1439/c881a21b-efc4-42a1-9be2-a10d70ce2436.jpg',
                           name='2550 лет городу Феодосии',
                           value=None, year=2021, present=False)
+        ],
+        "38063.html": [
+            StampBaseInfo(id=2726, image_url='https://rusmarka.ru//files/sitedata/401/1439/5154d87f-7a50-4c48-9900-6bf47808161a.jpg',
+                          value=None, year=2021, 
+                          series='Серия "Государственные награды Российской Федерации. Медали"', 
+                          name='«За отличие в охране общественного порядка»', present=False), 
+            StampBaseInfo(id=2727, image_url='https://rusmarka.ru//files/sitedata/401/1439/cd782a2e-41ad-45ce-af53-853237e042dd.jpg',
+                          value=None, year=2021, series='Серия "Государственные награды Российской Федерации. Медали"', 
+                          name='«За отличие в охране государственной границы»', present=False), 
+            StampBaseInfo(id=2728, image_url='https://rusmarka.ru//files/sitedata/401/1439/96432951-0c07-4b66-a555-d4704b9849c3.jpg', 
+                          value=None, year=2021, series='Серия "Государственные награды Российской Федерации. Медали"', 
+                          name='«За отвагу на пожаре»', present=False),
+            StampBaseInfo(id=2729, image_url="https://rusmarka.ru//files/sitedata/401/1439/39af6a9e-d5e8-4918-b6b8-6da4ab4cf64d.jpg",
+                          value=None, year=2021, 
+                          series='Серия "Государственные награды Российской Федерации. Медали"',
+                          name='«За спасение погибавших»', present=False)
         ]
     }
 

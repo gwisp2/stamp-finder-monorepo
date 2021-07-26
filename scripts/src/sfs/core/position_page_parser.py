@@ -134,8 +134,8 @@ class PositionPageParser:
                     sections.append(SectionHeader(h.text, None, h.text))
                 else:
                     # Parse stamp ids
-                    id_range_match = re.search(r'^№\s*(\d+)А?-(\d+)А?[\s.](\s*.*$|$)', h.text.strip())
-                    id_match = re.search(r'^№\s*(\d+)[\s.](\s*.*$|$)', h.text.strip())
+                    id_range_match = re.search(r'^№\s*(\d+)[AА]?-(\d+)[AА]?[\s.]?(\s*.*$|$)', h.text.strip())
+                    id_match = re.search(r'^№\s*(\d+)[\s.]?(\s*.*$|$)', h.text.strip())
                     if id_range_match:
                         stamp_id_start = int(id_range_match.group(1))
                         stamp_id_end = int(id_range_match.group(2))
