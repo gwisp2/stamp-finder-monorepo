@@ -10,16 +10,15 @@ export interface Props {
     stamp: Stamp
 }
 
-const CustomToggle = React.forwardRef<HTMLAnchorElement, { onClick: (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void }>((props, ref) => (
-    <a
-        href=""
+const CustomToggle = React.forwardRef<HTMLAnchorElement, { onClick: (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void }>((props, ref) => (
+    <span
         className="card-dropdown-toggle"
         ref={ref}
         onClick={(e) => {
             e.preventDefault();
             props.onClick(e);
         }}
-    ><ArrowDropDown /></a>
+    ><ArrowDropDown /></span>
 ));
 
 export class StampCardDropdown extends React.Component<Props, {}> {

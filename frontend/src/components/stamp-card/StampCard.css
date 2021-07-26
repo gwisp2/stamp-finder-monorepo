@@ -9,6 +9,10 @@
     text-decoration: none !important;
 }
 
+.card-dropdown-toggle:hover, .card-dropdown-toggle:active {
+    color: blue;
+}
+
 .stamp-card-dropdown {
     font-weight: normal;
     font-size: 80%;
