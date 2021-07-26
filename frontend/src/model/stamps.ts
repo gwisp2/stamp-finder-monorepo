@@ -94,6 +94,8 @@ export class Stamp {
         readonly value: number | null,
         readonly year: number | null,
         readonly categories: Array<string>,
+        readonly series: string | null,
+        readonly name: string | null,
         readonly present: boolean
     ) {
     }
