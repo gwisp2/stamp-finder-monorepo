@@ -39,7 +39,7 @@ export class StampCard extends React.Component<Props, {}> {
     render() {
         const s = this.props.stamp;
         return (<div className="position-relative shadow-sm bg-light border border-secondary rounded p-2">
-            <div className="stamp-card-header mb-1 d-flex justify-content-between"><div>№ {s.id} [{s.value}₽] // {s.year}</div><div><StampCardDropdown stamp={this.props.stamp} /></div></div>
+            <div className="stamp-card-header mb-1 d-flex justify-content-between"><div>№{s.id} {s.value}₽ {s.year}</div><div><StampCardDropdown stamp={this.props.stamp} /></div></div>
             <div className="stamp-card-image-container mb-1">
                 <div className="stamp-card-image-container-dummy" />
                 <img loading="lazy" draggable="false" alt={"Image of stamp " + s.id} className="stamp-image"
