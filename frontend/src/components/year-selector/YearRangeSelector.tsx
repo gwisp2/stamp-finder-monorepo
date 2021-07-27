@@ -5,6 +5,7 @@ import {YearSelector} from "./YearSelector";
 import "./YearRangeSelector.css";
 
 export interface YearRangeSelectorProps {
+    className?: string
     label?: string
     startYear: number
     endYear: number
@@ -33,15 +34,15 @@ export class YearRangeSelector extends React.Component<YearRangeSelectorProps, {
     }
 
     render() {
-        return (<Form.Group>
+        return (<Form.Group className={this.props.className}>
             <Form.Label>{this.props.label}</Form.Label>
-            <Form inline={true} className="year-range-selector-row">
-                <Form.Label className="mr-1">От: </Form.Label>
+            <Form className="year-range-selector-row">
+                <Form.Label className="me-1">От: </Form.Label>
                 <YearSelector startYear={this.props.startYear} endYear={this.props.value.end ?? this.props.endYear}
                               value={this.props.value.start}
                               onChange={(v) => this.runOnChangeHandler({start: v})}
                 />
-                <Form.Label className="mr-1 ml-1">До: </Form.Label>
+                <Form.Label className="me-1 ms-1">До: </Form.Label>
                 <YearSelector startYear={this.props.value.start ?? this.props.startYear} endYear={this.props.endYear}
                               value={this.props.value.end}
                               onChange={(v) => this.runOnChangeHandler({end: v})}/>

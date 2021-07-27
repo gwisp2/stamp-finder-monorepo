@@ -63,21 +63,21 @@ export class StampSearchOptionsSelector extends React.Component<Props, {}> {
         const sortIndex = _.findIndex(AllSorts, this.props.options.sort);
         return (
             <div>
-                <RangeSelector label={<span>Номинал: <button className="d-none">For some reason the first button becomes dark when any button is hovered, this hidden button hides this issue</button><ButtonGroup size="sm" aria-label="Номиналы">{valueButtons}</ButtonGroup></span>}
+                <RangeSelector className="mb-3" label={<div className="mb-2">Номинал: <button className="d-none">For some reason the first button becomes dark when any button is hovered, this hidden button hides this issue</button><ButtonGroup size="sm" aria-label="Номиналы">{valueButtons}</ButtonGroup></div>}
                     value={this.props.options.value}
                     onChange={(r) => this.onChange({ valueRange: r })} />
-                <YearRangeSelector label="Год выпуска:"
+                <YearRangeSelector className="mb-3" label="Год выпуска:"
                     startYear={this.props.startYear}
                     endYear={this.props.endYear}
                     value={this.props.options.year}
                     onChange={(r) => this.onChange({ yearRange: r })} />
-                <Form.Group>
+                <Form.Group className="mb-3">
                     <Form.Label>Название содержит:</Form.Label>
-                    <Form inline={true}>
+                    <Form>
                         <Form.Control name="contains" type="text" className="w-100" value={this.props.options.contains} onChange={(e) => this.onChange({contains: e.target.value})} />
                     </Form>
                 </Form.Group>
-                <Form.Group>
+                <Form.Group className="mb-3">
                     <Form.Label>Рубрика:</Form.Label>
                     <DropdownButton variant="custom-white" title={this.props.options.category ?? "[не задана]"}>
                         <Dropdown.Item onSelect={() => this.onChange({ category: null })}>[не задана]</Dropdown.Item>
@@ -90,12 +90,12 @@ export class StampSearchOptionsSelector extends React.Component<Props, {}> {
                         }
                     </DropdownButton>
                 </Form.Group>
-                <Form.Group controlId="soss-present">
+                <Form.Group className="mb-3" controlId="soss-present">
                     <Form.Check type="checkbox" label="В наличии"
                         checked={this.props.options.presenceRequired}
                         onChange={(e) => this.onChange({ presenceRequired: e.target.checked })} />
                 </Form.Group>
-                <Form.Group>
+                <Form.Group className="mb-3">
                     <Form.Label>Сортировка:</Form.Label>
                     <DropdownButton variant="custom-white" title={AllSortsNames[sortIndex]}>
                         {

@@ -4,6 +4,7 @@ import {Form} from "react-bootstrap";
 import "./RangeSelector.css"
 
 export interface RangeSelectorProps {
+    className?: string
     label?: React.ReactNode,
     value: NumberRange,
     onChange?: (range: NumberRange) => void
@@ -40,13 +41,13 @@ export class RangeSelector extends React.Component<RangeSelectorProps, RangeSele
     }
 
     render() {
-        return (<Form.Group>
+        return (<Form.Group className={this.props.className}>
             <Form.Label>{this.props.label}</Form.Label>
-            <Form inline={true} className="range-selector-row">
-                <Form.Label className="mr-1">От: </Form.Label>
+            <Form className="range-selector-row">
+                <Form.Label className="me-1">От: </Form.Label>
                 <Form.Control name="startStr" type="number" value={this.state.startStr}
                               onChange={this.handleNumberChange}/>
-                <Form.Label className="mr-1 ml-1">До: </Form.Label>
+                <Form.Label className="me-1 ms-1">До: </Form.Label>
                 <Form.Control name="endStr" type="number" value={this.state.endStr} onChange={this.handleNumberChange}/>
             </Form>
         </Form.Group>);

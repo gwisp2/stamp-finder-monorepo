@@ -47,11 +47,11 @@ class App extends React.Component<AppProps, AppState> {
 
         return (
             <Container>
-                <Navbar expand="sm" variant="dark" bg="dark" className="mb-3">
+                <Navbar expand="sm" variant="dark" bg="dark" className="mb-3 px-3 py-2">
                     <Navbar.Brand href="/"><SearchRounded/> Stamp Finder</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className="mr-auto"/>
+                        <Nav className="me-auto"/>
                         <Nav className="align-items-end">
                             <Nav.Link href="https://github.com/gwisp2/stamp-finder">
                                 <span className="link-with-icon">

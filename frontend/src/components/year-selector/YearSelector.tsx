@@ -1,4 +1,4 @@
-import React, {ChangeEvent} from "react";
+import React from "react";
 import {Form} from "react-bootstrap";
 import _ from "underscore";
 
@@ -17,20 +17,20 @@ export class YearSelector extends React.Component<YearSelectorProps, {}> {
 
     render() {
         return (
-            <Form.Control as="select" value={this.props.value?.toString() ?? "null"}
-                          onChange={this.handleYearSelection}>
+            <Form.Select as="select" value={this.props.value?.toString() ?? "null"}
+                          onChange={(e) => this.handleYearSelection((e.target as any).value)}>
                 <option key="null" value="null"/>
                 {
                     _.range(this.props.startYear, this.props.endYear + 1).map((i) => {
                         return (<option key={i} value={i}>{i}</option>);
                     })
                 }
-            </Form.Control>);
+            </Form.Select>);
     }
 
-    private handleYearSelection(e: ChangeEvent<HTMLInputElement>) {
+    private handleYearSelection(v: string) {
         if (this.props.onChange !== undefined) {
-            this.props.onChange(YearSelector.parseNumber(e.target.value));
+            this.props.onChange(YearSelector.parseNumber(v));
         }
     }
 

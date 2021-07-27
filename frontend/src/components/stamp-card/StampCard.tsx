@@ -24,9 +24,9 @@ const CustomToggle = React.forwardRef<HTMLAnchorElement, { onClick: (e: React.Mo
 export class StampCardDropdown extends React.Component<Props, {}> {
     render() {
         const s = this.props.stamp;
-        return (<Dropdown>
+        return (<Dropdown align="end">
             <Dropdown.Toggle as={CustomToggle}></Dropdown.Toggle>
-            <Dropdown.Menu align="right" className="stamp-card-dropdown">
+            <Dropdown.Menu className="stamp-card-dropdown">
                 {s.categories.length !== 0 && (<div className="stamp-card-labelvalue"><span className="label">Категории</span><span className="value">{s.categories.join(', ')}</span></div>) }
                 {s.series && (<div className="stamp-card-labelvalue"><span className="label">Серия</span><span className="value">{s.series}</span></div>)}
                 {s.name && (<div className="stamp-card-labelvalue"><span className="label">Название</span><span className="value">{s.name}</span></div>)}

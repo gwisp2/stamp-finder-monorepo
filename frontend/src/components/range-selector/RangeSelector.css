@@ -1,3 +1,8 @@
+.range-selector-row {
+    display: flex;
+    align-items: center;
+}
+
 .range-selector-row input {
     flex: 1;
     width: 100% !important;

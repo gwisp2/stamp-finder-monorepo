@@ -22,3 +22,8 @@
     display: flex;
     align-items:center;
 }
+
+.form-label {
+    /* Overwrite margin-botton from bootstrap */
+    margin-bottom: 0px !important;
+}
