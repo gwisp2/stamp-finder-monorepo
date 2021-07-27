@@ -42,7 +42,7 @@ export class StampCard extends React.Component<Props, {}> {
             <div className="stamp-card-header mb-1 d-flex justify-content-between"><div>№ {s.id} [{s.value}₽] // {s.year}</div><div><StampCardDropdown stamp={this.props.stamp} /></div></div>
             <div className="stamp-card-image-container mb-1">
                 <div className="stamp-card-image-container-dummy" />
-                <img draggable="false" alt={"Image of stamp " + s.id} className="stamp-image"
+                <img loading="lazy" draggable="false" alt={"Image of stamp " + s.id} className="stamp-image"
                     src={(s.imageUrl ?? EmptyImage).toString()} />
             </div>
             <a className={"w-100 btn " + (s.present ? "btn-success" : "btn-secondary")} href={s.page.toString()}
