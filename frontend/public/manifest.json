@@ -3,22 +3,17 @@
     "name": "Stamp Finder",
     "icons": [
         {
-            "src": "/icons/icon_32.png",
-            "type": "image/png",
-            "sizes": "32x32"
-        },
-        {
-            "src": "/icons/icon_96.png",
+            "src": "/icons/app_icon_96.png",
             "type": "image/png",
             "sizes": "96x96"
         },
         {
-            "src": "/icons/icon_192.png",
+            "src": "/icons/app_icon_192.png",
             "type": "image/png",
             "sizes": "192x192"
         },
         {
-            "src": "/icons/icon_512.png",
+            "src": "/icons/app_icon_512.png",
             "type": "image/png",
             "sizes": "512x512"
         }
