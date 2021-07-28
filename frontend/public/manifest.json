@@ -18,13 +18,13 @@
             "sizes": "192x192"
         },
         {
-            "src": "/images/icon_512.png",
+            "src": "/icons/icon_512.png",
             "type": "image/png",
             "sizes": "512x512"
         }
     ],
     "start_url": "/?source=pwa",
-    "background_color": "#3367D6",
+    "background_color": "#ffffff",
     "display": "minimal-ui",
     "scope": "/",
     "theme_color": "#ffffff",
