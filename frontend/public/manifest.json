@@ -1,0 +1,36 @@
+{
+    "short_name": "Stamp Finder",
+    "name": "Stamp Finder",
+    "icons": [
+        {
+            "src": "/icons/icon_32.png",
+            "type": "image/png",
+            "sizes": "32x32"
+        },
+        {
+            "src": "/icons/icon_96.png",
+            "type": "image/png",
+            "sizes": "96x96"
+        },
+        {
+            "src": "/icons/icon_192.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "/images/icon_512.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ],
+    "start_url": "/?source=pwa",
+    "background_color": "#3367D6",
+    "display": "minimal-ui",
+    "scope": "/",
+    "theme_color": "#ffffff",
+    "shortcuts": [
+    ],
+    "description": "Search of Russian stamps",
+    "screenshots": [
+    ]
+}
