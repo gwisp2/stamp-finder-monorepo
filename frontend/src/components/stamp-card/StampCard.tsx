@@ -26,8 +26,8 @@ const CustomToggle = React.forwardRef<
   </span>
 ));
 
-export class StampCardDropdown extends React.Component<Props, {}> {
-  render() {
+export class StampCardDropdown extends React.Component<Props> {
+  render(): React.ReactNode {
     const s = this.props.stamp;
     return (
       <Dropdown align="end">
@@ -57,8 +57,8 @@ export class StampCardDropdown extends React.Component<Props, {}> {
   }
 }
 
-export class StampCard extends React.Component<Props, {}> {
-  render() {
+export class StampCard extends React.Component<Props, Record<string, never>> {
+  render(): React.ReactNode {
     const s = this.props.stamp;
     return (
       <div className="position-relative shadow-sm bg-light border border-secondary rounded p-2">

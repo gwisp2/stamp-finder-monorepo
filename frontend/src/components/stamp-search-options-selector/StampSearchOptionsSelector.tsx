@@ -40,7 +40,7 @@ const AllSortsNames = Array<React.ReactNode>(
   </span>,
 );
 
-export class StampSearchOptionsSelector extends React.Component<Props, {}> {
+export class StampSearchOptionsSelector extends React.Component<Props> {
   private onChange(
     change: Partial<{
       valueRange: NumberRange;
@@ -51,7 +51,7 @@ export class StampSearchOptionsSelector extends React.Component<Props, {}> {
       sort: StampSort;
     }>,
   ) {
-    let options = {
+    const options = {
       valueRange: this.props.options.value,
       yearRange: this.props.options.year,
       category: this.props.options.category,
@@ -72,9 +72,9 @@ export class StampSearchOptionsSelector extends React.Component<Props, {}> {
     );
   }
 
-  render() {
+  render(): React.ReactNode {
     const valueButtons = [18, 52].map((value) => (
-      <Button variant="outline-secondary" onClick={(r) => this.onChange({ valueRange: new NumberRange(value, value) })}>
+      <Button variant="outline-secondary" onClick={() => this.onChange({ valueRange: new NumberRange(value, value) })}>
         {value}
       </Button>
     ));
@@ -82,7 +82,7 @@ export class StampSearchOptionsSelector extends React.Component<Props, {}> {
       <Button
         variant="outline-secondary"
         className="btn btn-outline-secondary"
-        onClick={(r) => this.onChange({ valueRange: new NumberRange(null, null) })}
+        onClick={() => this.onChange({ valueRange: new NumberRange(null, null) })}
       >
         Все
       </Button>,

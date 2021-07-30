@@ -9,18 +9,18 @@ export interface YearSelectorProps {
   onChange?: (year: number | null) => void;
 }
 
-export class YearSelector extends React.Component<YearSelectorProps, {}> {
+export class YearSelector extends React.Component<YearSelectorProps> {
   constructor(props: YearSelectorProps) {
     super(props);
     this.handleYearSelection = this.handleYearSelection.bind(this);
   }
 
-  render() {
+  render(): React.ReactNode {
     return (
       <Form.Select
         as="select"
         value={this.props.value?.toString() ?? 'null'}
-        onChange={(e) => this.handleYearSelection((e.target as any).value)}
+        onChange={(e) => this.handleYearSelection((e.target as unknown as { value: string }).value)}
       >
         <option key="null" value="null" />
         {_.range(this.props.startYear, this.props.endYear + 1).map((i) => {

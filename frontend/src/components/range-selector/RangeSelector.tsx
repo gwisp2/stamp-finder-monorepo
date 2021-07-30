@@ -25,7 +25,7 @@ export class RangeSelector extends React.Component<RangeSelectorProps, RangeSele
     this.handleNumberChange = this.handleNumberChange.bind(this);
   }
 
-  static getDerivedStateFromProps(props: RangeSelectorProps, currentState: RangeSelectorState) {
+  static getDerivedStateFromProps(props: RangeSelectorProps, currentState: RangeSelectorState): RangeSelectorState {
     let startStr = currentState.startStr;
     let endStr = currentState.endStr;
     const range = props.value;
@@ -41,7 +41,7 @@ export class RangeSelector extends React.Component<RangeSelectorProps, RangeSele
     };
   }
 
-  render() {
+  render(): React.ReactNode {
     return (
       <Form.Group className={this.props.className}>
         <Form className="range-selector-row mb-2">

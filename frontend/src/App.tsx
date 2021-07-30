@@ -27,11 +27,11 @@ class App extends React.Component<AppProps, AppState> {
     this.onSearchOptionsChange = this.onSearchOptionsChange.bind(this);
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     fetchStampsDb(new URL('data/stamps.json', document.baseURI)).then((db) => this.setState({ stampDb: db }));
   }
 
-  render() {
+  render(): React.ReactNode {
     const stampDb = this.state.stampDb ? this.state.stampDb : new StampDb(Array<Stamp>());
     const searchOptions = SearchOptions.fromUrlParams(new URLSearchParams(this.props.history.location.search));
     const stamps = stampDb.findStamps(searchOptions);

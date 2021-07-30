@@ -24,7 +24,7 @@ export class StampList extends React.Component<StampListProps, StampListState> {
     this.showMoreItems = this.showMoreItems.bind(this);
   }
 
-  static getDerivedStateFromProps(props: StampListProps, currentState: StampListState | null) {
+  static getDerivedStateFromProps(props: StampListProps, currentState: StampListState | null): StampListState | null {
     if (currentState === null || props.stamps !== currentState.allItems) {
       return {
         allItems: props.stamps,
@@ -43,7 +43,7 @@ export class StampList extends React.Component<StampListProps, StampListState> {
     });
   }
 
-  render() {
+  render(): React.ReactNode {
     return (
       <InfiniteScroll
         hasMore={this.state.shownItems.length !== this.props.stamps.length}

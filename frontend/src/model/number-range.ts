@@ -8,15 +8,15 @@ export class NumberRange {
     this.exact = exact !== undefined ? exact : start === end;
   }
 
-  static exact(value: number | null) {
+  static exact(value: number | null): NumberRange {
     return new NumberRange(value, value, true);
   }
 
-  static between(start: number | null, end: number | null) {
+  static between(start: number | null, end: number | null): NumberRange {
     return new NumberRange(start, end, false);
   }
 
-  contains(n: number | null) {
+  contains(n: number | null): boolean {
     if (n === null) {
       return this.start === null && this.end === null;
     }

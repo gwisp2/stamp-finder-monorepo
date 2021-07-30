@@ -27,7 +27,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "format": "prettier --write src"
+    "format": "prettier --write src",
+    "lint": "eslint --ext .ts src"
   },
   "eslintConfig": {
     "extends": [
@@ -60,6 +61,10 @@
     "@types/react-infinite-scroller": "^1.2.2",
     "@types/react-router-dom": "^5.1.8",
     "@types/underscore": "^1.11.3",
+    "@typescript-eslint/eslint-plugin": "^4.28.5",
+    "@typescript-eslint/parser": "^4.28.5",
+    "eslint": "^7.31.0",
+    "eslint-config-prettier": "^8.3.0",
     "prettier": "^2.3.2"
   }
 }

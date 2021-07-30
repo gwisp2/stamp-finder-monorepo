@@ -13,14 +13,14 @@ export interface YearRangeSelectorProps {
   onChange?: (range: NumberRange) => void;
 }
 
-export class YearRangeSelector extends React.Component<YearRangeSelectorProps, {}> {
+export class YearRangeSelector extends React.Component<YearRangeSelectorProps> {
   constructor(props: YearRangeSelectorProps) {
     super(props);
     this.runOnChangeHandler = this.runOnChangeHandler.bind(this);
   }
 
   private runOnChangeHandler(change: Partial<{ start: number | null; end: number | null }>) {
-    let range = {
+    const range = {
       start: this.props.value.start,
       end: this.props.value.end,
       ...change,
@@ -30,7 +30,7 @@ export class YearRangeSelector extends React.Component<YearRangeSelectorProps, {
     }
   }
 
-  render() {
+  render(): React.ReactNode {
     return (
       <Form.Group className={this.props.className}>
         <Form.Label>{this.props.label}</Form.Label>
