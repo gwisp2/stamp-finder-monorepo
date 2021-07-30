@@ -52,7 +52,7 @@ export class StampList extends React.Component<StampListProps, StampListState> {
                 className="row"
             >
                 {this.state.shownItems.map((s) => {
-                    return (<div className="col-sm-6 col-md-4 col-lg-3 mb-2" key={s.id}>
+                    return (<div className="col-sm-6 col-md-4 col-xxl-3 mb-2" key={s.id}>
                         <StampCard stamp={s}/>
                     </div>)
                 })}

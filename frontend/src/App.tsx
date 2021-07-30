@@ -69,7 +69,7 @@ class App extends React.Component<AppProps, AppState> {
                     </Navbar.Collapse>
                 </Navbar>
                 <Row>
-                    <Col xl={3} className="search-options-column mb-3">
+                    <Col xl={4} xxl={3} className="search-options-column mb-3">
                         <div
                             className="search-options-container position-sticky bg-light p-2 rounded border shadow-sm border-secondary">
                             <StampSearchOptionsSelector
@@ -82,7 +82,7 @@ class App extends React.Component<AppProps, AppState> {
                             </StampSearchOptionsSelector>
                         </div>
                     </Col>
-                    <Col xl={9}>
+                    <Col xl={8} xxl={9}>
                         <StampList stamps={stamps}/>
                     </Col>
                 </Row>

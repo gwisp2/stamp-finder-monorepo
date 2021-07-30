@@ -56,9 +56,13 @@ export class SearchOptions {
 
     private static fromUrlParam(p: string): NumberRange {
         const parts = p.split("~")
-        const start = parts[0] !== "" ? Number(parts[0]) : null;
-        const end = parts[1] !== "" ? Number(parts[1]) : null;
-        return new NumberRange(start, end)
+        if (parts.length === 1) {
+            return NumberRange.exact(parts[0] !== "" ? Number(parts[0]) : null);
+        } else {
+            const start = parts[0] !== "" ? Number(parts[0]) : null;
+            const end = parts[1] !== "" ? Number(parts[1]) : null;
+            return NumberRange.between(start, end)
+        }
     }
 
     toUrlParams(): URLSearchParams {
@@ -85,9 +89,13 @@ export class SearchOptions {
     }
 
     private static toUrlParam(range: NumberRange): string {
-        const startStr = range.start !== null ? "" + range.start : ""
-        const endStr = range.end !== null ? "" + range.end : ""
-        return startStr + "~" + endStr
+        if (range.exact) {
+            return range.start !== null ? "" + range.start : "";
+        } else {
+            const startStr = range.start !== null ? "" + range.start : ""
+            const endStr = range.end !== null ? "" + range.end : ""
+            return startStr + "~" + endStr
+        }
     }
 }
 

@@ -63,7 +63,7 @@ export class StampSearchOptionsSelector extends React.Component<Props, {}> {
         const sortIndex = _.findIndex(AllSorts, this.props.options.sort);
         return (
             <div>
-                <RangeSelector className="mb-3" label={<div className="mb-2">Номинал: <button className="d-none">For some reason the first button becomes dark when any button is hovered, this hidden button hides this issue</button><ButtonGroup size="sm" aria-label="Номиналы">{valueButtons}</ButtonGroup></div>}
+                <RangeSelector className="mb-3" label={<div>Номинал: <button className="d-none">For some reason the first button becomes dark when any button is hovered, this hidden button hides this issue</button><ButtonGroup size="sm" aria-label="Номиналы" className="ms-1">{valueButtons}</ButtonGroup></div>}
                     value={this.props.options.value}
                     onChange={(r) => this.onChange({ valueRange: r })} />
                 <YearRangeSelector className="mb-3" label="Год выпуска:"
