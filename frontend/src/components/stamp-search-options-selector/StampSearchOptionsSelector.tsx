@@ -115,9 +115,9 @@ export class StampSearchOptionsSelector extends React.Component<Props> {
           value={this.props.options.year}
           onChange={(r) => this.onChange({ yearRange: r })}
         />
-        <Form.Group className="mb-3">
+        <div className="mb-3">
           <Form.Label>Название содержит:</Form.Label>
-          <Form>
+          <div>
             <Form.Control
               name="contains"
               type="text"
@@ -125,9 +125,9 @@ export class StampSearchOptionsSelector extends React.Component<Props> {
               value={this.props.options.contains}
               onChange={(e) => this.onChange({ contains: e.target.value })}
             />
-          </Form>
-        </Form.Group>
-        <Form.Group className="mb-3">
+          </div>
+        </div>
+        <div className="mb-3">
           <Form.Label>Рубрика:</Form.Label>
           <DropdownButton variant="custom-white" title={this.props.options.category ?? '[не задана]'}>
             <Dropdown.Item onSelect={() => this.onChange({ category: null })}>[не задана]</Dropdown.Item>
@@ -139,16 +139,16 @@ export class StampSearchOptionsSelector extends React.Component<Props> {
               );
             })}
           </DropdownButton>
-        </Form.Group>
-        <Form.Group className="mb-3" controlId="soss-present">
+        </div>
+        <div className="mb-3">
           <Form.Check
             type="checkbox"
             label="В наличии"
             checked={this.props.options.presenceRequired}
             onChange={(e) => this.onChange({ presenceRequired: e.target.checked })}
           />
-        </Form.Group>
-        <Form.Group className="mb-3">
+        </div>
+        <div className="mb-3">
           <Form.Label>Сортировка:</Form.Label>
           <DropdownButton variant="custom-white" title={AllSortsNames[sortIndex]}>
             {_.range(0, AllSorts.length).map((i) => {
@@ -159,7 +159,7 @@ export class StampSearchOptionsSelector extends React.Component<Props> {
               );
             })}
           </DropdownButton>
-        </Form.Group>
+        </div>
         {this.props.numberOfFoundStamps !== undefined ? (
           <Form.Text>
             По запросу {plural(this.props.numberOfFoundStamps, 'найдена', 'найдено', 'найдено')}{' '}

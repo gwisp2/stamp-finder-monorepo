@@ -43,8 +43,8 @@ export class RangeSelector extends React.Component<RangeSelectorProps, RangeSele
 
   render(): React.ReactNode {
     return (
-      <Form.Group className={this.props.className}>
-        <Form className="range-selector-row mb-2">
+      <div className={this.props.className}>
+        <div className="range-selector-row mb-2">
           {this.props.label}
           <DropdownButton
             variant="custom-white"
@@ -55,9 +55,9 @@ export class RangeSelector extends React.Component<RangeSelectorProps, RangeSele
             <Dropdown.Item onSelect={() => this.setExact(true)}>Ровно</Dropdown.Item>
             <Dropdown.Item onSelect={() => this.setExact(false)}>Между</Dropdown.Item>
           </DropdownButton>
-        </Form>
+        </div>
         {!this.props.value.exact ? (
-          <Form className="range-selector-row">
+          <div className="range-selector-row">
             <Form.Label className="me-1">От: </Form.Label>
             <Form.Control
               name="startStr"
@@ -67,18 +67,18 @@ export class RangeSelector extends React.Component<RangeSelectorProps, RangeSele
             />
             <Form.Label className="me-1 ms-1">До: </Form.Label>
             <Form.Control name="endStr" type="number" value={this.state.endStr} onChange={this.handleNumberChange} />
-          </Form>
+          </div>
         ) : (
-          <Form className="range-selector-row">
+          <div className="range-selector-row">
             <Form.Control
               name="exactStr"
               type="number"
               value={this.state.startStr}
               onChange={this.handleNumberChange}
             />
-          </Form>
+          </div>
         )}
-      </Form.Group>
+      </div>
     );
   }
 

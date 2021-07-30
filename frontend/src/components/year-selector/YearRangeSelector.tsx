@@ -32,9 +32,9 @@ export class YearRangeSelector extends React.Component<YearRangeSelectorProps> {
 
   render(): React.ReactNode {
     return (
-      <Form.Group className={this.props.className}>
+      <div className={this.props.className}>
         <Form.Label>{this.props.label}</Form.Label>
-        <Form className="year-range-selector-row">
+        <div className="year-range-selector-row">
           <Form.Label className="me-1">От: </Form.Label>
           <YearSelector
             startYear={this.props.startYear}
@@ -49,8 +49,8 @@ export class YearRangeSelector extends React.Component<YearRangeSelectorProps> {
             value={this.props.value.end}
             onChange={(v) => this.runOnChangeHandler({ end: v })}
           />
-        </Form>
-      </Form.Group>
+        </div>
+      </div>
     );
   }
 }
