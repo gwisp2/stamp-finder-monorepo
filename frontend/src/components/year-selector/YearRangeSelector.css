@@ -1,9 +1,9 @@
 .year-range-selector-row {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .year-range-selector-row select {
-    flex: 1;
-    width: 100% !important;
+  flex: 1;
+  width: 100% !important;
 }

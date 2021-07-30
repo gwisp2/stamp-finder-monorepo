@@ -26,7 +26,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "format": "prettier --write src"
   },
   "eslintConfig": {
     "extends": [
@@ -58,6 +59,7 @@
     "@types/react-dom": "^17.0.9",
     "@types/react-infinite-scroller": "^1.2.2",
     "@types/react-router-dom": "^5.1.8",
-    "@types/underscore": "^1.11.3"
+    "@types/underscore": "^1.11.3",
+    "prettier": "^2.3.2"
   }
 }

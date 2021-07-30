@@ -1,29 +1,29 @@
 .search-options-column {
-    /*
+  /*
      * Dropdown in settings has to be rendered on top of stamp cards.
      * Because of that this column has to be _above_ column with stamp cards.
      */
-    z-index: 1;
+  z-index: 1;
 }
 
 .search-options-container {
-    position: sticky;
-    top: 2rem;
+  position: sticky;
+  top: 2rem;
 }
 
 .github-logo {
-    vertical-align: middle;
-    width: 1rem;
-    height: 1rem;
-    margin-right: 0.25rem;
+  vertical-align: middle;
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.25rem;
 }
 
 .link-with-icon {
-    display: flex;
-    align-items:center;
+  display: flex;
+  align-items: center;
 }
 
 .form-label {
-    /* Overwrite margin-botton from bootstrap */
-    margin-bottom: 0px !important;
+  /* Overwrite margin-botton from bootstrap */
+  margin-bottom: 0px !important;
 }
