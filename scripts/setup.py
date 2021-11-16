@@ -12,7 +12,7 @@ setup(
         'progressbar2',
         'pillow',
         'pyexcel-xls',
-        'pyexcel'
+        'pyexcel>=0.6.7'
     ],
     entry_points={
         'console_scripts': [
