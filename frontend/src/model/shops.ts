@@ -14,7 +14,7 @@ export class ShopItem {
 export class Shop {
   items: Array<ShopItem>;
 
-  constructor(readonly id: string, readonly displayName: string, readonly sortIndex: number) {
+  constructor(readonly id: string, readonly displayName: string, readonly link: string, readonly sortIndex: number) {
     this.items = new Array<ShopItem>();
   }
 
@@ -34,7 +34,9 @@ export class ShopDb {
     for (const shop of this.shops) {
       for (const item of shop.items) {
         for (const id of item.ids) {
-          this.id2items.set(id, item, ...(this.id2items.get(id) ?? []));
+          if (!_.contains(this.id2items.get(id) ?? [], id)) {
+            this.id2items.set(id, item, ...(this.id2items.get(id) ?? []));
+          }
         }
       }
     }
@@ -42,7 +44,10 @@ export class ShopDb {
 
   findItemsById(id: number): ShopItem[] {
     const items = this.id2items.get(id) ?? [];
-    return _.sortBy(items, (i) => i.shop.sortIndex);
+    return _.sortBy(
+      _.sortBy(items, (i) => i.name),
+      (i) => i.shop.sortIndex,
+    );
   }
 
   wireToStampDb(stampDb: StampDb): void {
