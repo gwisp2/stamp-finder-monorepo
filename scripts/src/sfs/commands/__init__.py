@@ -7,6 +7,8 @@ from .command_add_new import CommandAddNew
 from .command_reformat import CommandReformat
 from .command_parse_names import CommandParseNames
 from .command_rename_images import CommandRenameImages
+from .command_extract_items import CommandExtractItems
+from .command_union_items import CommandUnionItems
 
 command_list = [
     CommandUpdatePresentField(),
@@ -16,5 +18,7 @@ command_list = [
     CommandAddNew(),
     CommandReformat(),
     CommandParseNames(),
-    CommandRenameImages()
+    CommandRenameImages(),
+    CommandExtractItems(),
+    CommandUnionItems()
 ]

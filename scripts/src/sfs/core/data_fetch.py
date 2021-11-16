@@ -2,6 +2,7 @@ import re
 from dataclasses import dataclass
 from decimal import Decimal
 from typing import List, Set, Dict
+from .utils import extract_ids
 import bs4
 import progressbar
 import requests
@@ -106,15 +107,8 @@ def extract_buy_offers(content: bytes):
             else:
                 raise RuntimeError(f"Can't parse price: '{price}'")
             if art is not None and typ is not None and price is not None:
-                range_art_match = re.search(r'(\d+)-(\d+)', art)
-                single_art_match = re.search(r'(\d+)', art)
-                if range_art_match:
-                    start_id = int(range_art_match.group(1))
-                    end_id = int(range_art_match.group(2))
-                    buy_option_ids = list(range(start_id, end_id + 1))
-                elif single_art_match:
-                    buy_option_ids = [int(single_art_match.group(1))]
-                else:
+                buy_option_ids = extract_ids(art)
+                if not buy_option_ids:
                     continue
                 options.append(BuyOffer(buy_option_ids, typ, price))
     return options
