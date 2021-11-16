@@ -14,7 +14,13 @@ export class ShopItem {
 export class Shop {
   items: Array<ShopItem>;
 
-  constructor(readonly id: string, readonly displayName: string, readonly link: string, readonly sortIndex: number) {
+  constructor(
+    readonly id: string,
+    readonly displayName: string,
+    readonly link: string,
+    readonly reportDate: string | null,
+    readonly sortIndex: number,
+  ) {
     this.items = new Array<ShopItem>();
   }
 

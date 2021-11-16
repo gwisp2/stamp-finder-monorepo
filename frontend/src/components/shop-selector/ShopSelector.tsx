@@ -19,7 +19,7 @@ export class ShopSelector extends React.Component<ShopSelectorProps, Record<stri
           <Form.Check
             key={shop.id}
             type="checkbox"
-            label={shop.displayName}
+            label={shop.displayName + (shop.reportDate !== null ? ` [${shop.reportDate}]` : '')}
             checked={
               this.props.selectedIds === ANY ||
               (this.props.selectedIds !== null && _.contains(this.props.selectedIds, shop.id))
