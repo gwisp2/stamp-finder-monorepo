@@ -9,12 +9,15 @@ import _ from 'underscore';
 import { History as RHistory } from 'history';
 import { StampList } from './components/stamp-list/StampList';
 import { Container, Nav, Navbar, Row, Col } from 'react-bootstrap';
+import { ShopDb } from './model/shops';
+import { fetchShopsDb } from './model/shops-fetcher';
 
 interface AppProps {
   history: RHistory;
 }
 
 interface AppState {
+  shopDb: ShopDb | null;
   stampDb: StampDb | null;
 }
 
@@ -22,17 +25,26 @@ class App extends React.Component<AppProps, AppState> {
   constructor(props: AppProps) {
     super(props);
     this.state = {
+      shopDb: null,
       stampDb: null,
     };
     this.onSearchOptionsChange = this.onSearchOptionsChange.bind(this);
   }
 
   componentDidMount(): void {
-    fetchStampsDb(new URL('data/stamps.json', document.baseURI)).then((db) => this.setState({ stampDb: db }));
+    this.loadDbs().then((dbs) => this.setState(dbs));
+  }
+
+  private async loadDbs(): Promise<{ shopDb: ShopDb; stampDb: StampDb }> {
+    const shopDb = await fetchShopsDb(new URL('data/shops.json', document.baseURI));
+    const stampDb = await fetchStampsDb(new URL('data/stamps.json', document.baseURI));
+    shopDb.wireToStampDb(stampDb);
+    return { shopDb, stampDb };
   }
 
   render(): React.ReactNode {
-    const stampDb = this.state.stampDb ? this.state.stampDb : new StampDb(Array<Stamp>());
+    const shopDb = this.state.shopDb ?? new ShopDb([]);
+    const stampDb = this.state.stampDb ?? new StampDb(Array<Stamp>());
     const searchOptions = SearchOptions.fromUrlParams(new URLSearchParams(this.props.history.location.search));
     const stamps = stampDb.findStamps(searchOptions);
 
@@ -76,6 +88,7 @@ class App extends React.Component<AppProps, AppState> {
                 startYear={minYear}
                 endYear={maxYear}
                 listOfCategories={listOfCategories}
+                listOfShops={shopDb.shops}
                 numberOfFoundStamps={stamps.length}
                 onChange={(options) => this.onSearchOptionsChange(options)}
               ></StampSearchOptionsSelector>

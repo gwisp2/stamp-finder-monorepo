@@ -1,5 +1,5 @@
 import React from 'react';
-import { SearchOptions, SortOrder, StampField, StampSort } from '../../model/stamps';
+import { SearchOptions, SortOrder, StampField, StampSort, ANY } from '../../model/stamps';
 import { RangeSelector } from '../range-selector/RangeSelector';
 import _ from 'underscore';
 import { Button, ButtonGroup, Dropdown, DropdownButton, Form } from 'react-bootstrap';
@@ -9,6 +9,8 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import './StampSearchOptionsSelector.css';
 import plural from 'plural-ru';
 import { NumberRange } from '../../model/number-range';
+import { ShopSelector } from '../shop-selector/ShopSelector';
+import { Shop } from '../../model/shops';
 
 interface Props {
   startYear: number;
@@ -16,6 +18,7 @@ interface Props {
   options: SearchOptions;
   numberOfFoundStamps?: number;
   listOfCategories: Array<string>;
+  listOfShops: Array<Shop>;
   onChange: (newOptions: SearchOptions) => void;
 }
 
@@ -46,7 +49,7 @@ export class StampSearchOptionsSelector extends React.Component<Props> {
       valueRange: NumberRange;
       yearRange: NumberRange;
       category: string | null;
-      presenceRequired: boolean;
+      presenceRequired: null | string[] | typeof ANY;
       contains: string;
       sort: StampSort;
     }>,
@@ -141,11 +144,25 @@ export class StampSearchOptionsSelector extends React.Component<Props> {
           </DropdownButton>
         </div>
         <div className="mb-3">
-          <Form.Check
-            type="checkbox"
-            label="В наличии"
-            checked={this.props.options.presenceRequired}
-            onChange={(e) => this.onChange({ presenceRequired: e.target.checked })}
+          <Form.Label>
+            Наличие:{' '}
+            <ButtonGroup size="sm" aria-label="Номиналы" className="ms-1">
+              <button className="d-none">
+                For some reason the first button becomes dark when any button is hovered, this hidden button hides this
+                issue
+              </button>
+              <Button variant="outline-secondary" onClick={() => this.onChange({ presenceRequired: null })}>
+                Не обязательно
+              </Button>
+              <Button variant="outline-secondary" onClick={() => this.onChange({ presenceRequired: ANY })}>
+                Где угодно
+              </Button>
+            </ButtonGroup>
+          </Form.Label>
+          <ShopSelector
+            allShops={this.props.listOfShops}
+            selectedIds={this.props.options.presenceRequired}
+            onChange={(e) => this.onChange({ presenceRequired: e })}
           />
         </div>
         <div className="mb-3">

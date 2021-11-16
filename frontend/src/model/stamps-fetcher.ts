@@ -12,7 +12,6 @@ interface StampsJsonEntry {
   readonly categories: Array<string> | null;
   readonly series?: string;
   readonly name?: string;
-  readonly present: boolean;
 }
 
 export async function fetchStampsDb(url: URL): Promise<StampDb> {
@@ -26,17 +25,7 @@ export async function fetchStampsDb(url: URL): Promise<StampDb> {
     const series = entry.series ?? null;
     const name = entry.name ?? null;
     stampArray.push(
-      new Stamp(
-        Number(k),
-        new URL(entry.page),
-        image,
-        entry.value,
-        entry.year,
-        categories,
-        series,
-        name,
-        entry.present,
-      ),
+      new Stamp(Number(k), new URL(entry.page), image, entry.value, entry.year, categories, series, name),
     );
   });
   return new StampDb(stampArray);

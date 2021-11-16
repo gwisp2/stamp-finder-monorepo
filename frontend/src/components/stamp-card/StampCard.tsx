@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stamp } from '../../model/stamps';
+import { ANY, Stamp } from '../../model/stamps';
 import './StampCard.css';
 import EmptyImage from './empty.png';
 import ShoppingBasket from '@material-ui/icons/ShoppingBasket';
@@ -81,12 +81,12 @@ export class StampCard extends React.Component<Props, Record<string, never>> {
           />
         </div>
         <a
-          className={'w-100 btn ' + (s.present ? 'btn-success' : 'btn-secondary')}
+          className={'w-100 btn ' + (s.isPresentInShop(ANY) ? 'btn-success' : 'btn-secondary')}
           href={s.page.toString()}
           target="_blank"
           rel="noreferrer"
         >
-          {s.present ? (
+          {s.isPresentInShop(ANY) ? (
             <span>
               <ShoppingBasket fontSize={'small'} /> Купить
             </span>
