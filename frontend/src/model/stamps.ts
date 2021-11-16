@@ -1,5 +1,6 @@
 import { NumberRange } from './number-range';
 import _ from 'underscore';
+import { ShopItem } from './shops';
 
 export enum StampField {
   Id,
@@ -15,12 +16,14 @@ export class StampSort {
   constructor(readonly field: StampField, readonly order: SortOrder) {}
 }
 
+export const ANY = 'any';
+
 export class SearchOptions {
   static Default = new SearchOptions(
     new NumberRange(null, null),
     new NumberRange(1998, null),
     null,
-    false,
+    null,
     '',
     new StampSort(StampField.Id, SortOrder.Reversed),
   );
@@ -29,7 +32,7 @@ export class SearchOptions {
     readonly value: NumberRange,
     readonly year: NumberRange,
     readonly category: string | null,
-    readonly presenceRequired: boolean,
+    readonly presenceRequired: null | string[] | typeof ANY,
     readonly contains: string,
     readonly sort: StampSort,
   ) {}
@@ -45,7 +48,8 @@ export class SearchOptions {
     const year = yearStr !== null ? SearchOptions.fromUrlParam(yearStr) : SearchOptions.Default.year;
     const category =
       categoryStr !== null ? (categoryStr !== '<null>' ? categoryStr : null) : SearchOptions.Default.category;
-    const present = presentStr !== null ? Boolean(presentStr) : SearchOptions.Default.presenceRequired;
+    const present =
+      presentStr !== null ? SearchOptions.stringListfromUrlParam(presentStr) : SearchOptions.Default.presenceRequired;
     let sort = SearchOptions.Default.sort;
     if (sortStr !== null) {
       const sortParts = sortStr.split('-');
@@ -54,6 +58,13 @@ export class SearchOptions {
       sort = new StampSort(field, order);
     }
     return new SearchOptions(value, year, category, present, containsStr || '', sort);
+  }
+
+  private static stringListfromUrlParam(p: string): string[] | typeof ANY {
+    if (p == ANY) {
+      return ANY;
+    }
+    return p.split(',');
   }
 
   private static fromUrlParam(p: string): NumberRange {
@@ -78,8 +89,9 @@ export class SearchOptions {
     if (this.category !== SearchOptions.Default.category) {
       params.set('category', this.category ?? '<null>');
     }
-    if (this.presenceRequired !== SearchOptions.Default.presenceRequired) {
-      params.set('present', '' + this.presenceRequired);
+    if (this.presenceRequired !== null && this.presenceRequired.length !== 0) {
+      const v = this.presenceRequired === ANY ? ANY : this.presenceRequired.join(',');
+      params.set('present', v);
     }
     if (!_.isEqual(this.sort, SearchOptions.Default.sort)) {
       params.set('sort', this.sort.field + '-' + this.sort.order);
@@ -103,6 +115,7 @@ export class SearchOptions {
 
 export class Stamp {
   readonly idNameAndSeries: string;
+  shopItems: ShopItem[];
 
   constructor(
     readonly id: number,
@@ -113,9 +126,16 @@ export class Stamp {
     readonly categories: Array<string>,
     readonly series: string | null,
     readonly name: string | null,
-    readonly present: boolean,
   ) {
     this.idNameAndSeries = (id + '|' + (name || '') + '|' + (series || '')).toLowerCase();
+    this.shopItems = [];
+  }
+
+  isPresentInShop(shop: string[] | typeof ANY): boolean {
+    if (shop === ANY) {
+      return this.shopItems.length !== 0;
+    }
+    return _.any(this.shopItems, (item) => _.contains(shop, item.shop.id));
   }
 }
 
@@ -128,7 +148,7 @@ export class StampDb {
       return (
         searchOptions.year.contains(s.year) &&
         searchOptions.value.contains(s.value) &&
-        (!searchOptions.presenceRequired || s.present) &&
+        (!searchOptions.presenceRequired || s.isPresentInShop(searchOptions.presenceRequired)) &&
         (searchOptions.category === null || s.categories.includes(searchOptions.category)) &&
         s.idNameAndSeries.indexOf(containsLowered) >= 0
       );

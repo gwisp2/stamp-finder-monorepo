@@ -4,7 +4,8 @@ import './StampCard.css';
 import EmptyImage from './empty.png';
 import ShoppingBasket from '@material-ui/icons/ShoppingBasket';
 import ArrowDropDown from '@material-ui/icons/ArrowDropDown';
-import { Dropdown } from 'react-bootstrap';
+import { Button, ButtonGroup, Dropdown } from 'react-bootstrap';
+import _ from 'underscore';
 
 export interface Props {
   stamp: Stamp;
@@ -57,6 +58,31 @@ export class StampCardDropdown extends React.Component<Props> {
   }
 }
 
+export class ShopItemsDropdown extends React.Component<Props> {
+  render(): React.ReactNode {
+    const stamp = this.props.stamp;
+    const shops = _.unique(stamp.shopItems.map((item) => item.shop));
+    const color = shops.length !== 0 ? 'success' : 'secondary';
+    return (
+      <Dropdown className="w-100" as={ButtonGroup} align="end">
+        <Button variant={color} href={stamp.page.href}>
+          <ShoppingBasket fontSize={'small'} /> В магазин
+        </Button>
+        {shops.length !== 0 && <Dropdown.Toggle split variant={color} id="dropdown-split-basic" />}
+        {shops.length !== 0 && (
+          <Dropdown.Menu>
+            {shops.map((shop) => (
+              <Dropdown.Item key={shop.id} href={shop.link}>
+                {shop.displayName}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+        )}
+      </Dropdown>
+    );
+  }
+}
+
 export class StampCard extends React.Component<Props, Record<string, never>> {
   render(): React.ReactNode {
     const s = this.props.stamp;
@@ -80,20 +106,7 @@ export class StampCard extends React.Component<Props, Record<string, never>> {
             src={(s.imageUrl ?? EmptyImage).toString()}
           />
         </div>
-        <a
-          className={'w-100 btn ' + (s.present ? 'btn-success' : 'btn-secondary')}
-          href={s.page.toString()}
-          target="_blank"
-          rel="noreferrer"
-        >
-          {s.present ? (
-            <span>
-              <ShoppingBasket fontSize={'small'} /> Купить
-            </span>
-          ) : (
-            'Нет в наличии'
-          )}
-        </a>
+        <ShopItemsDropdown stamp={s} />
       </div>
     );
   }
