@@ -11,8 +11,8 @@ setup(
         'bs4',
         'progressbar2',
         'pillow',
-        'pyexcel',
-        'pyexcel-xls'
+        'pyexcel-xls',
+        'pyexcel'
     ],
     entry_points={
         'console_scripts': [

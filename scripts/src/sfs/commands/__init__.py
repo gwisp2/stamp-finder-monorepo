@@ -9,6 +9,7 @@ from .command_parse_names import CommandParseNames
 from .command_rename_images import CommandRenameImages
 from .command_extract_items import CommandExtractItems
 from .command_union_items import CommandUnionItems
+from .command_scan_rusmarka_availability import CommandScanRusmarkaAvailability
 
 command_list = [
     CommandUpdatePresentField(),
@@ -20,5 +21,6 @@ command_list = [
     CommandParseNames(),
     CommandRenameImages(),
     CommandExtractItems(),
-    CommandUnionItems()
+    CommandUnionItems(),
+    CommandScanRusmarkaAvailability()
 ]
