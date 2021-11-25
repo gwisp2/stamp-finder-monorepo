@@ -61,7 +61,6 @@ class CommandAddNew(Command):
                         categories=[],
                         name=stamp_info.name,
                         series=stamp_info.series,
-                        present=stamp_info.present,
                         image=image_path
                     ))
 

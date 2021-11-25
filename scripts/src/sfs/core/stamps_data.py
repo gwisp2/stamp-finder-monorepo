@@ -14,7 +14,6 @@ class StampEntry:
     categories: List[str]
     series: Optional[str] = None
     name: Optional[str] = None
-    present: Optional[bool] = None
 
     def position_id(self) -> int:
         m = re.search(r'(\d+)', self.page)
@@ -52,8 +51,7 @@ class StampsJson:
                 page=entry_json['page'],
                 categories=entry_json.get('categories') or [],
                 series=entry_json.get('series'),
-                name=entry_json.get('name'),
-                present=entry_json['present']
+                name=entry_json.get('name')
             ))
         return StampsJson(entries)
 
@@ -69,7 +67,5 @@ class StampsJson:
                 'series': entry.series,
                 'name': entry.name
             }
-            if entry.present is not None:
-                entries_dict[entry.id]['present'] = entry.present
         with open(path, 'wt', encoding='utf-8') as f:
             json.dump(entries_dict, f, indent=2, ensure_ascii=False)
