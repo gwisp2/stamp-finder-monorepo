@@ -1,12 +1,12 @@
 import React from 'react';
 import { SearchOptions, Stamp, StampDb } from './model/stamps';
 import { fetchStampsDb } from './model/stamps-fetcher';
-import { StampSearchOptionsSelector } from './components/stamp-search-options-selector/StampSearchOptionsSelector';
+import { StampSearchOptionsSelector } from './components/StampSearchOptionsSelector/StampSearchOptionsSelector';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import SearchRounded from '@material-ui/icons/SearchRounded';
 import _ from 'underscore';
 import { History as RHistory } from 'history';
-import { StampList } from './components/stamp-list/StampList';
+import { StampList } from './components/StampList';
 import { Container, Nav, Navbar, Row, Col } from 'react-bootstrap';
 import { ShopDb } from './model/shops';
 import { fetchShopsDb } from './model/shops-fetcher';

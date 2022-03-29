@@ -1,8 +1,8 @@
 import React from 'react';
-import { NumberRange } from '../../model/number-range';
+import { NumberRange } from 'model';
 import { Form } from 'react-bootstrap';
-import { YearSelector } from './YearSelector';
-import './YearRangeSelector.css';
+import { YearSelector } from 'components/YearSelector';
+import { FormRow } from 'components/Form';
 
 export interface YearRangeSelectorProps {
   className?: string;
@@ -34,7 +34,7 @@ export class YearRangeSelector extends React.Component<YearRangeSelectorProps> {
     return (
       <div className={this.props.className}>
         <Form.Label>{this.props.label}</Form.Label>
-        <div className="year-range-selector-row">
+        <FormRow>
           <Form.Label className="me-1">От: </Form.Label>
           <YearSelector
             startYear={this.props.startYear}
@@ -49,7 +49,7 @@ export class YearRangeSelector extends React.Component<YearRangeSelectorProps> {
             value={this.props.value.end}
             onChange={(v) => this.runOnChangeHandler({ end: v })}
           />
-        </div>
+        </FormRow>
       </div>
     );
   }

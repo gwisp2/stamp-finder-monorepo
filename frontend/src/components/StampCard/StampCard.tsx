@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stamp } from '../../model/stamps';
+import { Stamp } from 'model';
 import './StampCard.css';
 import EmptyImage from './empty.png';
 import ShoppingBasket from '@material-ui/icons/ShoppingBasket';

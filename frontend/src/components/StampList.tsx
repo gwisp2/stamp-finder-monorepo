@@ -1,6 +1,6 @@
 import React from 'react';
-import { Stamp } from '../../model/stamps';
-import { StampCard } from '../stamp-card/StampCard';
+import { Stamp } from 'model';
+import { StampCard } from 'components/StampCard';
 import InfiniteScroll from 'react-infinite-scroller';
 
 export interface StampListProps {

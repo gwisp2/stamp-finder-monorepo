@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { NumberRange } from '../../model/number-range';
+import { NumberRange } from 'model';
 import { Dropdown, DropdownButton, Form } from 'react-bootstrap';
-import './RangeSelector.css';
+import { FormRow } from 'components/Form';
 
 export interface RangeSelectorProps {
   className?: string;
@@ -37,6 +37,7 @@ export const RangeSelector: React.VFC<RangeSelectorProps> = (props) => {
   const [startStr, setStartStr] = useState(toString(props.value.start));
   const [endStr, setEndStr] = useState(toString(props.value.end));
 
+  // Update start & end string on external change
   useEffect(() => {
     const prevStart = parseNumber(startStr);
     const prevEnd = parseNumber(endStr);
@@ -67,15 +68,15 @@ export const RangeSelector: React.VFC<RangeSelectorProps> = (props) => {
 
   return (
     <div className={props.className}>
-      <div className="range-selector-row mb-2">
+      <FormRow className="mb-2">
         {props.label}
         <DropdownButton variant="custom-white" title={props.value.exact ? 'Ровно' : 'Между'} size="sm" className="ms-2">
           <Dropdown.Item onSelect={() => update({ exact: true })}>Ровно</Dropdown.Item>
           <Dropdown.Item onSelect={() => update({ exact: false })}>Между</Dropdown.Item>
         </DropdownButton>
-      </div>
+      </FormRow>
       {!props.value.exact ? (
-        <div className="range-selector-row">
+        <FormRow>
           <Form.Label className="me-1">От: </Form.Label>
           <Form.Control
             name="startStr"
@@ -85,16 +86,16 @@ export const RangeSelector: React.VFC<RangeSelectorProps> = (props) => {
           />
           <Form.Label className="me-1 ms-1">До: </Form.Label>
           <Form.Control name="endStr" type="number" value={endStr} onChange={(e) => update({ end: e.target.value })} />
-        </div>
+        </FormRow>
       ) : (
-        <div className="range-selector-row">
+        <FormRow>
           <Form.Control
             name="exactStr"
             type="number"
             value={startStr}
             onChange={(e) => update({ start: e.target.value })}
           />
-        </div>
+        </FormRow>
       )}
     </div>
   );
