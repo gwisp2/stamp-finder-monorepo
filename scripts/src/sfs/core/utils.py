@@ -3,8 +3,8 @@ from typing import Optional, List
 
 
 def extract_ids(art: str) -> Optional[List[int]]:
-    range_art_match = re.search(r'(\d+)-(\d+)', art)
-    single_art_match = re.search(r'(\d+)', art)
+    range_art_match = re.search(r"(\d+)-(\d+)", art)
+    single_art_match = re.search(r"(\d+)", art)
     if range_art_match:
         start_id = int(range_art_match.group(1))
         end_id = int(range_art_match.group(2))

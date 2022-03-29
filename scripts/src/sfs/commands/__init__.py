@@ -22,5 +22,5 @@ command_list = [
     CommandRenameImages(),
     CommandExtractItems(),
     CommandUnionItems(),
-    CommandScanRusmarkaAvailability()
+    CommandScanRusmarkaAvailability(),
 ]

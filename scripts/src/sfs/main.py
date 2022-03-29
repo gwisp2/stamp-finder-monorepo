@@ -17,10 +17,10 @@ def main():
     parsed_args = parser.parse_args(sys.argv[1:])
     command = parsed_args.command_
     if not command:
-        sys.stderr.write('No command specified\n')
+        sys.stderr.write("No command specified\n")
         sys.exit(1)
     command.run(parsed_args)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
