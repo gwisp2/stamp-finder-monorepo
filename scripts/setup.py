@@ -25,6 +25,9 @@ setup(
             "types-requests",
             "types-beautifulsoup4",
             "types-Pillow",
+            "tqdm-stubs",
+            "types-xxhash",
+            "types-docopt"
         ],
         "tests": ["pytest"],
     },
