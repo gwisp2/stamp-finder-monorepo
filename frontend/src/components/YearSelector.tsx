@@ -1,3 +1,4 @@
+import { parseNumber } from 'model';
 import React from 'react';
 import { Form } from 'react-bootstrap';
 import _ from 'underscore';
@@ -9,43 +10,23 @@ export interface YearSelectorProps {
   onChange?: (year: number | null) => void;
 }
 
-export class YearSelector extends React.Component<YearSelectorProps> {
-  constructor(props: YearSelectorProps) {
-    super(props);
-    this.handleYearSelection = this.handleYearSelection.bind(this);
-  }
-
-  render(): React.ReactNode {
-    return (
-      <Form.Select
-        as="select"
-        value={this.props.value?.toString() ?? 'null'}
-        onChange={(e) => this.handleYearSelection((e.target as unknown as { value: string }).value)}
-      >
-        <option key="null" value="null" />
-        {_.range(this.props.startYear, this.props.endYear + 1).map((i) => {
-          return (
-            <option key={i} value={i}>
-              {i}
-            </option>
-          );
-        })}
-      </Form.Select>
-    );
-  }
-
-  private handleYearSelection(v: string) {
-    if (this.props.onChange !== undefined) {
-      this.props.onChange(YearSelector.parseNumber(v));
+export const YearSelector: React.VFC<YearSelectorProps> = (props) => {
+  const onSelect = (e: React.FormEvent<HTMLSelectElement>) => {
+    if (props.onChange !== undefined) {
+      props.onChange(parseNumber((e.target as unknown as { value: string }).value));
     }
-  }
+  };
 
-  private static parseNumber(s: string): number | null {
-    if (s.length !== 0) {
-      const n = Number(s);
-      return !isNaN(n) ? n : null;
-    } else {
-      return null;
-    }
-  }
-}
+  return (
+    <Form.Select as="select" value={props.value?.toString() ?? 'null'} onChange={onSelect}>
+      <option key="null" value="null" />
+      {_.range(props.startYear, props.endYear + 1).map((i) => {
+        return (
+          <option key={i} value={i}>
+            {i}
+          </option>
+        );
+      })}
+    </Form.Select>
+  );
+};

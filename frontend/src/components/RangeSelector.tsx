@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { NumberRange } from 'model';
+import { NumberRange, parseNumber, toString } from 'model';
 import { Dropdown, DropdownButton, Form } from 'react-bootstrap';
 import { FormRow } from 'components/Form';
 
@@ -9,25 +9,6 @@ export interface RangeSelectorProps {
   value: NumberRange;
   onChange?: (range: NumberRange) => void;
 }
-
-function parseNumber(s: undefined): undefined;
-function parseNumber(s: string): number | null;
-function parseNumber(s: string | undefined): number | null | undefined;
-function parseNumber(s: string | undefined): number | null | undefined {
-  if (s === undefined) {
-    return undefined;
-  }
-  if (s.length !== 0) {
-    const n = Number(s);
-    return !isNaN(n) ? n : null;
-  } else {
-    return null;
-  }
-}
-
-const toString = (n: number | null): string => {
-  return n?.toString() ?? '';
-};
 
 const coalesce = <T,>(x: T | undefined, defaultValue: T): T => {
   return x !== undefined ? x : defaultValue;

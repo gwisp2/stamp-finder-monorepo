@@ -13,44 +13,37 @@ export interface YearRangeSelectorProps {
   onChange?: (range: NumberRange) => void;
 }
 
-export class YearRangeSelector extends React.Component<YearRangeSelectorProps> {
-  constructor(props: YearRangeSelectorProps) {
-    super(props);
-    this.runOnChangeHandler = this.runOnChangeHandler.bind(this);
-  }
-
-  private runOnChangeHandler(change: Partial<{ start: number | null; end: number | null }>) {
+export const YearRangeSelector: React.VFC<YearRangeSelectorProps> = (props) => {
+  const onChange = (change: { start?: number | null; end?: number | null }) => {
     const range = {
-      start: this.props.value.start,
-      end: this.props.value.end,
+      start: props.value.start,
+      end: props.value.end,
       ...change,
     };
-    if (this.props.onChange) {
-      this.props.onChange(new NumberRange(range.start, range.end));
+    if (props.onChange) {
+      props.onChange(new NumberRange(range.start, range.end));
     }
-  }
+  };
 
-  render(): React.ReactNode {
-    return (
-      <div className={this.props.className}>
-        <Form.Label>{this.props.label}</Form.Label>
-        <FormRow>
-          <Form.Label className="me-1">От: </Form.Label>
-          <YearSelector
-            startYear={this.props.startYear}
-            endYear={this.props.value.end ?? this.props.endYear}
-            value={this.props.value.start}
-            onChange={(v) => this.runOnChangeHandler({ start: v })}
-          />
-          <Form.Label className="me-1 ms-1">До: </Form.Label>
-          <YearSelector
-            startYear={this.props.value.start ?? this.props.startYear}
-            endYear={this.props.endYear}
-            value={this.props.value.end}
-            onChange={(v) => this.runOnChangeHandler({ end: v })}
-          />
-        </FormRow>
-      </div>
-    );
-  }
-}
+  return (
+    <div className={props.className}>
+      <Form.Label>{props.label}</Form.Label>
+      <FormRow>
+        <Form.Label className="me-1">От: </Form.Label>
+        <YearSelector
+          startYear={props.startYear}
+          endYear={props.value.end ?? props.endYear}
+          value={props.value.start}
+          onChange={(v) => onChange({ start: v })}
+        />
+        <Form.Label className="me-1 ms-1">До: </Form.Label>
+        <YearSelector
+          startYear={props.value.start ?? props.startYear}
+          endYear={props.endYear}
+          value={props.value.end}
+          onChange={(v) => onChange({ end: v })}
+        />
+      </FormRow>
+    </div>
+  );
+};
