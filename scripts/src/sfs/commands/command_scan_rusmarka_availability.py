@@ -5,7 +5,7 @@ import sys
 
 import progressbar
 
-from sfs.core import Item, ShopItems, data_fetch, export_shop_items_to_json
+from sfs.core import ExtractedShopItems, ShopItem, data_fetch
 
 from .command import Command
 
@@ -25,12 +25,16 @@ class CommandScanRusmarkaAvailability(Command):
             data_fetch.load_buy_offers(pos_id)
             for pos_id in progressbar.progressbar(all_position_ids)
         ]
-        buy_offers = [bo for l in buy_offers_lists for bo in l]
-        shop_items = ShopItems(
+        buy_offers = [
+            bo for offers_on_page in buy_offers_lists for bo in offers_on_page
+        ]
+        shop_items = ExtractedShopItems(
             excel_name="rusmarka.ru",
             report_date=datetime.datetime.now().date(),
-            items=[Item(name="?", ids=bo.stamp_ids, amount=None) for bo in buy_offers],
+            items=[
+                ShopItem(name="?", ids=bo.stamp_ids, amount=None) for bo in buy_offers
+            ],
         )
-        js = export_shop_items_to_json(shop_items)
+        js = shop_items.to_json()
         with open(args.out, "wt", encoding="utf-8") as f:
             json.dump(js, f, skipkeys=True, indent=2, ensure_ascii=False)
