@@ -1,21 +1,21 @@
 from sfs.commands.command import Command
 
-from .command_add_new import CommandAddNew
-from .command_extract_items import CommandExtractItems
-from .command_reformat import CommandReformat
-from .command_rename_images import CommandRenameImages
-from .command_resize_images import CommandResizeImages
-from .command_scan_rusmarka_availability import CommandScanRusmarkaAvailability
-from .command_union_items import CommandUnionItems
-from .command_update_cats import CommandUpdateCats
+from .cmd_images_rename import CmdImagesRename
+from .cmd_images_resize import CmdImagesResize
+from .cmd_shops_join import CmdShopsJoin
+from .cmd_shops_parse_xls import CmdShopsParseXls
+from .cmd_shops_scrape import CmdShopsScrape
+from .cmd_stamps_reformat import CmdStampsReformat
+from .cmd_stamps_scrape_categories import CmdStampsScrapeCategories
+from .cmd_stamps_scrape_new import CmdStampsScrapeNew
 
 command_list = [
-    CommandResizeImages(),
-    CommandUpdateCats(),
-    CommandAddNew(),
-    CommandReformat(),
-    CommandRenameImages(),
-    CommandExtractItems(),
-    CommandUnionItems(),
-    CommandScanRusmarkaAvailability(),
+    CmdImagesResize,
+    CmdStampsScrapeCategories,
+    CmdStampsScrapeNew,
+    CmdStampsReformat,
+    CmdImagesRename,
+    CmdShopsParseXls,
+    CmdShopsJoin,
+    CmdShopsScrape,
 ]

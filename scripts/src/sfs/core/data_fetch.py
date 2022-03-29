@@ -76,7 +76,9 @@ def find_position_ids_for_category(cat_id: int) -> Set[int]:
         fetch_position_ids(
             f"https://rusmarka.ru/catalog/marki/year/0/cat/{cat_id}/p/{page}.aspx"
         )
-        for page in range(0, max_page_index + 1)
+        for page in log.tqdm(
+            range(0, max_page_index + 1), desc=f"Category {cat_id}", leave=False
+        )
     ]
     return set(i for pos_id_list in position_ids_lists for i in pos_id_list)
 

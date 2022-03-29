@@ -1,32 +1,32 @@
-import argparse
 import io
 import os
-from argparse import Namespace
 
 import requests
 from PIL import Image
 
 from sfs.core import PositionPageParser, StampEntry, StampsJson, data_fetch, log
 
+from .cmd_stamps_scrape_categories import CmdStampsScrapeCategories
 from .command import Command
-from .command_update_cats import CommandUpdateCats
 
 
-class CommandAddNew(Command):
-    def __init__(self):
-        super().__init__("add-new")
+class CmdStampsScrapeNew(Command):
+    name = ["stamps", "scrape-new"]
 
-    def configure_parser(self, parser: argparse.ArgumentParser):
-        parser.add_argument("--datadir", type=str, required=True)
-        parser.add_argument("--links-page", type=str, required=True)
+    def run(self):
+        db_path = self.args["--db"]
+        links_page = (
+            self.args["--links-page"] or "https://rusmarka.ru/catalog/marki/cat/19.aspx"
+        )
 
-    def run(self, args):
-        stamps_json_path = os.path.join(args.datadir, "stamps.json")
+        stamps_json_path = os.path.join(db_path, "stamps.json")
         log.info("Loading stamps.json")
         stamps_json = StampsJson.load(stamps_json_path)
 
+        # Scrape links to position pages
+        # Use 'Новинки' category if links_page is not provided
         log.info("Fetching links")
-        position_ids_at_page = set(data_fetch.fetch_position_ids(args.links_page))
+        position_ids_at_page = set(data_fetch.fetch_position_ids(links_page))
         known_position_ids = set(e.position_id() for e in stamps_json.entries)
         known_stamp_ids = set(e.id for e in stamps_json.entries)
 
@@ -48,7 +48,7 @@ class CommandAddNew(Command):
                         image = Image.open(
                             io.BytesIO(requests.get(stamp_info.image_url).content)
                         ).convert("RGB")
-                        image.save(os.path.join(args.datadir, image_path))
+                        image.save(os.path.join(db_path, image_path))
                     else:
                         image_path = None
 
@@ -70,4 +70,4 @@ class CommandAddNew(Command):
         stamps_json.save(stamps_json_path)
 
         log.info("Updating categories")
-        CommandUpdateCats().run(Namespace(datadir=args.datadir))
+        CmdStampsScrapeCategories({"db": db_path}).run()

@@ -1,12 +1,16 @@
-import argparse
+from typing import Any, List, Union
 
 
 class Command:
-    def __init__(self, name: str):
-        self.name = name
+    # Overridden in subclasses
+    name: Union[str, List[str]] = ""
 
-    def configure_parser(self, parser: argparse.ArgumentParser):
-        raise NotImplemented
+    def __init__(self, args: dict[Any, Any]):
+        self.args: dict[Any, Any] = args
 
-    def run(self, args: argparse.Namespace):
+    @classmethod
+    def name_as_list(cls) -> List[str]:
+        return cls.name if isinstance(cls.name, list) else [cls.name]
+
+    def run(self):
         raise NotImplemented

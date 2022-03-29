@@ -80,7 +80,7 @@ class ExtractedShopItems(BaseModel):
     def from_json(j: Any) -> "ExtractedShopItems":
         return ExtractedShopItems(
             excel_name=j["excelName"],
-            report_data=json_date_format.parse(j["reportDate"]),
+            report_date=json_date_format.parse(j["reportDate"]),
             items=[ShopItem(**item_json) for item_json in j["items"]],
         )
 

@@ -1,20 +1,18 @@
-import argparse
 import itertools
 import os
 
 from sfs.core import StampsJson, data_fetch, log
+
 from .command import Command
 
 
-class CommandUpdateCats(Command):
-    def __init__(self):
-        super().__init__("update-cats")
+class CmdStampsScrapeCategories(Command):
+    name = ["stamps", "scrape-categories"]
 
-    def configure_parser(self, parser: argparse.ArgumentParser):
-        parser.add_argument("--datadir", type=str, required=True)
+    def run(self):
+        db_path = self.args["--db"]
 
-    def run(self, args):
-        stamps_json_path = os.path.join(args.datadir, "stamps.json")
+        stamps_json_path = os.path.join(db_path, "stamps.json")
         log.info("Loading stamps.json")
         stamps_json = StampsJson.load(stamps_json_path)
 
@@ -32,7 +30,7 @@ class CommandUpdateCats(Command):
 
         log.info("Fetching data")
         cats_dict = data_fetch.find_categories()
-        for cat_id, cat_name in log.progressbar(cats_dict.items()):
+        for cat_id, cat_name in log.progressbar(cats_dict.items(), desc="Categories"):
             if cat_name == "Новинки":
                 continue
             pos_ids = data_fetch.find_position_ids_for_category(cat_id)

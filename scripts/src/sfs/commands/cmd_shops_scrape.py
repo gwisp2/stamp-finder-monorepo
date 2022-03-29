@@ -1,4 +1,3 @@
-import argparse
 import datetime
 import json
 
@@ -7,14 +6,12 @@ from sfs.core import ExtractedShopItems, ShopItem, data_fetch, log
 from .command import Command
 
 
-class CommandScanRusmarkaAvailability(Command):
-    def __init__(self):
-        super().__init__("scan-rusmarka-availability")
+class CmdShopsScrape(Command):
+    name = ["shops", "scrape"]
 
-    def configure_parser(self, parser: argparse.ArgumentParser):
-        parser.add_argument("--out", type=str, required=True)
+    def run(self):
+        out_file = self.args["--out"]
 
-    def run(self, args):
         log.info("Fetching position page links from rusmarka")
         all_position_ids = list(data_fetch.find_all_position_ids())
         log.info("Loading all positions & parsing buy offers")
@@ -33,5 +30,5 @@ class CommandScanRusmarkaAvailability(Command):
             ],
         )
         js = shop_items.to_json()
-        with open(args.out, "wt", encoding="utf-8") as f:
+        with open(out_file, "wt", encoding="utf-8") as f:
             json.dump(js, f, skipkeys=True, indent=2, ensure_ascii=False)

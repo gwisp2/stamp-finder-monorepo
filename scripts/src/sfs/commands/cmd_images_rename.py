@@ -1,22 +1,18 @@
-import argparse
 import os
-import sys
 
 from sfs.core import StampsJson, log
 
 from .command import Command
 
 
-class CommandRenameImages(Command):
-    def __init__(self):
-        super().__init__("rename-images")
+class CmdImagesRename(Command):
+    name = ["images", "rename"]
 
-    def configure_parser(self, parser: argparse.ArgumentParser):
-        parser.add_argument("--datadir", type=str, required=True)
-        parser.add_argument("--format", type=str, required=True)
+    def run(self):
+        db_path = self.args["--db"]
+        file_format = self.args["--format"]
 
-    def run(self, args):
-        stamps_json_path = os.path.join(args.datadir, "stamps.json")
+        stamps_json_path = os.path.join(db_path, "stamps.json")
         log.info("Loading stamps.json")
         stamps_json = StampsJson.load(stamps_json_path)
 
@@ -31,7 +27,7 @@ class CommandRenameImages(Command):
             basename = os.path.basename(path)
             filename = basename.split(".")[0]
             extension = basename.split(".")[1]
-            new_basename = args.format.format(
+            new_basename = file_format.format(
                 basename=basename, filename=filename, ext=extension
             )
             renames[path] = os.path.join(path_dir, new_basename).replace("\\", "/")

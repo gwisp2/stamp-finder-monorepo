@@ -9,7 +9,7 @@ setup(
     install_requires=[
         "requests",
         "bs4",
-        "isort",
+        "docopt",
         "tqdm",
         "pillow",
         "pydantic",
