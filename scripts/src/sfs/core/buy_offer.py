@@ -4,7 +4,7 @@ from typing import List
 import bs4
 from pydantic import BaseModel
 
-from sfs.core.utils import extract_ids
+from .utils import extract_ids
 
 
 class BuyOffer(BaseModel):

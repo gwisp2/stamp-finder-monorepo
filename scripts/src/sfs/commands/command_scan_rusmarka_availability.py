@@ -1,14 +1,12 @@
 import argparse
 import datetime
 import json
-import os
 import sys
 
 import progressbar
 
-from sfs.core import data_fetch
+from sfs.core import Item, ShopItems, data_fetch, export_shop_items_to_json
 
-from ..core.items import Item, ShopItems, export_shop_items_to_json
 from .command import Command
 
 

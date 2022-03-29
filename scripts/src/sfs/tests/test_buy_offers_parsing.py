@@ -5,7 +5,7 @@ from typing import Dict, List
 import pytest
 
 import sfs.tests.pages
-from sfs.core.data_fetch import BuyOffer, extract_buy_offers
+from sfs.core import BuyOffer, extract_buy_offers
 
 expected_values_dict: Dict[str, List[BuyOffer]] = {
     "38182.html": [

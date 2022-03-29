@@ -5,7 +5,8 @@ import sys
 
 import progressbar
 
-from ..core import StampsJson, data_fetch
+from sfs.core import StampsJson, data_fetch
+
 from .command import Command
 
 

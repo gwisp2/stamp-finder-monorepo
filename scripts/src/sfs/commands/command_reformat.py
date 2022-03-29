@@ -2,7 +2,8 @@ import argparse
 import os
 import sys
 
-from ..core import StampsJson
+from sfs.core import StampsJson
+
 from .command import Command
 
 

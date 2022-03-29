@@ -1,7 +1,7 @@
 import argparse
 import json
 
-from sfs.core.items import (
+from sfs.core import (
     combine_list_of_shop_items_with_metadata,
     export_shops_to_json,
     parse_shop_items_from_json,

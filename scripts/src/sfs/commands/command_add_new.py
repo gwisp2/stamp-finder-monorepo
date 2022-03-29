@@ -8,10 +8,10 @@ import progressbar
 import requests
 from PIL import Image
 
-from ..core import PositionPageParser, StampsJson, data_fetch
-from ..core.stamps_data import StampEntry
-from . import CommandUpdateCats
+from sfs.core import PositionPageParser, StampEntry, StampsJson, data_fetch
+
 from .command import Command
+from .command_update_cats import CommandUpdateCats
 
 
 class CommandAddNew(Command):

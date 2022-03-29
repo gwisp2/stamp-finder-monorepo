@@ -5,8 +5,7 @@ from typing import Dict, List
 import pytest
 
 import sfs.tests.pages
-from sfs.core import PositionPageParser
-from sfs.core.position_page_parser import StampBaseInfo
+from sfs.core import PositionPageParser, StampBaseInfo
 
 expected_values_dict: Dict[str, List[StampBaseInfo]] = {
     "38182.html": [

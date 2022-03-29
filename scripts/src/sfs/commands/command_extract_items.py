@@ -2,7 +2,7 @@ import argparse
 import json
 import sys
 
-from sfs.core.items import export_shop_items_to_json, parse_shop_from_xls
+from sfs.core import export_shop_items_to_json, parse_shop_from_xls
 
 from .command import Command
 
