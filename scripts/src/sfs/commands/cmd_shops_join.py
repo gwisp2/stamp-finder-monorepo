@@ -1,7 +1,10 @@
+import importlib.resources
 import json
+from io import BytesIO
 from typing import List
 
-from sfs.core import ExtractedShopItems, Shop, ShopMetadata
+import sfs.core.data
+from sfs.core import ExtractedShopItems, Shop, ShopMetadata, log
 
 from .command import Command
 
@@ -14,8 +17,14 @@ class CmdShopsJoin(Command):
         input_files = self.args["<input_json_file>"]
         out_file = self.args["--out"]
 
-        with open(metadata_path, "rt", encoding="utf-8") as f:
-            shops_metadata = ShopMetadata.from_json_list(json.load(f))
+        if metadata_path:
+            # Read metadata from file
+            with open(metadata_path, "rt", encoding="utf-8") as f:
+                shops_metadata = ShopMetadata.from_json_list(json.load(f))
+        else:
+            # Read bundled metadata
+            metadata_bytes = importlib.resources.read_binary(sfs.core.data, 'default-shops-metadata.json')
+            shops_metadata = ShopMetadata.from_json_list(json.load(BytesIO(metadata_bytes)))
 
         shop_items_list = []
         for infile in input_files:
@@ -26,3 +35,5 @@ class CmdShopsJoin(Command):
         with open(out_file, "wt", encoding="utf-8") as f:
             shops_json = [shop.to_json() for shop in shops]
             json.dump(shops_json, f, indent=2, ensure_ascii=False)
+
+        log.info('Completed')

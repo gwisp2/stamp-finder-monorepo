@@ -8,7 +8,7 @@ Usage:
   sfs images resize --db=<db> --size=<size_px>
   sfs shops scrape --out=<json_file>
   sfs shops parse-xls --out=<json_file> <xls_file>
-  sfs shops join --out=<json_file> --metadata=<json_file> [<input_json_file>]...
+  sfs shops join --out=<json_file> [--metadata=<json_file>] [<input_json_file>]...
 
   sfs (-h | --help)
 
