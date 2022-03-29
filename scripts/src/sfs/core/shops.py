@@ -64,13 +64,17 @@ class ExtractedShopItems(BaseModel):
                     items.append(ShopItem(excel_name=name, ids=ids, amount=int(amount)))
             elif len(row) == 2 and row[1].startswith("Период: "):
                 # Period raw
-                date_str = re.search(r"\d+.\d+.\d+", row[1]).group(0)
-                report_date = report_date_format.parse(date_str)
+                date_match = re.search(r"\d+.\d+.\d+", row[1])
+                if date_match:
+                    date_str = date_match.group(0)
+                    report_date = report_date_format.parse(date_str)
 
         if excel_name and report_date and items:
             return ExtractedShopItems(
                 excel_name=excel_name, report_date=report_date, items=items
             )
+        else:
+            return None
 
     @staticmethod
     def from_json(j: Any) -> "ExtractedShopItems":

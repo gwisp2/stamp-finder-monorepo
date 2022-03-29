@@ -1,10 +1,11 @@
 import re
 from decimal import Decimal
-from typing import Dict, List, Set
+from typing import Dict, List, Set, cast
 
 import bs4
 import progressbar
 import requests
+from bs4 import Tag
 from pydantic import BaseModel
 
 from .buy_offer import extract_buy_offers
@@ -48,7 +49,7 @@ def find_categories() -> Dict[int, str]:
         requests.get("https://rusmarka.ru/catalog/marki/year/0.aspx").content,
         features="html.parser",
     )
-    category_select = soup.find("select", attrs={"name": "category"})
+    category_select = cast(Tag, soup.find("select", attrs={"name": "category"}))
     d = {}
     for option in category_select.find_all("option"):
         val = option["value"]

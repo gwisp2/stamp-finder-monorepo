@@ -16,6 +16,6 @@ setup(
         "pyexcel-xls",
         "pyexcel>=0.6.7",
     ],
-    extras_require={"dev": ["black", "isort"], "tests": ["pytest"]},
+    extras_require={"dev": ["black", "isort", "mypy", "types-requests", "types-beautifulsoup4", "types-Pillow"], "tests": ["pytest"]},
     entry_points={"console_scripts": ["sfs=sfs.main:main"]},
 )

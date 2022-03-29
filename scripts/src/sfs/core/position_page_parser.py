@@ -2,9 +2,10 @@ import datetime
 import re
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union, cast
 
 import bs4
+from bs4 import Tag
 
 
 class ParseException(Exception):
@@ -140,15 +141,15 @@ class PositionPageParser:
             raise ParseException("There must be at least two div.marka-main")
         marka_main_div = marka_main_divs[1]
         # Traverse this div
-        sections = []
+        sections: List[Section] = []
         for section_element in marka_main_div:
             if not isinstance(section_element, bs4.element.Tag):
                 continue
-            section_element_class = section_element.attrs.get("class") or []
+            section_element_class: List[str] = section_element.attrs.get("class") or []  # type: ignore
             h = section_element.find("h1") or section_element.find("h2")
             date_product = section_element.find("div", class_="date-product")
             author_product = section_element.find("div", class_="author-product")
-            img = section_element.find("img")
+            img = cast(Optional[Tag], section_element.find("img"))
             nav_ul = section_element.find("ul", class_="nav")
             if h:
                 # Header
@@ -199,10 +200,10 @@ class PositionPageParser:
                 image_url = "https://rusmarka.ru/" + image_url
 
                 # Extract buy offers
-                tbody = section_element.find("tbody")
+                tbody = cast(Tag, section_element.find("tbody"))
                 buy_offers = []
                 if tbody:
-                    rows = tbody.find_all("tr")
+                    rows: List[Tag] = tbody.find_all("tr")
                     last_art = None
                     for row in rows:
                         cells = [td.text for td in row.find_all("td")]
