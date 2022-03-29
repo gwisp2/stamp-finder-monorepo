@@ -16,7 +16,8 @@ class CommandExtractItems(Command):
         parser.add_argument("outfile", type=str)
 
     def run(self, args):
-        extracted_items = ExtractedShopItems.parse_from_xls(args.infile)
+        with open(args.infile, "rb") as f:
+            extracted_items = ExtractedShopItems.parse_from_xls(f.read())
         if not extracted_items:
             sys.stderr.write("Couldn't parse a shop\n")
             return

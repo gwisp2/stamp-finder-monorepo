@@ -39,9 +39,9 @@ class ExtractedShopItems(BaseModel):
     items: List[ShopItem]
 
     @staticmethod
-    def parse_from_xls(file_name: str) -> Optional["ExtractedShopItems"]:
+    def parse_from_xls(file_content: bytes) -> Optional["ExtractedShopItems"]:
         # Load .xls file
-        rows = pyexcel.get_array(file_name=file_name)
+        rows = pyexcel.get_array(file_content=file_content, file_type="xls")
 
         excel_name = None
         report_date = None
@@ -61,7 +61,7 @@ class ExtractedShopItems(BaseModel):
                 amount = row[3]
                 ids = extract_ids(name)
                 if ids:
-                    items.append(ShopItem(excel_name=name, ids=ids, amount=int(amount)))
+                    items.append(ShopItem(name=name, ids=ids, amount=int(amount)))
             elif len(row) == 2 and row[1].startswith("Период: "):
                 # Period raw
                 date_match = re.search(r"\d+.\d+.\d+", row[1])
