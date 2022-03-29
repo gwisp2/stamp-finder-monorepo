@@ -1,4 +1,4 @@
-from .buy_offer import BuyOffer, extract_buy_offers
+from .buy_offer import BuyOffer
 from .position_page_parser import (
     ParseException,
     PositionPageParser,

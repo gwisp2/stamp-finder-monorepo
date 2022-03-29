@@ -5,7 +5,7 @@ from typing import Dict, List
 import pytest
 
 import sfs.tests.pages
-from sfs.core import BuyOffer, extract_buy_offers
+from sfs.core import BuyOffer
 
 expected_values_dict: Dict[str, List[BuyOffer]] = {
     "38182.html": [
@@ -57,5 +57,5 @@ page_name_list = [k for k, v in expected_values_dict.items()]
 @pytest.mark.parametrize("page_name", page_name_list)
 def test_parse_buy_offers(page_name: str):
     content = importlib.resources.read_binary(sfs.tests.pages, page_name)
-    buy_offers = extract_buy_offers(content)
+    buy_offers = BuyOffer.extract_from_page(content)
     assert buy_offers == expected_values_dict[page_name]

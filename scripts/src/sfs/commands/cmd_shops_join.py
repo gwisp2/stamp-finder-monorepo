@@ -23,8 +23,12 @@ class CmdShopsJoin(Command):
                 shops_metadata = ShopMetadata.from_json_list(json.load(f))
         else:
             # Read bundled metadata
-            metadata_bytes = importlib.resources.read_binary(sfs.core.data, 'default-shops-metadata.json')
-            shops_metadata = ShopMetadata.from_json_list(json.load(BytesIO(metadata_bytes)))
+            metadata_bytes = importlib.resources.read_binary(
+                sfs.core.data, "default-shops-metadata.json"
+            )
+            shops_metadata = ShopMetadata.from_json_list(
+                json.load(BytesIO(metadata_bytes))
+            )
 
         shop_items_list = []
         for infile in input_files:
@@ -36,4 +40,4 @@ class CmdShopsJoin(Command):
             shops_json = [shop.to_json() for shop in shops]
             json.dump(shops_json, f, indent=2, ensure_ascii=False)
 
-        log.info('Completed')
+        log.info("Completed")

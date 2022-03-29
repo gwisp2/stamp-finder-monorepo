@@ -1,20 +1,11 @@
 import re
-from decimal import Decimal
 from typing import Dict, List, Set, cast
 
 import bs4
 import requests
 from bs4 import Tag
-from pydantic import BaseModel
 
-from . import log
-from .buy_offer import extract_buy_offers
-
-
-class BuyOffer(BaseModel):
-    stamp_ids: List[int]
-    typ: str
-    price: Decimal
+from . import BuyOffer, log
 
 
 def fetch_position_ids(page_url: str) -> List[int]:
@@ -91,5 +82,5 @@ def load_position_page(position_id: int) -> bytes:
     return requests.get(position_page_url(position_id)).content
 
 
-def load_buy_offers(position_id: int):
-    return extract_buy_offers(load_position_page(position_id))
+def load_buy_offers(position_id: int) -> List[BuyOffer]:
+    return BuyOffer.extract_from_page(load_position_page(position_id))
