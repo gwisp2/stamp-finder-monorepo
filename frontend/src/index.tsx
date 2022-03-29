@@ -4,21 +4,20 @@ import App from './App';
 import './index.css';
 import ReactGA from 'react-ga';
 import { BrowserRouter, withRouter } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const ga_id = process.env.REACT_APP_GA_ID;
 const ga_is_enabled = ga_id !== undefined && ga_id.length !== 0;
 if (ga_id !== undefined && ga_is_enabled) {
-  console.log(`GA ID is ${ga_id}`);
   ReactGA.initialize(ga_id);
-  ReactGA.pageview(window.location.pathname + window.location.search);
 }
 
 const AppWithRouter = withRouter(({ history }) => {
-  if (ga_is_enabled) {
-    history.listen(() => {
-      ReactGA.pageview(window.location.pathname + window.location.search);
-    });
-  }
+  useEffect(() => {
+    if (ga_is_enabled) {
+      ReactGA.pageview(history.location.pathname + history.location.search);
+    }
+  }, [history.location]);
   return <App history={history} />;
 });
 ReactDOM.render(
