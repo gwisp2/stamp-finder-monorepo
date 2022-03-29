@@ -1,9 +1,7 @@
 import argparse
 import os
-import sys
 
 from sfs.core import StampsJson, log
-
 from .command import Command
 
 
