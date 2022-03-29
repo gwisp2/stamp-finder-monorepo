@@ -6,6 +6,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      REACT_APP_GA_ID: G-TTB9GY8JE9
     steps:
     - name: Checkout
       uses: actions/checkout@v2
