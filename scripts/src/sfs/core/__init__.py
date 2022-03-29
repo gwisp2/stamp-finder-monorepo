@@ -1,11 +1,11 @@
-from .stamps_data import StampsJson
 from .position_page_parser import (
-    PositionPageParser,
-    StampBaseInfo,
     ParseException,
+    PositionPageParser,
     Section,
-    SectionHeader,
-    SectionDescription,
     SectionDateOrAuthor,
+    SectionDescription,
+    SectionHeader,
     SectionImageAndOffers,
+    StampBaseInfo,
 )
+from .stamps_data import StampsJson

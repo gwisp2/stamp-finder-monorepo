@@ -3,8 +3,9 @@ import os
 import re
 import sys
 
-from .command import Command
 from sfs.core import StampsJson
+
+from .command import Command
 
 
 class CommandUpdateImageField(Command):

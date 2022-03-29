@@ -1,11 +1,13 @@
 import argparse
 import os
 import sys
+
 import progressbar
 
-from .command import Command
 from sfs.core import data_fetch
 from sfs.core.stamps_data import StampsJson
+
+from .command import Command
 
 
 class CommandUpdatePresentField(Command):

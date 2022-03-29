@@ -1,12 +1,14 @@
 import argparse
 import json
-from .command import Command
+
 from sfs.core.items import (
-    parse_shops_metadata_from_json,
-    parse_shop_items_from_json,
     combine_list_of_shop_items_with_metadata,
     export_shops_to_json,
+    parse_shop_items_from_json,
+    parse_shops_metadata_from_json,
 )
+
+from .command import Command
 
 
 class CommandUnionItems(Command):

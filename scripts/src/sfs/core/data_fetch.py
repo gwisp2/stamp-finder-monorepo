@@ -1,6 +1,6 @@
 import re
 from decimal import Decimal
-from typing import List, Set, Dict
+from typing import Dict, List, Set
 
 import bs4
 import progressbar

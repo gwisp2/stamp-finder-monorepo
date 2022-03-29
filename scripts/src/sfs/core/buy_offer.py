@@ -1,7 +1,9 @@
-import bs4
 from decimal import Decimal
 from typing import List
+
+import bs4
 from pydantic import BaseModel
+
 from sfs.core.utils import extract_ids
 
 

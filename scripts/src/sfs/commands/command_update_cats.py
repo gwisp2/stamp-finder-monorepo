@@ -1,12 +1,12 @@
 import argparse
+import itertools
 import os
 import sys
 
-import itertools
 import progressbar
 
+from ..core import StampsJson, data_fetch
 from .command import Command
-from ..core import data_fetch, StampsJson
 
 
 class CommandUpdateCats(Command):

@@ -1,5 +1,5 @@
 import re
-from typing import Optional, List
+from typing import List, Optional
 
 
 # Extract list of ids from 'X-Y' range string or 'X' string

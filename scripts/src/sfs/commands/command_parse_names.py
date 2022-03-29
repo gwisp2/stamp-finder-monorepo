@@ -2,8 +2,8 @@ import argparse
 import os
 import sys
 
+from ..core import PositionPageParser, StampsJson
 from .command import Command
-from ..core import StampsJson, PositionPageParser
 
 
 class CommandParseNames(Command):

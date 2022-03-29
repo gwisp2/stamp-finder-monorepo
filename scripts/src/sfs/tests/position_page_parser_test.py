@@ -1,9 +1,9 @@
 import importlib.resources
 import unittest
 from decimal import Decimal
+
 import sfs.tests.pages
 from sfs.core import PositionPageParser
-
 from sfs.core.position_page_parser import StampBaseInfo
 
 

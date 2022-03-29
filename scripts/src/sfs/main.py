@@ -1,6 +1,7 @@
 import argparse
-import progressbar
 import sys
+
+import progressbar
 
 from sfs.commands import command_list
 

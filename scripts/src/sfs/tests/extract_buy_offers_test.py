@@ -3,8 +3,7 @@ import unittest
 from decimal import Decimal
 
 import sfs.tests.pages
-from sfs.core.data_fetch import extract_buy_offers
-from sfs.core.data_fetch import BuyOffer
+from sfs.core.data_fetch import BuyOffer, extract_buy_offers
 
 
 class TestBuyOffersParsing(unittest.TestCase):

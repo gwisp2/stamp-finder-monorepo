@@ -2,8 +2,8 @@ import argparse
 import os
 import sys
 
-from .command import Command
 from ..core import StampsJson
+from .command import Command
 
 
 class CommandRenameImages(Command):

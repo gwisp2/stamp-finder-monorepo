@@ -1,9 +1,10 @@
 import datetime
 import re
-import bs4
-from decimal import Decimal
-from typing import Union, Optional, List, Tuple, Dict
 from dataclasses import dataclass
+from decimal import Decimal
+from typing import Dict, List, Optional, Tuple, Union
+
+import bs4
 
 
 class ParseException(Exception):

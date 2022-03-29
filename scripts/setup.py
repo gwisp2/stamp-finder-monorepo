@@ -9,11 +9,13 @@ setup(
     install_requires=[
         "requests",
         "bs4",
+        "isort",
         "progressbar2",
         "pillow",
+        "pydantic",
         "pyexcel-xls",
         "pyexcel>=0.6.7",
     ],
-    extras_require={"dev": ["black"]},
+    extras_require={"dev": ["black", "isort"]},
     entry_points={"console_scripts": ["sfs=sfs.main:main"]},
 )

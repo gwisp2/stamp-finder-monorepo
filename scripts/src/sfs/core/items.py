@@ -1,12 +1,11 @@
 import dataclasses
-import re
-from typing import List, Optional, Dict
 import datetime
+import re
+from typing import Dict, List, Optional
 
 import pyexcel
 
 from .utils import extract_ids
-
 
 DateFormat = "%d.%m.%Y"
 
