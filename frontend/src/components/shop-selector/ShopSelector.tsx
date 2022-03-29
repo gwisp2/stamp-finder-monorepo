@@ -12,7 +12,6 @@ export interface ShopSelectorProps {
 
 export class ShopSelector extends React.Component<ShopSelectorProps, Record<string, never>> {
   render(): React.ReactNode {
-    console.log(this.props.allShops);
     return (
       <div>
         {this.props.allShops.map((shop) => (
