@@ -47,13 +47,13 @@ export class StampList extends React.Component<StampListProps, StampListState> {
     return (
       <InfiniteScroll
         hasMore={this.state.shownItems.length !== this.props.stamps.length}
-        loader={<h4>Загрузка...</h4>}
+        loader={<h4 key="L">Загрузка...</h4>}
         loadMore={this.showMoreItems}
         className="row"
       >
         {this.state.shownItems.map((s) => {
           return (
-            <div className="col-sm-6 col-md-4 col-xxl-3 mb-2" key={s.id}>
+            <div className="col-sm-6 col-md-4 col-xxl-3 mb-2" key={`S${s.id}`}>
               <StampCard stamp={s} />
             </div>
           );
