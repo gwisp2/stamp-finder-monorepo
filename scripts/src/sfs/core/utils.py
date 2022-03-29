@@ -2,6 +2,7 @@ import re
 from typing import Optional, List
 
 
+# Extract list of ids from 'X-Y' range string or 'X' string
 def extract_ids(art: str) -> Optional[List[int]]:
     range_art_match = re.search(r"(\d+)-(\d+)", art)
     single_art_match = re.search(r"(\d+)", art)

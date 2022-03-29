@@ -1,15 +1,16 @@
 import re
-from dataclasses import dataclass
 from decimal import Decimal
 from typing import List, Set, Dict
-from .utils import extract_ids
+
 import bs4
 import progressbar
 import requests
+from pydantic import BaseModel
+
+from .buy_offer import extract_buy_offers
 
 
-@dataclass
-class BuyOffer:
+class BuyOffer(BaseModel):
     stamp_ids: List[int]
     typ: str
     price: Decimal
@@ -89,39 +90,3 @@ def load_position_page(position_id: int) -> bytes:
 
 def load_buy_offers(position_id: int):
     return extract_buy_offers(load_position_page(position_id))
-
-
-def extract_buy_offers(content: bytes):
-    # TODO: remove code duplication with PositionPageParser
-    # Note that PositionPageParser is aimed to work only with new pages, it may crash on old ones.
-    # So we can't use PositionPageParser here.
-    soup = bs4.BeautifulSoup(content, features="html.parser")
-    options = []
-    for table_container in soup.find_all("div", class_="marka-post"):
-        tbody = table_container.find("tbody")
-        if not tbody:
-            continue
-        rows = tbody.find_all("tr")
-        last_art = None
-        for row in rows:
-            cells = [td.text for td in row.find_all("td")]
-            cells = [c if c != "\xa0" else None for c in cells]
-            art_cell = cells[0]
-            art = art_cell or last_art
-            last_art = art
-            typ = cells[1]
-            price = cells[2]
-            if price:
-                price = price.replace("\xa0", " ").replace(",", ".")
-            if price and price.endswith("руб."):
-                price = Decimal(price[:-4].strip())
-            elif price is None:
-                price = None
-            else:
-                raise RuntimeError(f"Can't parse price: '{price}'")
-            if art is not None and typ is not None and price is not None:
-                buy_option_ids = extract_ids(art)
-                if not buy_option_ids:
-                    continue
-                options.append(BuyOffer(buy_option_ids, typ, price))
-    return options
