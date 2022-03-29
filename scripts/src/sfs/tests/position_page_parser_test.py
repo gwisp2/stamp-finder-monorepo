@@ -78,15 +78,21 @@ class TestPositionPageParsing(unittest.TestCase):
                           value=None, year=2021, 
                           series='Серия "Государственные награды Российской Федерации. Медали"',
                           name='«За спасение погибавших»', present=False)
+        ],
+        "39566.html": [
+            StampBaseInfo(id=2881, image_url='https://rusmarka.ru//files/sitedata/401/1439/736bbf1f-bfb3-45eb-b6f7-3bb9bc564f0d.jpg',
+                          value=Decimal('50.00'), year=2022,
+                          series=None,
+                          name='Учебное парусное судно "Херсонес"', present=True)
         ]
     }
 
     def test_parse_stamp_base_info(self):
         for resource in TestPositionPageParsing.answers:
             content = importlib.resources.read_binary(sfs.tests.pages, resource)
-            # print("===================")
-            # for section in PositionPageParser.parse_sections(content):
-            #    print(section)
+            print("===================")
+            for section in PositionPageParser.parse_sections(content):
+                print(section)
             entries = PositionPageParser.parse_stamp_entries(content)
             self.assertEqual(entries, TestPositionPageParsing.answers[resource])
 

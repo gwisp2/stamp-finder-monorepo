@@ -64,8 +64,11 @@ class StampBaseInfo:
 class PositionPageParser:
     @staticmethod
     def parse_stamp_entries(content: Union[str, bytes, List[Section]]) -> List[StampBaseInfo]:
+        # Extract sections if not already parsed
         if isinstance(content, str) or isinstance(content, bytes):
             content = PositionPageParser.parse_sections(content)
+
+        # Dict from id to stamp info
         stamps_dict: Dict[int, StampBaseInfo] = {}
         year = None
 
@@ -76,12 +79,14 @@ class PositionPageParser:
                 stamps_dict[stamp_id] = StampBaseInfo(id=stamp_id)
                 return stamps_dict[stamp_id]
 
+        # Try to extract information from sections
         last_id = None
         for section in content:
             if isinstance(section, SectionHeader):
                 if section.stamp_id_or_range is not None:
                     if isinstance(section.stamp_id_or_range, int):
-                        info(section.stamp_id_or_range).name = section.title
+                        if len(section.title) != 0:
+                            info(section.stamp_id_or_range).name = section.title
                         last_id = section.stamp_id_or_range
                     else:
                         for x in range(section.stamp_id_or_range[0], section.stamp_id_or_range[1] + 1):
