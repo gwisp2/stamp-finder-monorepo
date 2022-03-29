@@ -4,7 +4,6 @@ import { fetchStampsDb } from './model/stamps-fetcher';
 import { StampSearchOptionsSelector } from './components/stamp-search-options-selector/StampSearchOptionsSelector';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import SearchRounded from '@material-ui/icons/SearchRounded';
-import AttachMoney from '@material-ui/icons/AttachMoney';
 import _ from 'underscore';
 import { History as RHistory } from 'history';
 import { StampList } from './components/stamp-list/StampList';
