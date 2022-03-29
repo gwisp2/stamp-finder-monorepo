@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NumberRange } from '../../model/number-range';
 import { Dropdown, DropdownButton, Form } from 'react-bootstrap';
 import './RangeSelector.css';
@@ -10,111 +10,92 @@ export interface RangeSelectorProps {
   onChange?: (range: NumberRange) => void;
 }
 
-interface RangeSelectorState {
-  startStr: string;
-  endStr: string;
+function parseNumber(s: undefined): undefined;
+function parseNumber(s: string): number | null;
+function parseNumber(s: string | undefined): number | null | undefined;
+function parseNumber(s: string | undefined): number | null | undefined {
+  if (s === undefined) {
+    return undefined;
+  }
+  if (s.length !== 0) {
+    const n = Number(s);
+    return !isNaN(n) ? n : null;
+  } else {
+    return null;
+  }
 }
 
-export class RangeSelector extends React.Component<RangeSelectorProps, RangeSelectorState> {
-  constructor(props: RangeSelectorProps) {
-    super(props);
-    this.state = {
-      startStr: '',
-      endStr: '',
-    };
-    this.handleNumberChange = this.handleNumberChange.bind(this);
-  }
+const toString = (n: number | null): string => {
+  return n?.toString() ?? '';
+};
 
-  static getDerivedStateFromProps(props: RangeSelectorProps, currentState: RangeSelectorState): RangeSelectorState {
-    let startStr = currentState.startStr;
-    let endStr = currentState.endStr;
-    const range = props.value;
-    if (range.start !== RangeSelector.parseNumber(startStr)) {
-      startStr = range.start?.toString() ?? '';
-    }
-    if (range.end !== RangeSelector.parseNumber(endStr)) {
-      endStr = range.end?.toString() ?? '';
-    }
-    return {
-      startStr: startStr,
-      endStr: endStr,
-    };
-  }
+const coalesce = <T,>(x: T | undefined, defaultValue: T): T => {
+  return x !== undefined ? x : defaultValue;
+};
 
-  render(): React.ReactNode {
-    return (
-      <div className={this.props.className}>
-        <div className="range-selector-row mb-2">
-          {this.props.label}
-          <DropdownButton
-            variant="custom-white"
-            title={this.props.value.exact ? 'Ровно' : 'Между'}
-            size="sm"
-            className="ms-2"
-          >
-            <Dropdown.Item onSelect={() => this.setExact(true)}>Ровно</Dropdown.Item>
-            <Dropdown.Item onSelect={() => this.setExact(false)}>Между</Dropdown.Item>
-          </DropdownButton>
-        </div>
-        {!this.props.value.exact ? (
-          <div className="range-selector-row">
-            <Form.Label className="me-1">От: </Form.Label>
-            <Form.Control
-              name="startStr"
-              type="number"
-              value={this.state.startStr}
-              onChange={this.handleNumberChange}
-            />
-            <Form.Label className="me-1 ms-1">До: </Form.Label>
-            <Form.Control name="endStr" type="number" value={this.state.endStr} onChange={this.handleNumberChange} />
-          </div>
-        ) : (
-          <div className="range-selector-row">
-            <Form.Control
-              name="exactStr"
-              type="number"
-              value={this.state.startStr}
-              onChange={this.handleNumberChange}
-            />
-          </div>
-        )}
+export const RangeSelector: React.VFC<RangeSelectorProps> = (props) => {
+  const [startStr, setStartStr] = useState(toString(props.value.start));
+  const [endStr, setEndStr] = useState(toString(props.value.end));
+
+  useEffect(() => {
+    const prevStart = parseNumber(startStr);
+    const prevEnd = parseNumber(endStr);
+    if (prevStart !== props.value.start) {
+      setStartStr(toString(props.value.start));
+    }
+    if (prevEnd !== props.value.end) {
+      setEndStr(toString(props.value.end));
+    }
+  }, [props.value]);
+
+  const update = (change: { start?: string; end?: string; exact?: boolean }) => {
+    // Update start/end strings
+    const newStart = coalesce(change.start, toString(props.value.start));
+    const newEnd = coalesce(change.end, toString(props.value.end));
+    const newExact = change.exact ?? props.value.exact;
+    setStartStr(newStart);
+    setEndStr(newEnd);
+
+    // Parse those strings to numbers
+    const newStartNumber = parseNumber(newStart);
+    const newEndNumber = parseNumber(newEnd);
+    if (props.onChange !== undefined) {
+      const newRange = newExact ? NumberRange.exact(newStartNumber) : NumberRange.between(newStartNumber, newEndNumber);
+      props.onChange(newRange);
+    }
+  };
+
+  return (
+    <div className={props.className}>
+      <div className="range-selector-row mb-2">
+        {props.label}
+        <DropdownButton variant="custom-white" title={props.value.exact ? 'Ровно' : 'Между'} size="sm" className="ms-2">
+          <Dropdown.Item onSelect={() => update({ exact: true })}>Ровно</Dropdown.Item>
+          <Dropdown.Item onSelect={() => update({ exact: false })}>Между</Dropdown.Item>
+        </DropdownButton>
       </div>
-    );
-  }
-
-  private setExact(exact: boolean) {
-    if (this.props.onChange !== undefined) {
-      const newRange = exact
-        ? NumberRange.exact(this.props.value.start)
-        : NumberRange.between(this.props.value.start, this.props.value.end);
-      this.props.onChange(newRange);
-    }
-  }
-
-  private handleNumberChange(e: ChangeEvent<HTMLInputElement>) {
-    let newStart = RangeSelector.parseNumber(this.state.startStr);
-    let newEnd = RangeSelector.parseNumber(this.state.endStr);
-    if (e.target.name === 'startStr') {
-      newStart = RangeSelector.parseNumber(e.target.value);
-    } else if (e.target.name === 'endStr') {
-      newEnd = RangeSelector.parseNumber(e.target.value);
-    } else if (e.target.name === 'exactStr') {
-      const value = RangeSelector.parseNumber(e.target.value);
-      newStart = value;
-      newEnd = value;
-    }
-    if (this.props.onChange !== undefined) {
-      const newRange = this.props.value.exact ? NumberRange.exact(newStart) : NumberRange.between(newStart, newEnd);
-      this.props.onChange(newRange);
-    }
-  }
-
-  private static parseNumber(s: string): number | null {
-    if (s.length !== 0) {
-      const n = Number(s);
-      return !isNaN(n) ? n : null;
-    } else {
-      return null;
-    }
-  }
-}
+      {!props.value.exact ? (
+        <div className="range-selector-row">
+          <Form.Label className="me-1">От: </Form.Label>
+          <Form.Control
+            name="startStr"
+            type="number"
+            value={startStr}
+            onChange={(e) => update({ start: e.target.value })}
+          />
+          <Form.Label className="me-1 ms-1">До: </Form.Label>
+          <Form.Control name="endStr" type="number" value={endStr} onChange={(e) => update({ end: e.target.value })} />
+        </div>
+      ) : (
+        <div className="range-selector-row">
+          <Form.Control
+            name="exactStr"
+            type="number"
+            value={startStr}
+            onChange={(e) => update({ start: e.target.value })}
+          />
+        </div>
+      )}
+    </div>
+  );
+};
