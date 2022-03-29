@@ -2,7 +2,7 @@ import argparse
 import os
 import sys
 
-from sfs.core import StampsJson
+from sfs.core import StampsJson, log
 
 from .command import Command
 
@@ -16,9 +16,9 @@ class CommandReformat(Command):
 
     def run(self, args):
         stamps_json_path = os.path.join(args.datadir, "stamps.json")
-        sys.stderr.write("Loading stamps.json\n")
+        log.info("Loading stamps.json")
         stamps_json = StampsJson.load(stamps_json_path)
 
-        sys.stderr.write("Saving stamps.json\n")
+        log.info("Saving stamps.json")
         stamps_json.sort_entries()
         stamps_json.save(stamps_json_path)

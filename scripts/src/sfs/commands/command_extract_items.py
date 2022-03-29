@@ -1,8 +1,7 @@
 import argparse
 import json
-import sys
 
-from sfs.core import ExtractedShopItems
+from sfs.core import ExtractedShopItems, log
 
 from .command import Command
 
@@ -19,7 +18,7 @@ class CommandExtractItems(Command):
         with open(args.infile, "rb") as f:
             extracted_items = ExtractedShopItems.parse_from_xls(f.read())
         if not extracted_items:
-            sys.stderr.write("Couldn't parse a shop\n")
+            log.info("Couldn't parse a shop")
             return
         js = extracted_items.to_json()
         with open(args.outfile, "wt", encoding="utf-8") as f:

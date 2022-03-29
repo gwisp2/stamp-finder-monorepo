@@ -1,15 +1,13 @@
 import argparse
 import sys
 
-import progressbar
-
 from sfs.commands import command_list
+from sfs.core import log
 
 
 def main():
-    progressbar.streams.wrap_stderr()
     parser = argparse.ArgumentParser()
-    parser.set_defaults(command_=None)
+    parser.set_defaults(command=None)
     subparsers = parser.add_subparsers()
     for command in command_list:
         subparser: argparse.ArgumentParser = subparsers.add_parser(command.name)
@@ -18,7 +16,7 @@ def main():
     parsed_args = parser.parse_args(sys.argv[1:])
     command = parsed_args.command_
     if not command:
-        sys.stderr.write("No command specified\n")
+        log.info("No command specified\n")
         sys.exit(1)
     command.run(parsed_args)
 

@@ -10,7 +10,7 @@ setup(
         "requests",
         "bs4",
         "isort",
-        "progressbar2",
+        "tqdm",
         "pillow",
         "pydantic",
         "pyexcel-xls",

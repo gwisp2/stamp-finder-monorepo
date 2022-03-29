@@ -1,11 +1,8 @@
 import argparse
 import datetime
 import json
-import sys
 
-import progressbar
-
-from sfs.core import ExtractedShopItems, ShopItem, data_fetch
+from sfs.core import ExtractedShopItems, ShopItem, data_fetch, log
 
 from .command import Command
 
@@ -18,12 +15,12 @@ class CommandScanRusmarkaAvailability(Command):
         parser.add_argument("--out", type=str, required=True)
 
     def run(self, args):
-        sys.stderr.write("Fetching position page links from rusmarka\n")
+        log.info("Fetching position page links from rusmarka")
         all_position_ids = list(data_fetch.find_all_position_ids())
-        sys.stderr.write("Loading all positions & parsing buy offers\n")
+        log.info("Loading all positions & parsing buy offers")
         buy_offers_lists = [
             data_fetch.load_buy_offers(pos_id)
-            for pos_id in progressbar.progressbar(all_position_ids)
+            for pos_id in log.progressbar(all_position_ids)
         ]
         buy_offers = [
             bo for offers_on_page in buy_offers_lists for bo in offers_on_page

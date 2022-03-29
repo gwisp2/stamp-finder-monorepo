@@ -3,11 +3,11 @@ from decimal import Decimal
 from typing import Dict, List, Set, cast
 
 import bs4
-import progressbar
 import requests
 from bs4 import Tag
 from pydantic import BaseModel
 
+from . import log
 from .buy_offer import extract_buy_offers
 
 
@@ -39,7 +39,7 @@ def find_all_position_ids() -> Set[int]:
     # Visit all pages
     position_ids_lists = [
         fetch_position_ids(f"https://rusmarka.ru/catalog/marki/year/0/p/{page}.aspx")
-        for page in progressbar.progressbar(range(0, max_page_index + 1))
+        for page in log.tqdm(range(0, max_page_index + 1))
     ]
     return set(i for pos_id_list in position_ids_lists for i in pos_id_list)
 

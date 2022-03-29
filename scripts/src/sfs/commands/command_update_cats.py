@@ -1,12 +1,8 @@
 import argparse
 import itertools
 import os
-import sys
 
-import progressbar
-
-from sfs.core import StampsJson, data_fetch
-
+from sfs.core import StampsJson, data_fetch, log
 from .command import Command
 
 
@@ -19,7 +15,7 @@ class CommandUpdateCats(Command):
 
     def run(self, args):
         stamps_json_path = os.path.join(args.datadir, "stamps.json")
-        sys.stderr.write("Loading stamps.json\n")
+        log.info("Loading stamps.json")
         stamps_json = StampsJson.load(stamps_json_path)
 
         all_entries = list(stamps_json.entries)
@@ -34,9 +30,9 @@ class CommandUpdateCats(Command):
         for stamp in all_entries:
             stamp.categories = []
 
-        sys.stderr.write("Fetching data\n")
+        log.info("Fetching data")
         cats_dict = data_fetch.find_categories()
-        for cat_id, cat_name in progressbar.progressbar(cats_dict.items()):
+        for cat_id, cat_name in log.progressbar(cats_dict.items()):
             if cat_name == "Новинки":
                 continue
             pos_ids = data_fetch.find_position_ids_for_category(cat_id)
@@ -44,5 +40,5 @@ class CommandUpdateCats(Command):
                 for stamp in pos_id_to_stamps.get(pos_id) or []:
                     stamp.categories.append(cat_name)
 
-        sys.stderr.write("Saving stamps.json\n")
+        log.info("Saving stamps.json")
         stamps_json.save(stamps_json_path)

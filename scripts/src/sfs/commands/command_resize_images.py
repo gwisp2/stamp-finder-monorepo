@@ -1,10 +1,10 @@
 import argparse
 import os
-import sys
 
 from PIL import Image
 
 from .command import Command
+from ..core import log
 
 
 class CommandResizeImages(Command):
@@ -16,7 +16,7 @@ class CommandResizeImages(Command):
         parser.add_argument("--size", type=int, required=True)
 
     def run(self, args):
-        sys.stderr.write("Scanning images directory & resizing\n")
+        log.info("Scanning images directory & resizing\n")
         images_dir = os.path.join(args.datadir, "images")
         image_files = os.listdir(images_dir)
         for image_file in image_files:

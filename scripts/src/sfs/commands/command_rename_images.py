@@ -2,7 +2,7 @@ import argparse
 import os
 import sys
 
-from sfs.core import StampsJson
+from sfs.core import StampsJson, log
 
 from .command import Command
 
@@ -17,10 +17,10 @@ class CommandRenameImages(Command):
 
     def run(self, args):
         stamps_json_path = os.path.join(args.datadir, "stamps.json")
-        sys.stderr.write("Loading stamps.json\n")
+        log.info("Loading stamps.json")
         stamps_json = StampsJson.load(stamps_json_path)
 
-        sys.stderr.write("Renaming images\n")
+        log.info("Renaming images")
         stamps_json_dir = os.path.dirname(stamps_json_path)
         image_paths = {
             stamp.image for stamp in stamps_json.entries if stamp.image is not None
@@ -43,5 +43,5 @@ class CommandRenameImages(Command):
         for stamp in stamps_json.entries:
             stamp.image = renames[stamp.image]
 
-        sys.stderr.write("Saving stamps.json\n")
+        log.info("Saving stamps.json")
         stamps_json.save(stamps_json_path)
