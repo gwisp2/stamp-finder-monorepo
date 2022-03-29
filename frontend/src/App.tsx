@@ -71,12 +71,6 @@ class App extends React.Component<AppProps, AppState> {
                   <span>Github</span>
                 </span>
               </Nav.Link>
-              <Nav.Link href="https://sobe.ru/na/gwisp">
-                <span className="link-with-icon">
-                  <AttachMoney />
-                  <span>Donate</span>
-                </span>
-              </Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Navbar>
