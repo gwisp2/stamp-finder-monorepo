@@ -34,14 +34,14 @@ export const YearRangeSelector: React.VFC<YearRangeSelectorProps> = (props) => {
           startYear={props.startYear}
           endYear={props.value.end ?? props.endYear}
           value={props.value.start}
-          onChange={(v) => onChange({ start: v })}
+          onSelect={(v) => onChange({ start: v })}
         />
         <Form.Label className="me-1 ms-1">До: </Form.Label>
         <YearSelector
           startYear={props.value.start ?? props.startYear}
           endYear={props.endYear}
           value={props.value.end}
-          onChange={(v) => onChange({ end: v })}
+          onSelect={(v) => onChange({ end: v })}
         />
       </FormRow>
     </div>

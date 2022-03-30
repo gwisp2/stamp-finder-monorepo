@@ -7,7 +7,7 @@ import { useQuery } from 'react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
 import _ from 'underscore';
 import { StampList } from './components/StampList';
-import { StampSearchOptionsSelector } from './components/StampSearchOptionsSelector/StampSearchOptionsSelector';
+import { StampSearchOptionsSelector } from './components/StampSearchOptionsSelector';
 import { ShopDb } from './model/shops';
 import { SearchOptions, StampDb } from './model/stamps';
 

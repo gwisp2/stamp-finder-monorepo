@@ -1,7 +1,8 @@
 import { FormRow } from 'components/Form';
 import { NumberRange, parseNumber, toString } from 'model';
 import React, { useEffect, useState } from 'react';
-import { Dropdown, DropdownButton, Form } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
+import { Selector } from './Selector';
 
 export interface RangeSelectorProps {
   className?: string;
@@ -51,10 +52,14 @@ export const RangeSelector: React.VFC<RangeSelectorProps> = (props) => {
     <div className={props.className}>
       <FormRow className="mb-2">
         {props.label}
-        <DropdownButton variant="custom-white" title={props.value.exact ? 'Ровно' : 'Между'} size="sm" className="ms-2">
-          <Dropdown.Item onClick={() => update({ exact: true })}>Ровно</Dropdown.Item>
-          <Dropdown.Item onClick={() => update({ exact: false })}>Между</Dropdown.Item>
-        </DropdownButton>
+        <Selector
+          size="sm"
+          className="ms-2"
+          options={[true, false]}
+          selected={props.value.exact}
+          renderer={(v) => (v ? 'Ровно' : 'Между')}
+          onSelect={(v) => update({ exact: v })}
+        />
       </FormRow>
       {!props.value.exact ? (
         <FormRow>

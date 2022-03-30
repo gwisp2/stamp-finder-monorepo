@@ -1,14 +1,11 @@
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import { RangeSelector } from 'components/RangeSelector';
+import { Selector } from 'components/Selector';
 import { ShopSelector } from 'components/ShopSelector';
 import { YearRangeSelector } from 'components/YearRangeSelector';
 import { ANY, NumberRange, SearchOptions, Shop, SortOrder, StampField, StampSort } from 'model';
 import plural from 'plural-ru';
 import React from 'react';
-import { Button, ButtonGroup, Dropdown, DropdownButton, Form } from 'react-bootstrap';
-import _ from 'underscore';
-import './StampSearchOptionsSelector.css';
+import { Button, ButtonGroup, Form } from 'react-bootstrap';
 
 interface Props {
   startYear: number;
@@ -25,20 +22,6 @@ const AllSorts = Array<StampSort>(
   new StampSort(StampField.Id, SortOrder.Reversed),
   new StampSort(StampField.Value, SortOrder.Natural),
   new StampSort(StampField.Value, SortOrder.Reversed),
-);
-const AllSortsNames = Array<React.ReactNode>(
-  <span>
-    По номеру <ArrowUpwardIcon />
-  </span>,
-  <span>
-    По номеру <ArrowDownwardIcon />
-  </span>,
-  <span>
-    По номиналу <ArrowUpwardIcon />
-  </span>,
-  <span>
-    По номиналу <ArrowDownwardIcon />
-  </span>,
 );
 
 export class StampSearchOptionsSelector extends React.Component<Props> {
@@ -93,7 +76,8 @@ export class StampSearchOptionsSelector extends React.Component<Props> {
         Все
       </Button>,
     );
-    const sortIndex = _.findIndex(AllSorts, this.props.options.sort);
+    const listOfCategories = [null, ...this.props.listOfCategories];
+
     return (
       <div>
         <RangeSelector
@@ -135,16 +119,11 @@ export class StampSearchOptionsSelector extends React.Component<Props> {
         </div>
         <div className="mb-3">
           <Form.Label>Рубрика:</Form.Label>
-          <DropdownButton variant="custom-white" title={this.props.options.category ?? '[не задана]'}>
-            <Dropdown.Item onSelect={() => this.onChange({ category: null })}>[не задана]</Dropdown.Item>
-            {this.props.listOfCategories.map((cat) => {
-              return (
-                <Dropdown.Item key={cat} onSelect={() => this.onChange({ category: cat })}>
-                  {cat}
-                </Dropdown.Item>
-              );
-            })}
-          </DropdownButton>
+          <Selector
+            options={listOfCategories}
+            selected={this.props.options.category}
+            onSelect={(cat) => this.onChange({ category: cat })}
+          />
         </div>
         <div className="mb-3">
           <Form.Label>
@@ -170,15 +149,13 @@ export class StampSearchOptionsSelector extends React.Component<Props> {
         </div>
         <div className="mb-3">
           <Form.Label>Сортировка:</Form.Label>
-          <DropdownButton variant="custom-white" title={AllSortsNames[sortIndex]}>
-            {_.range(0, AllSorts.length).map((i) => {
-              return (
-                <Dropdown.Item key={i} onClick={() => this.onChange({ sort: AllSorts[i] })}>
-                  {AllSortsNames[i]}
-                </Dropdown.Item>
-              );
-            })}
-          </DropdownButton>
+          <Selector
+            eq="deep"
+            selected={this.props.options.sort}
+            renderer={(sort) => sort.name()}
+            options={AllSorts}
+            onSelect={(sort) => this.onChange({ sort: sort })}
+          />
         </div>
         {this.props.numberOfFoundStamps !== undefined ? (
           <Form.Text>

@@ -14,6 +14,12 @@ export enum SortOrder {
 
 export class StampSort {
   constructor(readonly field: StampField, readonly order: SortOrder) {}
+
+  name(): string {
+    const fieldName = this.field === StampField.Id ? 'По номеру' : 'По номиналу';
+    const dirName = this.order === SortOrder.Natural ? 'вверх' : 'вниз';
+    return `${fieldName} (${dirName})`;
+  }
 }
 
 export const ANY = 'any';
