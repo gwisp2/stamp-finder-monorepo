@@ -1,7 +1,7 @@
+import { ANY, Shop } from 'model';
 import React from 'react';
 import { Form } from 'react-bootstrap';
 import _ from 'underscore';
-import { ANY, Shop } from 'model';
 
 export interface ShopSelectorProps {
   allShops: Shop[];

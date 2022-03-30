@@ -1,12 +1,12 @@
-import React from 'react';
-import { Stamp } from 'model';
-import './StampCard.css';
-import EmptyImage from './empty.png';
-import ShoppingBasket from '@mui/icons-material/ShoppingBasket';
 import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
+import ShoppingBasket from '@mui/icons-material/ShoppingBasket';
+import { Stamp } from 'model';
+import React from 'react';
 import { Button, ButtonGroup, Dropdown } from 'react-bootstrap';
-import _ from 'underscore';
 import styled from 'styled-components';
+import _ from 'underscore';
+import EmptyImage from './empty.png';
+import './StampCard.css';
 
 const CustomToggleSpan = styled.span`
   color: black;

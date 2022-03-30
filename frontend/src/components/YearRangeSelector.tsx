@@ -1,8 +1,8 @@
-import React from 'react';
-import { NumberRange } from 'model';
-import { Form } from 'react-bootstrap';
-import { YearSelector } from 'components/YearSelector';
 import { FormRow } from 'components/Form';
+import { YearSelector } from 'components/YearSelector';
+import { NumberRange } from 'model';
+import React from 'react';
+import { Form } from 'react-bootstrap';
 
 export interface YearRangeSelectorProps {
   className?: string;

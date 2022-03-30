@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { NumberRange, parseNumber, toString } from 'model';
-import { Dropdown, DropdownButton, Form } from 'react-bootstrap';
 import { FormRow } from 'components/Form';
+import { NumberRange, parseNumber, toString } from 'model';
+import React, { useEffect, useState } from 'react';
+import { Dropdown, DropdownButton, Form } from 'react-bootstrap';
 
 export interface RangeSelectorProps {
   className?: string;

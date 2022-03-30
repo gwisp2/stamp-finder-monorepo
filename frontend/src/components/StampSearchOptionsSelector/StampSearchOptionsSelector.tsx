@@ -1,14 +1,14 @@
-import React from 'react';
-import { SearchOptions, SortOrder, StampField, StampSort, ANY, NumberRange, Shop } from 'model';
-import { RangeSelector } from 'components/RangeSelector';
-import _ from 'underscore';
-import { Button, ButtonGroup, Dropdown, DropdownButton, Form } from 'react-bootstrap';
-import { YearRangeSelector } from 'components/YearRangeSelector';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import './StampSearchOptionsSelector.css';
-import plural from 'plural-ru';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import { RangeSelector } from 'components/RangeSelector';
 import { ShopSelector } from 'components/ShopSelector';
+import { YearRangeSelector } from 'components/YearRangeSelector';
+import { ANY, NumberRange, SearchOptions, Shop, SortOrder, StampField, StampSort } from 'model';
+import plural from 'plural-ru';
+import React from 'react';
+import { Button, ButtonGroup, Dropdown, DropdownButton, Form } from 'react-bootstrap';
+import _ from 'underscore';
+import './StampSearchOptionsSelector.css';
 
 interface Props {
   startYear: number;

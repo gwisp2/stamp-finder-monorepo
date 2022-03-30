@@ -1,15 +1,15 @@
-import React, { useCallback } from 'react';
-import { SearchOptions, StampDb } from './model/stamps';
-import { StampSearchOptionsSelector } from './components/StampSearchOptionsSelector/StampSearchOptionsSelector';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import SearchRounded from '@mui/icons-material/SearchRounded';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { fetchShopsDb, fetchStampsDb } from 'model';
+import React, { useCallback } from 'react';
+import { Col, Container, Nav, Navbar, Row } from 'react-bootstrap';
+import { useQuery } from 'react-query';
+import { useLocation, useNavigate } from 'react-router-dom';
 import _ from 'underscore';
 import { StampList } from './components/StampList';
-import { Container, Nav, Navbar, Row, Col } from 'react-bootstrap';
+import { StampSearchOptionsSelector } from './components/StampSearchOptionsSelector/StampSearchOptionsSelector';
 import { ShopDb } from './model/shops';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { fetchShopsDb, fetchStampsDb } from 'model';
-import { useQuery } from 'react-query';
+import { SearchOptions, StampDb } from './model/stamps';
 
 const loadData = async () => {
   const [shopsDb, stampsDb] = await Promise.all([

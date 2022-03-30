@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import ReactGA from 'react-ga';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import './index.css';
-import ReactGA from 'react-ga';
-import { BrowserRouter } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from 'react-query';
 
 const ga_id = process.env.REACT_APP_GA_ID;
 const ga_is_enabled = ga_id !== undefined && ga_id.length !== 0;

@@ -1,5 +1,5 @@
-import { NumberRange } from './number-range';
 import _ from 'underscore';
+import { NumberRange } from './number-range';
 import { ShopItem } from './shops';
 
 export enum StampField {

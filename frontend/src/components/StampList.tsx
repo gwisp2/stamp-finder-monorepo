@@ -1,9 +1,7 @@
-import React from 'react';
-import { Stamp } from 'model';
 import { StampCard } from 'components/StampCard';
+import { Stamp } from 'model';
+import React, { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
-import { useState } from 'react';
-import { useEffect } from 'react';
 
 export interface StampListProps {
   stamps: Array<Stamp>;
