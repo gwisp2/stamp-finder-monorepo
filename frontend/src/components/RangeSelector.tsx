@@ -52,8 +52,8 @@ export const RangeSelector: React.VFC<RangeSelectorProps> = (props) => {
       <FormRow className="mb-2">
         {props.label}
         <DropdownButton variant="custom-white" title={props.value.exact ? 'Ровно' : 'Между'} size="sm" className="ms-2">
-          <Dropdown.Item onSelect={() => update({ exact: true })}>Ровно</Dropdown.Item>
-          <Dropdown.Item onSelect={() => update({ exact: false })}>Между</Dropdown.Item>
+          <Dropdown.Item onClick={() => update({ exact: true })}>Ровно</Dropdown.Item>
+          <Dropdown.Item onClick={() => update({ exact: false })}>Между</Dropdown.Item>
         </DropdownButton>
       </FormRow>
       {!props.value.exact ? (

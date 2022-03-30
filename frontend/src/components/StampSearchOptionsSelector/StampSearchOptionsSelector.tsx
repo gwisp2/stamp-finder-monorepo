@@ -4,8 +4,8 @@ import { RangeSelector } from 'components/RangeSelector';
 import _ from 'underscore';
 import { Button, ButtonGroup, Dropdown, DropdownButton, Form } from 'react-bootstrap';
 import { YearRangeSelector } from 'components/YearRangeSelector';
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
-import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import './StampSearchOptionsSelector.css';
 import plural from 'plural-ru';
 import { ShopSelector } from 'components/ShopSelector';
@@ -173,7 +173,7 @@ export class StampSearchOptionsSelector extends React.Component<Props> {
           <DropdownButton variant="custom-white" title={AllSortsNames[sortIndex]}>
             {_.range(0, AllSorts.length).map((i) => {
               return (
-                <Dropdown.Item key={i} onSelect={() => this.onChange({ sort: AllSorts[i] })}>
+                <Dropdown.Item key={i} onClick={() => this.onChange({ sort: AllSorts[i] })}>
                   {AllSortsNames[i]}
                 </Dropdown.Item>
               );

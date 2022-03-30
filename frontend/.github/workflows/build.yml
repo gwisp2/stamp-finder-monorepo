@@ -12,9 +12,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Install dependencies
-      run: yarn install
+      run: npm install
     - name: Build the project
-      run: yarn build
+      run: yarn run build
     - name: Upload the artifact
       uses: actions/upload-artifact@v2
       with:
