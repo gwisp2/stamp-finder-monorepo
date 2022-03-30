@@ -85,10 +85,6 @@ export class StampSearchOptionsSelector extends React.Component<Props> {
           label={
             <div>
               Номинал:{' '}
-              <button className="d-none">
-                For some reason the first button becomes dark when any button is hovered, this hidden button hides this
-                issue
-              </button>
               <ButtonGroup size="sm" aria-label="Номиналы" className="ms-1">
                 {valueButtons}
               </ButtonGroup>
@@ -129,10 +125,6 @@ export class StampSearchOptionsSelector extends React.Component<Props> {
           <Form.Label>
             Наличие:{' '}
             <ButtonGroup size="sm" aria-label="Номиналы" className="ms-1">
-              <button className="d-none">
-                For some reason the first button becomes dark when any button is hovered, this hidden button hides this
-                issue
-              </button>
               <Button variant="outline-secondary" onClick={() => this.onChange({ presenceRequired: null })}>
                 Не обязательно
               </Button>
