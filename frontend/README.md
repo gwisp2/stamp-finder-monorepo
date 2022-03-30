@@ -15,14 +15,14 @@
      ```
    - полный, подготовка описана [здесь](https://github.com/gwisp2/stamp-finder-scripts)
 3. Установить зависимости
-   > yarn install
+   > npm install
 4. Запустить всё это дело
-   > yarn start
+   > npm start
 
 ## Запустить на прод
 Собрать всё следующей командой и скормить содержимое build/ веб-серверу. 
 ```
-yarn build
+npm run build
 ```
 
 Переодически потребуется обновлять данные, подробнее об этом [здесь](https://github.com/gwisp2/stamp-finder-scripts).
