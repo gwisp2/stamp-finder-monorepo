@@ -70,4 +70,4 @@ class CmdStampsScrapeNew(Command):
         stamps_json.save(stamps_json_path)
 
         log.info("Updating categories")
-        CmdStampsScrapeCategories({"db": db_path}).run()
+        CmdStampsScrapeCategories({"--db": db_path}).run()
