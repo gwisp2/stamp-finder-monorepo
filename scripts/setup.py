@@ -6,6 +6,9 @@ setup(
     version="0.0.1",
     package_dir={"": "src"},
     packages=find_packages(where="src"),
+    package_data={
+        "": ["*.json"],
+    },
     install_requires=[
         "requests",
         "bs4",
@@ -27,7 +30,7 @@ setup(
             "types-Pillow",
             "tqdm-stubs",
             "types-xxhash",
-            "types-docopt"
+            "types-docopt",
         ],
         "tests": ["pytest"],
     },
