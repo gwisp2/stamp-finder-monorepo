@@ -16,9 +16,7 @@ expected_values_dict: Dict[str, List[BuyOffer]] = {
         BuyOffer(stamp_ids=[2744], typ="Чистый", price=Decimal("56.00")),
         BuyOffer(stamp_ids=[2744], typ="Гашеный", price=Decimal("17.00")),
         BuyOffer(
-            stamp_ids=[2741, 2742, 2743, 2744],
-            typ="Чистый",
-            price=Decimal("448.00"),
+            stamp_ids=[2741, 2742, 2743, 2744], typ="Чистый", price=Decimal("448.00"),
         ),
     ],
     "38205.html": [

@@ -4,7 +4,7 @@ Usage:
   sfs stamps scrape-new --db=<db> [--links-page=<url>]
   sfs stamps scrape-categories --db=<db>
   sfs stamps reformat --db=<db>
-  sfs images build --db=<db> --size=<size_px>
+  sfs images build --db=<db> --size=<size_px> [--cache-db=<cache_db>]
   sfs shops scrape --out=<json_file>
   sfs shops parse-xls --out=<json_file> <xls_file>
   sfs shops join --out=<json_file> [--metadata=<json_file>] [<input_json_file>]...
