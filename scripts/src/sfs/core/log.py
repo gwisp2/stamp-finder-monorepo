@@ -1,9 +1,55 @@
+import io
+from abc import ABC, abstractmethod
+from typing import Any, Iterable
+
 from tqdm import tqdm
 
 
+class LogImpl(ABC):
+    _current: "LogImpl" = None
+
+    @abstractmethod
+    def log(self, message: str) -> None:
+        ...
+
+    @abstractmethod
+    def progressbar(self, *args, **kwargs) -> Iterable:
+        ...
+
+    @staticmethod
+    def get() -> "LogImpl":
+        if LogImpl._current is None:
+            LogImpl._current = DefaultLogImpl()
+        return LogImpl._current
+
+    @staticmethod
+    def set(impl: "LogImpl") -> None:
+        LogImpl._current = impl
+
+
+class DefaultLogImpl(LogImpl):
+    def log(self, message: str) -> None:
+        tqdm.write(message)
+
+    def progressbar(self, *args, **kwargs) -> Iterable[Any]:
+        return tqdm(*args, **kwargs)
+
+
+class EmbeddedLogImpl(LogImpl):
+    def __init__(self, out: io.IOBase):
+        self.out = out
+
+    def log(self, message: str) -> None:
+        self.out.write(message.encode("utf8"))
+        self.out.write(b"\n")
+
+    def progressbar(self, *args, **kwargs) -> Iterable:
+        return args[0]
+
+
 def info(message: str) -> None:
-    tqdm.write(message)
+    LogImpl.get().log(message)
 
 
 def progressbar(*args, **kwargs):
-    return tqdm(*args, **kwargs)
+    return LogImpl.get().progressbar(*args, **kwargs)

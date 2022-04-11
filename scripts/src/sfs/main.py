@@ -20,18 +20,45 @@ Options:
   --format=<filename_format> Template to use for new image file names. No-op format is '{filename}.{ext}'.
   --size=<size_px>           Maximum allowed size of image in pixels. Images of a larger size will be downscaled.
 """
-
+import io
 import sys
+import traceback
 
 from docopt import docopt
+from pydantic import BaseModel
 
 from sfs.commands import command_list
 from sfs.core import log
+from sfs.core.log import DefaultLogImpl, EmbeddedLogImpl
 
 
-def main():
+class SfsRunResult(BaseModel):
+    out: bytes
+    code: int
+
+
+def embedded_main(argv, catch_log=True) -> SfsRunResult:
+    code = 0
+    out = io.BytesIO()
+    # noinspection PyBroadException
+    try:
+        log.LogImpl.set(EmbeddedLogImpl(out) if catch_log else DefaultLogImpl())
+        main(argv)
+    except SystemExit as e:
+        if isinstance(e.code, str):
+            log.info(e.code)
+            code = 1
+        else:
+            code = e.code
+    except Exception as e:
+        log.info(traceback.format_exc())
+        code = 2
+    return SfsRunResult(out=out.getvalue(), code=code)
+
+
+def main(argv):
     parse_result = docopt(
-        __doc__, argv=None, help=True, version=None, options_first=False
+        __doc__, argv=argv, help=True, version=None, options_first=False
     )
     command = next(
         (
@@ -50,4 +77,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])
