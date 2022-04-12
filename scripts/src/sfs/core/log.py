@@ -1,4 +1,5 @@
 import io
+import threading
 from abc import ABC, abstractmethod
 from typing import Any, Iterable, TypeVar
 
@@ -6,7 +7,7 @@ from tqdm import tqdm
 
 
 class LogImpl(ABC):
-    _current: "LogImpl" = None
+    _current = threading.local()
 
     @abstractmethod
     def log(self, message: str) -> None:
@@ -18,13 +19,14 @@ class LogImpl(ABC):
 
     @staticmethod
     def get() -> "LogImpl":
-        if LogImpl._current is None:
-            LogImpl._current = DefaultLogImpl()
-        return LogImpl._current
+        value = getattr(LogImpl._current, "value", None)
+        if value is None:
+            LogImpl._current.value = value = DefaultLogImpl()
+        return value
 
     @staticmethod
     def set(impl: "LogImpl") -> None:
-        LogImpl._current = impl
+        LogImpl._current.value = impl
 
 
 class DefaultLogImpl(LogImpl):

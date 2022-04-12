@@ -30,7 +30,7 @@ def find_all_position_ids() -> Set[int]:
     # Visit all pages
     position_ids_lists = [
         fetch_position_ids(f"https://rusmarka.ru/catalog/marki/year/0/p/{page}.aspx")
-        for page in log.tqdm(range(0, max_page_index + 1))
+        for page in log.progressbar(range(0, max_page_index + 1))
     ]
     return set(i for pos_id_list in position_ids_lists for i in pos_id_list)
 
@@ -67,7 +67,7 @@ def find_position_ids_for_category(cat_id: int) -> Set[int]:
         fetch_position_ids(
             f"https://rusmarka.ru/catalog/marki/year/0/cat/{cat_id}/p/{page}.aspx"
         )
-        for page in log.tqdm(
+        for page in log.progressbar(
             range(0, max_page_index + 1), desc=f"Category {cat_id}", leave=False
         )
     ]
