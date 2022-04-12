@@ -17,4 +17,4 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         push: true
-        tags: latest
+        tags: ghcr.io/gwisp2:stamp-finder-backend:latest
