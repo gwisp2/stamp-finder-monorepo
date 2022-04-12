@@ -135,8 +135,8 @@ class CmdImagesBuild(Command):
 
         if src_db != dst_db and len(files_to_delete) != 0:
             log.info(f"Deleting {len(files_to_delete)} old image files")
-            for file in files_to_delete:
-                os.remove(file)
+            for image_rel_path in files_to_delete:
+                os.remove(dst_db.joinpath(image_rel_path))
 
         log.info("Saving transform journal")
         journal = DbTransformJournal(transforms=list(done_transforms.values()))
