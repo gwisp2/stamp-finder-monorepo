@@ -56,7 +56,7 @@ class StampsJson:
             )
         return StampsJson(entries)
 
-    def save(self, path: Union[str, PathLike[str]]):
+    def save(self, path: Union[str, PathLike]):
         path = Path(path)
         entries_dict = {}
         for entry in self.entries:
