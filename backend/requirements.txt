@@ -1,0 +1,5 @@
+pydantic
+pyyaml
+docopt
+loguru
+stamp-finder-scripts @ git+https://github.com/gwisp2/stamp-finder-scripts.git#4ab8b66afe6f09bf628d3ccb52803c799ecb7b34
