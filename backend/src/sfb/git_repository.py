@@ -2,7 +2,7 @@ from pathlib import Path
 
 from loguru import logger
 
-from sfb.subprocess_util import run_subprocess
+from sfb.subprocess_util import SubprocessException, run_subprocess
 
 
 class GitRepository:
@@ -47,7 +47,10 @@ class GitRepository:
         :return: whether git pull changed the current branch
         """
         prev_hash = self.current_commit_hash()
-        run_subprocess(["git", "pull"], cwd=self.local)
+        try:
+            run_subprocess(["git", "pull"], cwd=self.local)
+        except SubprocessException:
+            logger.warning('Error calling "git pull"')
         new_hash = self.current_commit_hash()
         return new_hash != prev_hash
 
