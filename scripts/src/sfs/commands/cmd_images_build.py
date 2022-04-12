@@ -46,7 +46,7 @@ class CmdImagesBuild(Command):
 
         # Read previous .image-transform.json
         transform_journal_path = dst_db.joinpath(".image-transform.json")
-        if src_db != dst_db and dst_db.exists():
+        if src_db != dst_db and transform_journal_path.exists():
             old_journal = DbTransformJournal(
                 **json.loads(transform_journal_path.read_text("utf8"))
             )
