@@ -25,6 +25,7 @@ Options:
 import io
 import sys
 import traceback
+from typing import List, Optional
 
 from docopt import docopt
 from pydantic import BaseModel
@@ -58,7 +59,8 @@ def embedded_main(argv, catch_log=True) -> SfsRunResult:
     return SfsRunResult(out=out.getvalue(), code=code)
 
 
-def main(argv):
+def main(argv: Optional[List[str]] = None):
+    argv = argv if argv is not None else sys.argv[1:]
     parse_result = docopt(
         __doc__, argv=argv, help=True, version=None, options_first=False
     )
@@ -79,4 +81,4 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()
