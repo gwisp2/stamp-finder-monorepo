@@ -130,13 +130,13 @@ class CmdImagesBuild(Command):
         }
         files_to_delete: Set[Path] = old_image_paths - new_image_paths
 
+        log.info("Saving stamps.json")
+        stamps_json.save(dst_db.joinpath("stamps.json"))
+
         if src_db != dst_db and len(files_to_delete) != 0:
             log.info(f"Deleting {len(files_to_delete)} old image files")
             for file in files_to_delete:
                 os.remove(file)
-
-        log.info("Saving stamps.json")
-        stamps_json.save(dst_db.joinpath("stamps.json"))
 
         log.info("Saving transform journal")
         journal = DbTransformJournal(transforms=list(done_transforms.values()))
