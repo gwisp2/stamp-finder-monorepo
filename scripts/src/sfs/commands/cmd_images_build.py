@@ -1,100 +1,95 @@
-import glob
 import io
+import json
 import os
-import re
-import shutil
-from typing import Dict, Tuple
+from pathlib import Path, PurePath, WindowsPath
+from typing import Dict, List, Set
 
 import xxhash
-from docopt import Optional
 from PIL import Image
+from pydantic import BaseModel
 
-from sfs.core import StampEntry, StampsJson, log
+from sfs.core import StampsJson, log
 
 from .command import Command
+
+
+class DbTransformedFile(BaseModel):
+    # Path to original image (relative to db root)
+    original_path: Path
+    # Path to compressed & hashed (relative to db root)
+    transformed_path: Path
+    # modification time of the original image
+    m_time: float
+
+
+class DbTransformJournal(BaseModel):
+    transforms: List[DbTransformedFile]
+
+
+def json_encoder(x):
+    if isinstance(x, PurePath):
+        return str(x).replace("\\", "/")
+    return x
 
 
 class CmdImagesBuild(Command):
     name = ["images", "build"]
 
     def run(self):
-        db_path = self.args["--db"]
-        cache_db_path = self.args["--cache-db"]
+        src_db = Path(self.args["--src-db"])
+        dst_db = Path(self.args["--dst-db"])
         size = int(self.args["--size"] or 512)
 
-        if cache_db_path == db_path:
-            raise RuntimeError("cache_db_path and db_path must be different")
-
         # Read stamps.json
-        stamps_json_path = os.path.join(db_path, "stamps.json")
-        log.info("Loading stamps.json")
+        stamps_json_path = os.path.join(src_db, "stamps.json")
         stamps_json = StampsJson.load(stamps_json_path)
-        stamps_json_image_to_entry = {e.image: e for e in stamps_json.entries}
 
-        # Read cache & find what image names can be mapped
-        if cache_db_path is not None and os.path.exists(
-            os.path.join(cache_db_path, "stamps.json")
-        ):
-            log.info("Loading cache stamps.json")
-            cache_stamps_json = StampsJson.load(
-                os.path.join(cache_db_path, "stamps.json")
+        # Read previous .image-transform.json
+        transform_journal_path = dst_db.joinpath(".image-transform.json")
+        if src_db != dst_db and dst_db.exists():
+            old_journal = DbTransformJournal(
+                **json.loads(transform_journal_path.read_text("utf8"))
             )
-
-            # Keys: image name (without extension & -{hash} suffix)
-            # Values: (name with hash and extension, absolute path, mtime)
-            image_to_cache_image_path: Dict[str, (str, str, float)] = {}
-
-            for entry in cache_stamps_json.entries:
-                if not os.path.exists(os.path.join(cache_db_path, entry.image)):
-                    # Ignore invalid image paths
-                    continue
-
-                basename = os.path.basename(entry.image)
-                filename = basename.split(".")[0]
-                m = re.match("^(.*)-([0-9a-f]{8})$", filename)
-                if m:
-                    abs_path = os.path.join(cache_db_path, entry.image)
-                    mtime = os.stat(abs_path).st_mtime
-                    image_to_cache_image_path[m.group(1)] = (basename, abs_path, mtime)
-
+            old_transforms: Dict[Path, DbTransformedFile] = {
+                t.original_path: t for t in old_journal.transforms
+            }
         else:
-            image_to_cache_image_path = {}
+            old_transforms: Dict[Path, DbTransformedFile] = {}
+
+        # Prepare output directories
+        image_paths: Set[Path] = {
+            Path(stamp.image)
+            for stamp in stamps_json.entries
+            if stamp.image is not None
+        }
+        for image_dir in {path.parent for path in image_paths}:
+            dst_db.joinpath(image_dir).mkdir(parents=True, exist_ok=True)
 
         # Compress images
         log.info("Compressing images")
-        image_paths = {
-            stamp.image for stamp in stamps_json.entries if stamp.image is not None
-        }
-        renames = {}
-        for path in log.progressbar(image_paths):
-            abs_path = os.path.join(db_path, path)
 
-            path_dir = os.path.dirname(path)
-            basename = os.path.basename(path)
+        done_transforms: Dict[Path, DbTransformedFile] = {}
 
-            filename = basename.split(".")[0]
-            extension = basename.split(".")[1]
+        # Compress images
+        for image_rel_path in log.progressbar(image_paths):
+            # 'abs' (absolute) here means that path to the db is included
+            image_abs_path = src_db.joinpath(image_rel_path)
 
-            m = re.match("^(.*)-([0-9a-f]{8})$", filename)
-            if m:
-                # Image is already compressed
-                renames[path] = path
-                continue
+            image_rel_dir = image_rel_path.parent
+            image_basename = image_rel_path.name
+            image_filename = image_basename.split(".")[0]
 
-            cache_entry = image_to_cache_image_path.get(filename)
-            if cache_entry is not None and cache_entry[2] == os.stat(abs_path).st_mtime:
-                # Found compressed image in cache, with the same mtime
-                # Add a rename & copy file
-                new_path = os.path.join(path_dir, cache_entry[0]).replace("\\", "/")
-                renames[path] = new_path
-                shutil.copy2(cache_entry[1], os.path.join(db_path, new_path))
-                # Remove old file
-                os.remove(abs_path)
-                continue
+            # Check if image is already transformed
+            if image_rel_path in old_transforms:
+                old_transform = old_transforms[image_rel_path]
+                if old_transform.m_time == os.path.getmtime(image_abs_path):
+                    # Already transformed, skip compression
+                    done_transforms[old_transform.original_path] = old_transform
+                    continue
 
             # Compress image
-            log.info(f"Compressing {path}")
-            im = Image.open(abs_path)
+            log.info(f"Compressing {image_rel_path}")
+            im = Image.open(image_abs_path)
             im.thumbnail((size, size))
             compressed_bytes_io = io.BytesIO()
             im.save(compressed_bytes_io, format="webp")
@@ -106,24 +101,47 @@ class CmdImagesBuild(Command):
             file_hash = hasher.hexdigest()
 
             # Write the file
-            new_basename = f"{filename}-{file_hash}.webp"
-            new_abs_path = os.path.join(db_path, path_dir, new_basename)
+            new_basename = f"{image_filename}-{file_hash}.webp"
+            new_rel_path = image_rel_dir.joinpath(new_basename)
+            new_abs_path = dst_db.joinpath(new_rel_path)
             with open(new_abs_path, "wb") as f:
                 f.write(compressed_bytes)
 
-            # Copy mtime from original file, so that next time we can skip compression if mtimes match
-            os.utime(
-                new_abs_path,
-                (os.path.getatime(new_abs_path), os.path.getmtime(abs_path)),
+            original_m_time = os.path.getmtime(image_abs_path)
+            transform = DbTransformedFile(
+                original_path=image_rel_path,
+                transformed_path=new_rel_path,
+                m_time=original_m_time,
             )
-
-            renames[path] = os.path.join(path_dir, new_basename).replace("\\", "/")
+            done_transforms[transform.original_path] = transform
 
             # Remove old file
-            os.remove(abs_path)
+            if src_db == dst_db:
+                os.remove(image_abs_path)
 
         for stamp in stamps_json.entries:
-            stamp.image = renames[stamp.image]
+            stamp.image = str(done_transforms[Path(stamp.image)].transformed_path)
+
+        new_image_paths: Set[Path] = {
+            t.transformed_path for t in done_transforms.values()
+        }
+        old_image_paths: Set[Path] = {
+            t.transformed_path for t in old_transforms.values()
+        }
+        files_to_delete: Set[Path] = old_image_paths - new_image_paths
+
+        if src_db != dst_db and len(files_to_delete) != 0:
+            log.info(f"Deleting {len(files_to_delete)} old image files")
+            for file in files_to_delete:
+                os.remove(file)
 
         log.info("Saving stamps.json")
-        stamps_json.save(stamps_json_path)
+        stamps_json.save(dst_db.joinpath("stamps.json"))
+
+        log.info("Saving transform journal")
+        journal = DbTransformJournal(transforms=list(done_transforms.values()))
+
+        journal_as_json = journal.json(indent=2, encoder=json_encoder)
+        transform_journal_path.write_text(journal_as_json, encoding="utf8")
+
+        log.info("Done")

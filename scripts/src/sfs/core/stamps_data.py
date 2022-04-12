@@ -1,7 +1,9 @@
 import json
 import re
 from dataclasses import dataclass
-from typing import List, Optional
+from os import PathLike
+from pathlib import Path
+from typing import List, Optional, Union
 
 
 @dataclass
@@ -54,7 +56,8 @@ class StampsJson:
             )
         return StampsJson(entries)
 
-    def save(self, path: str):
+    def save(self, path: Union[str, PathLike[str]]):
+        path = Path(path)
         entries_dict = {}
         for entry in self.entries:
             entries_dict[entry.id] = {

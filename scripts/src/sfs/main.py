@@ -4,7 +4,7 @@ Usage:
   sfs stamps scrape-new --db=<db> [--links-page=<url>]
   sfs stamps scrape-categories --db=<db>
   sfs stamps reformat --db=<db>
-  sfs images build --db=<db> --size=<size_px> [--cache-db=<cache_db>]
+  sfs images build --src-db=<db> --dst-db=<db> --size=<size_px>
   sfs shops scrape --out=<json_file>
   sfs shops parse-xls --out=<json_file> <xls_file>
   sfs shops join --out=<json_file> [--metadata=<json_file>] [<input_json_file>]...
@@ -14,6 +14,8 @@ Usage:
 Options:
   -h --help                  Show this screen.
   --db=<db>                  Path to stamps database directory containing stamps.json.
+  --src-db=<db>              Path to input stamps database directory containing stamps.json.
+  --dst-db=<db>              Path to output stamps database directory.
   --links-page=<url>         URL of page where links to new positions are located,
                              by default the link to category 'Новинки' is used.
   --out=<json_file>         .json file where extracted data will be written

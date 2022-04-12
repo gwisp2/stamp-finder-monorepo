@@ -1,6 +1,6 @@
 import io
 from abc import ABC, abstractmethod
-from typing import Any, Iterable
+from typing import Any, Iterable, TypeVar
 
 from tqdm import tqdm
 
@@ -51,5 +51,8 @@ def info(message: str) -> None:
     LogImpl.get().log(message)
 
 
-def progressbar(*args, **kwargs):
-    return LogImpl.get().progressbar(*args, **kwargs)
+T = TypeVar("T")
+
+
+def progressbar(iterable: Iterable[T], *rest_args, **kwargs) -> Iterable[T]:
+    return LogImpl.get().progressbar(iterable, *rest_args, **kwargs)
