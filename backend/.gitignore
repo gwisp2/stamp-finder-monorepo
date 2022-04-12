@@ -1,0 +1,7 @@
+/venv
+/dist
+/build
+/work
+*.egg-info
+__pycache__
+/.idea
