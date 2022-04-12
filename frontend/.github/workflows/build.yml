@@ -1,42 +1,32 @@
-name: Build and deploy
+name: Build docker image
 
 on:
   push
 
+permissions:
+  packages: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      REACT_APP_GA_ID: G-TTB9GY8JE9
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
-    - name: Install dependencies
-      run: npm install
-    - name: Build the project
-      run: yarn run build
-    - name: Upload the artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/checkout@v3
+    - name: Log in to the Container registry
+      uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
       with:
-        name: stamp-finder
-        path: build/**
-  deploy:
-    environment: prod
-    needs: build
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-    - name: Download the artifact
-      uses: actions/download-artifact@v2
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
       with:
-        name: stamp-finder
-        path: stamp-finder/
-    - name: Install SSH key
-      uses: shimataro/ssh-key-action@v2
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+    - name: Build and push Docker image
+      uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
       with:
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
-        config: ${{ secrets.SSH_CONFIG }} 
-        if_key_exists: fail
-    - name: Rsync over ssh
-      run: rsync -r stamp-finder/ prod:webroot/app --delete &>/dev/null
+        context: .
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
