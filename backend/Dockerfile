@@ -10,3 +10,4 @@ RUN pip3 install -r requirements.txt
 # Install app
 COPY . .
 ENTRYPOINT ["python3", "-m", "sfb.main"]
+CMD ["-c", "/app/config/default.yml"]
