@@ -3,8 +3,8 @@ from pathlib import Path
 from loguru import logger
 
 from sfb.config import ConfigDataRepo
-from sfb.git_repository import GitRepository
-from sfb.subprocess_util import run_sfs
+from sfb.utility.git_repository import GitRepository
+from sfb.utility.subprocess_util import run_sfs
 
 
 class StampsUpdater:
@@ -18,7 +18,7 @@ class StampsUpdater:
         self.upstream_config = upstream_config
         self.public_dir = public_dir
         self.stamps_data_repo = GitRepository(
-            upstream_config.git, upstream_config.git_ref, internal_stamps_db_dir
+            upstream_config.url, upstream_config.ref, internal_stamps_db_dir
         )
 
     def init(self):

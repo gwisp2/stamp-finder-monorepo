@@ -1,7 +1,3 @@
 # Default configuration file to be used in docker container
 internal_dir: /app/data/internal
 public_dir: /app/data/public
-stamps_data:
-  git: https://github.com/gwisp2/russian-stamps.git
-  git_ref: main
-  refresh_period: 60

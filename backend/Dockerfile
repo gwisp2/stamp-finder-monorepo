@@ -8,12 +8,11 @@ RUN useradd -M -u 1042 sfb && mkdir -p /app/data && chown sfb:sfb /app/data
 # Install requirements
 ENV PYTHONPATH=/app/src
 COPY requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
+RUN pip3 install -r requirements.txt && pip install uwsgi supervisor
 
 # Install app
+ENV SFB_CONFIG_PATH=/app/docker/config.yml
 COPY . .
-ENTRYPOINT ["python3", "-m", "sfb.main"]
-CMD ["-c", "/app/config/default.yml"]
-
-# Change user
 USER sfb
+
+ENTRYPOINT ["/app/docker/entrypoint.sh"]

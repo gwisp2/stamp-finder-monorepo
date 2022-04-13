@@ -26,12 +26,8 @@ def run_subprocess(command: List[str], cwd: Union[Path, None] = None) -> bytes:
     return result.stdout
 
 
-# Changed in main
-sfs_logging_enabled = True
-
-
 def run_sfs(args):
-    result = sfs.main.embedded_main(args, catch_log=not sfs_logging_enabled)
+    result = sfs.main.embedded_main(args, catch_log=True)
     if result.code != 0:
         logger.error(result.out.decode("utf8"))
         raise SubprocessException(

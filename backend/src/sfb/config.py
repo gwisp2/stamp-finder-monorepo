@@ -6,15 +6,15 @@ from yaml import Loader, load
 
 
 class ConfigDataRepo(BaseModel):
-    git: str
-    git_ref: str
-    refresh_period: int
+    url: str = "https://github.com/gwisp2/russian-stamps.git"
+    ref: str = "main"
+    refresh_period: int = 600
 
 
 class Config(BaseModel):
     internal_dir: str
     public_dir: str
-    stamps_data: ConfigDataRepo
+    stamps_data: ConfigDataRepo = ConfigDataRepo()
 
     @staticmethod
     def load_from_dict(config_dict: Dict[Any, Any]) -> "Config":

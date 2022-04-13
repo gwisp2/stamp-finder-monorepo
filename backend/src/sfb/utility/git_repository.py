@@ -2,7 +2,7 @@ from pathlib import Path
 
 from loguru import logger
 
-from sfb.subprocess_util import SubprocessException, run_subprocess
+from sfb.utility.subprocess_util import SubprocessException, run_subprocess
 
 
 class GitRepository:

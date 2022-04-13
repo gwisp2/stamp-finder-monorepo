@@ -3,11 +3,12 @@ import threading
 from pathlib import Path
 from typing import Dict, List
 
+import filelock
 import xxhash
 from loguru import logger
 from sfs.core import ExtractedShopItems, Shop, ShopMetadata
 
-from sfb.subprocess_util import SubprocessException, run_sfs
+from sfb.utility.subprocess_util import SubprocessException, run_sfs
 
 
 class ShopNotUpdatedException(Exception):
@@ -25,7 +26,9 @@ class ShopsUpdater:
             "tmp_shop_rusmarka.json"
         )
         self.rusmarka_lock = threading.RLock()
-        self.shops_json_lock = threading.RLock()
+        self.shops_json_lock = filelock.FileLock(
+            self.internal_shops_dir.joinpath(".lock")
+        )
 
     def init(self):
         self.internal_shops_dir.mkdir(parents=True, exist_ok=True)
@@ -36,7 +39,7 @@ class ShopsUpdater:
     def update_public(self):
         """Regenerate shops.json based on known data"""
 
-        with self.shops_json_lock:
+        with self.shops_json_lock.acquire():
             # Load data about shops
             item_lists = list(self._load_shops().values())
             metadata_list = self._load_metadata()
@@ -71,14 +74,14 @@ class ShopsUpdater:
 
         logger.info("Regenerated shops.json")
 
-    def handle_new_xls(self, file_content: bytes):
+    def handle_shop_quantities_xls(self, file_content: bytes):
         # Parse xls
         try:
             extracted_items = ExtractedShopItems.parse_from_xls(file_content)
         except:
             raise ShopNotUpdatedException("Не удалось извлечь данные из файла")
 
-        with self.shops_json_lock:
+        with self.shops_json_lock.acquire():
             # Load old files & check if provided data is not too old
             shops_dict = self._load_shops()
             old_items = next(
@@ -155,6 +158,6 @@ class ShopsUpdater:
             self.rusmarka_lock.release()
 
         # Update
-        with self.shops_json_lock:
+        with self.shops_json_lock.acquire():
             self.rusmarka_json_tmp_path.replace(self.rusmarka_json_path)
             self.update_public()
