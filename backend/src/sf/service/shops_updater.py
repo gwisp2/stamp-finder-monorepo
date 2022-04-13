@@ -92,7 +92,7 @@ class ShopsUpdater:
             )
             if (
                 old_items is not None
-                and old_items.report_date <= extracted_items.report_date
+                and old_items.report_date >= extracted_items.report_date
             ):
                 raise ShopNotUpdatedException("Нужны более свежие данные")
 
