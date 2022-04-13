@@ -36,12 +36,7 @@ class TaskShopsJoin(Task):
                 shops_metadata = ShopMetadata.from_json_list(json.load(f))
         else:
             # Read bundled metadata
-            metadata_bytes = importlib.resources.read_binary(
-                sf.core.data, "default-shops-metadata.json"
-            )
-            shops_metadata = ShopMetadata.from_json_list(
-                json.load(BytesIO(metadata_bytes))
-            )
+            shops_metadata = ShopMetadata.get_bundled_list()
 
         shop_items_list = []
         for infile in self.inputs:

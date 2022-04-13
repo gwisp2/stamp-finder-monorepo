@@ -1,9 +1,14 @@
 import datetime
+import importlib.resources
+import json
 import re
+from io import BytesIO
 from typing import Any, Dict, List, Optional
 
 import pyexcel
 from pydantic import BaseModel
+
+import sf.core.data
 
 from .utils import extract_ids
 
@@ -110,6 +115,13 @@ class ShopMetadata(BaseModel):
     @staticmethod
     def from_json_list(jl: List[Any]) -> List["ShopMetadata"]:
         return [ShopMetadata.from_json(j) for j in jl]
+
+    @staticmethod
+    def get_bundled_list() -> List["ShopMetadata"]:
+        metadata_bytes = importlib.resources.read_binary(
+            sf.core.data, "default-shops-metadata.json"
+        )
+        return ShopMetadata.from_json_list(json.load(BytesIO(metadata_bytes)))
 
 
 # Combined ExtractedShopItems & ShopMetadata

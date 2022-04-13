@@ -5,7 +5,6 @@ from typing import Dict, List
 
 import filelock
 import xxhash
-from loguru import logger
 
 from sf.core import ExtractedShopItems, Shop, ShopMetadata, log
 from sf.tasks import TaskShopsScrape
@@ -123,11 +122,15 @@ class ShopsUpdater:
         return self.internal_shops_dir.joinpath(f)
 
     def _load_metadata(self) -> List[ShopMetadata]:
-        return ShopMetadata.from_json_list(
-            json.loads(
-                self.internal_shops_dir.joinpath("metadata.json").read_text("utf8")
+        metadata_path = self.internal_shops_dir.joinpath("metadata.json")
+        if metadata_path.exists():
+            return ShopMetadata.from_json_list(
+                json.loads(
+                    self.internal_shops_dir.joinpath("metadata.json").read_text("utf8")
+                )
             )
-        )
+        else:
+            return ShopMetadata.get_bundled_list()
 
     def _load_shops(self) -> Dict[str, ExtractedShopItems]:
         return {
