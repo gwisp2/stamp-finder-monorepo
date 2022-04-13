@@ -11,7 +11,7 @@ const ga_id_env = process.env.REACT_APP_GA_ID;
 const ga_id = ga_id_env && ga_id_env.length > 0 ? ga_id_env : undefined;
 
 const dataUrl = process.env.REACT_APP_DATA_URL ?? 'data';
-const callUrl = process.env.REACT_APP_CALL_URL ?? 'http://localhost:5000/api';
+const callUrl = process.env.REACT_APP_CALL_URL ?? 'api';
 const appApi = new AppApi(dataUrl, callUrl);
 
 const queryClient = new QueryClient();
