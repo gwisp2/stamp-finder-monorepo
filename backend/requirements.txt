@@ -1,8 +1,16 @@
-pydantic
-pyyaml
+bs4
 docopt
-loguru
+docopt
+filelock
 flask
 flask-cors
-filelock
-stamp-finder-scripts @ git+https://github.com/gwisp2/stamp-finder-scripts.git#4ab8b66afe6f09bf628d3ccb52803c799ecb7b34
+loguru
+pillow
+pydantic
+pydantic
+pyexcel-xls
+pyexcel>=0.6.7
+pyyaml
+requests
+tqdm
+xxhash
