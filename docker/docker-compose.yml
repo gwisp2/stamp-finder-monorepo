@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  sf-backend-updater:
+    build:
+      dockerfile: docker/Dockerfile
+      context: ..
+      target: backend-updater
+    container_name: sf-backend-updater
+    volumes:
+    - data-public:/app/data/public:rw
+    - data-internal:/app/data/internal:rw
+  sf-backend-uwsgi:
+    build:
+      dockerfile: docker/Dockerfile
+      context: ..
+      target: backend-uwsgi
+    container_name: sf-backend-uwsgi
+    expose:
+    - 5000
+    volumes:
+    - data-public:/app/data/public:rw
+    - data-internal:/app/data/internal:rw
+  sf-nginx:
+    build:
+      dockerfile: docker/Dockerfile
+      context: ..
+      target: frontend
+    container_name: sf-frontend
+    ports:
+    - 8080:80
+    volumes:
+    - data-public:/app/data:ro
+volumes:
+  data-public:
+  data-internal:

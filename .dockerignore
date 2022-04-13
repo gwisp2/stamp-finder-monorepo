@@ -1,0 +1,14 @@
+**/.git
+**/.github
+**/venv
+**/dist
+**/.idea
+**/build
+**/work
+**/Dockerfile
+**/*.dockerfile
+**/docker-compose.yml
+**/.mypy_cache
+**/.pytest_cache
+**/*.egg-info
+**/__pycache__
