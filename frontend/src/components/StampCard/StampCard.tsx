@@ -67,8 +67,8 @@ export const ShopItemsDropdown: React.VFC<{ stamp: Stamp }> = (props) => {
   const color = shops.length !== 0 ? 'success' : 'secondary';
   return (
     <Dropdown className="w-100" as={ButtonGroup} align="end">
-      <Button variant={color} href={stamp.page.href}>
-        <ShoppingBasket fontSize={'small'} /> В магазин
+      <Button variant={color} href={stamp.page.href} className="icon-with-text">
+        <ShoppingBasket fontSize={'small'} /> <span className="ms-1">В магазин</span>
       </Button>
       {shops.length !== 0 && <Dropdown.Toggle split variant={color} id="dropdown-split-basic" />}
       {shops.length !== 0 && (

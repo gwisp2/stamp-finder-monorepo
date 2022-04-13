@@ -1,33 +1,30 @@
 import SearchRounded from '@mui/icons-material/SearchRounded';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { fetchShopsDb, fetchStampsDb } from 'model';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Col, Container, Nav, Navbar, Row } from 'react-bootstrap';
-import { useQuery } from 'react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useShopsDb, useStampsDb } from 'service/AppApi';
 import _ from 'underscore';
 import { StampList } from './components/StampList';
 import { StampSearchOptionsSelector } from './components/StampSearchOptionsSelector';
 import { ShopDb } from './model/shops';
 import { SearchOptions, StampDb } from './model/stamps';
 
-const loadData = async () => {
-  const [shopsDb, stampsDb] = await Promise.all([
-    fetchShopsDb(new URL('data/shops.json', document.baseURI)),
-    fetchStampsDb(new URL('data/stamps.json', document.baseURI)),
-  ]);
-  shopsDb.wireToStampDb(stampsDb);
-  return [shopsDb, stampsDb] as const;
-};
-
 const App: React.VFC<Record<string, never>> = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const queryOptions = { refetchOnWindowFocus: false, cacheTime: Infinity, staleTime: Infinity };
-  const { data } = useQuery('data', loadData, queryOptions);
-  const shopsDb = (data && data[0]) ?? new ShopDb([]);
-  const stampDb = (data && data[1]) ?? new StampDb([]);
+  const shopsDbQuery = useShopsDb();
+  const stampsDbQuery = useStampsDb();
+
+  const [shopsDb, stampDb] = useMemo(() => {
+    const shopsDb = shopsDbQuery.data;
+    const stampDb = stampsDbQuery.data;
+    if (shopsDb && stampDb) {
+      shopsDb.wireToStampDb(stampDb);
+    }
+    return [shopsDb ?? new ShopDb([]), stampDb ?? new StampDb([])] as const;
+  }, [shopsDbQuery.data, stampsDbQuery.data]);
 
   const handleSearch = useCallback((newOptions: SearchOptions) => {
     const params = newOptions.toUrlParams();

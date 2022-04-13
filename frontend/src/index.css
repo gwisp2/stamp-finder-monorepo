@@ -27,3 +27,9 @@
   /* Overwrite margin-botton from bootstrap */
   margin-bottom: 0px !important;
 }
+
+.icon-with-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
