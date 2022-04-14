@@ -41,7 +41,7 @@ export class ShopDb {
       for (const item of shop.items) {
         for (const id of item.ids) {
           if (!_.contains(this.id2items.get(id) ?? [], id)) {
-            this.id2items.set(id, item, ...(this.id2items.get(id) ?? []));
+            this.id2items.set(id, item);
           }
         }
       }

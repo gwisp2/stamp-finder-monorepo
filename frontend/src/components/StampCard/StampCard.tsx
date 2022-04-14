@@ -1,6 +1,7 @@
 import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
 import ShoppingBasket from '@mui/icons-material/ShoppingBasket';
-import { Stamp } from 'model';
+import { CustomDropdownToggle } from 'components/CustomToggle';
+import { SearchOptions, Stamp } from 'model';
 import React from 'react';
 import { Button, ButtonGroup, Dropdown } from 'react-bootstrap';
 import styled from 'styled-components';
@@ -61,21 +62,33 @@ export const StampCardDropdown: React.VFC<{ stamp: Stamp }> = (props) => {
   );
 };
 
-export const ShopItemsDropdown: React.VFC<{ stamp: Stamp }> = (props) => {
+export const ShopItemsDropdown: React.VFC<{ stamp: Stamp; searchOptions?: SearchOptions }> = (props) => {
   const stamp = props.stamp;
-  const shops = _.unique(stamp.shopItems.map((item) => item.shop));
-  const color = shops.length !== 0 ? 'success' : 'secondary';
+
+  const items = stamp.itemsGroupedByShops();
+  const interestingItems = items.filter(
+    (p) => props.searchOptions === undefined || props.searchOptions.isShopInteresting(p[0]),
+  );
+  const otherItems = items.filter((p) => !_.includes(interestingItems, p));
+
+  const color = items.length !== 0 ? 'success' : 'secondary';
   return (
     <Dropdown className="w-100" as={ButtonGroup} align="end">
       <Button variant={color} href={stamp.page.href} className="icon-with-text">
         <ShoppingBasket fontSize={'small'} /> <span className="ms-1">В магазин</span>
       </Button>
-      {shops.length !== 0 && <Dropdown.Toggle split variant={color} id="dropdown-split-basic" />}
-      {shops.length !== 0 && (
+      {items.length !== 0 && <CustomDropdownToggle variant={color}>{interestingItems.length}</CustomDropdownToggle>}
+      {items.length !== 0 && (
         <Dropdown.Menu>
-          {shops.map((shop) => (
+          {interestingItems.map(([shop, shopItems]) => (
             <Dropdown.Item key={shop.id} href={shop.link}>
-              {shop.displayName}
+              {shop.displayName}: {shopItems.map((i) => i.name).join(', ')}
+            </Dropdown.Item>
+          ))}
+          {otherItems.length !== 0 && <Dropdown.Divider />}
+          {otherItems.map(([shop, shopItems]) => (
+            <Dropdown.Item key={shop.id} href={shop.link}>
+              {shop.displayName}: {shopItems.map((i) => i.name).join(', ')}
             </Dropdown.Item>
           ))}
         </Dropdown.Menu>
@@ -135,13 +148,13 @@ const SquareImage: React.VFC<{ alt: string; url: URL | null; className?: string 
   );
 };
 
-export const StampCard: React.VFC<{ stamp: Stamp }> = (props) => {
+export const StampCard: React.VFC<{ stamp: Stamp; searchOptions?: SearchOptions }> = (props) => {
   const s = props.stamp;
   return (
     <div className="position-relative shadow-sm bg-light border border-secondary rounded p-2">
       <StampCardHeader stamp={s} />
       <SquareImage alt={'Image of stamp ' + s.id} url={s.imageUrl} className="mb-1" />
-      <ShopItemsDropdown stamp={s} />
+      <ShopItemsDropdown stamp={s} searchOptions={props.searchOptions} />
     </div>
   );
 };

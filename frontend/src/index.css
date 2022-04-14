@@ -33,3 +33,15 @@
   align-items: center;
   justify-content: center;
 }
+
+.dropdown-item {
+  padding: 0rem 0.3rem;
+}
+
+.dropdown-menu {
+  padding: 0.25rem;
+}
+
+.dropdown-divider {
+  margin: 0.2rem;
+}

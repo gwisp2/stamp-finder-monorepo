@@ -76,7 +76,7 @@ const App: React.VFC<Record<string, never>> = () => {
           </div>
         </Col>
         <Col xl={8} xxl={9}>
-          <StampList stamps={stamps} />
+          <StampList stamps={stamps} searchOptions={searchOptions} />
         </Col>
       </Row>
     </Container>

@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import { NumberRange } from './number-range';
-import { ShopItem } from './shops';
+import { Shop, ShopItem } from './shops';
 
 export enum StampField {
   Id,
@@ -108,6 +108,14 @@ export class SearchOptions {
     return params;
   }
 
+  isShopInteresting(shop: Shop): boolean {
+    if (this.presenceRequired === null || this.presenceRequired === ANY) {
+      return true;
+    } else {
+      return _.includes(this.presenceRequired, shop.id);
+    }
+  }
+
   private static toUrlParam(range: NumberRange): string {
     if (range.exact) {
       return range.start !== null ? '' + range.start : '';
@@ -142,6 +150,18 @@ export class Stamp {
       return this.shopItems.length !== 0;
     }
     return _.any(this.shopItems, (item) => _.contains(shop, item.shop.id));
+  }
+
+  itemsGroupedByShops(): [Shop, ShopItem[]][] {
+    const shopToItems = new Map<Shop, ShopItem[]>();
+    for (const item of this.shopItems) {
+      const shopItems = shopToItems.get(item.shop) ?? [];
+      shopItems.push(item);
+      shopToItems.set(item.shop, shopItems);
+    }
+    const shops = [...shopToItems.keys()];
+    _.sortBy(shops, (s) => s.displayName);
+    return shops.map((s) => [s, shopToItems.get(s)!]);
   }
 }
 
