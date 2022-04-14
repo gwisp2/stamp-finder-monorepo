@@ -9,6 +9,7 @@ from .utils import extract_ids
 
 class BuyOffer(BaseModel):
     stamp_ids: List[int]
+    name: str
     typ: str
     price: Decimal
 
@@ -46,6 +47,11 @@ class BuyOffer(BaseModel):
                     if not buy_option_ids:
                         continue
                     options.append(
-                        BuyOffer(stamp_ids=buy_option_ids, typ=typ, price=price)
+                        BuyOffer(
+                            name=art.strip(),
+                            stamp_ids=buy_option_ids,
+                            typ=typ,
+                            price=price,
+                        )
                     )
         return options

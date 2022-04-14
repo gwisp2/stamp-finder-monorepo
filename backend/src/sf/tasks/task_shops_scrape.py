@@ -34,7 +34,9 @@ class TaskShopsScrape(Task):
             excel_name="rusmarka.ru",
             report_date=datetime.datetime.now().date(),
             items=[
-                ShopItem(name="?", ids=bo.stamp_ids, amount=None) for bo in buy_offers
+                ShopItem(name=bo.name, ids=bo.stamp_ids, amount=None)
+                for bo in buy_offers
+                if bo.typ == "Чистый"
             ],
         )
         js = shop_items.to_json()
