@@ -2,8 +2,8 @@ bs4
 docopt
 docopt
 filelock
-flask
-flask-cors
+Flask>=2.1.1
+Flask-Cors>=3.0.10
 loguru
 pillow
 pydantic
