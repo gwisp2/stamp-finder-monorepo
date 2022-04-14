@@ -37,12 +37,12 @@ ENTRYPOINT ["/app/docker/run_uwsgi.sh"]
 #          Frontend image
 # =====================================                  
 FROM node:17.8-alpine3.14 AS frontend-build
-
+ARG GA_TAG
 RUN mkdir /app
 COPY frontend/package.json frontend/package-lock.json /app/
 RUN cd /app && npm install
 COPY frontend /app
-RUN cd /app && npm run build
+RUN cd /app && REACT_APP_GA_ID=$GA_TAG npm run build
 
 FROM nginx:1.21.6 AS frontend
 COPY --from=frontend-build /app/build /app/html

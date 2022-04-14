@@ -12,3 +12,4 @@
 **/.pytest_cache
 **/*.egg-info
 **/__pycache__
+**/node_modules
