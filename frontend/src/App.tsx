@@ -52,7 +52,7 @@ const App: React.VFC<Record<string, never>> = () => {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto" />
           <Nav className="align-items-end">
-            <Nav.Link href="https://github.com/gwisp2/stamp-finder">
+            <Nav.Link href="https://github.com/gwisp2/stamp-finder-monorepo">
               <span className="link-with-icon">
                 <img alt="Github logo" className="github-logo" src="github-logo.png" />
                 <span>Github</span>
