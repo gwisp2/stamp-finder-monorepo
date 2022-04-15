@@ -41,7 +41,9 @@ export class AppApi {
   constructor(private readonly data_base_url: string, private readonly call_base_url: string) {}
 
   async fetchShopsDb(): Promise<ShopDb> {
-    const response = await fetch(new URL(this.data_base_url + '/shops.json', document.baseURI).toString());
+    const response = await fetch(new URL(this.data_base_url + '/shops.json', document.baseURI).toString(), {
+      cache: 'no-cache',
+    });
     const shopsJson = (await response.json()) as ShopJson[];
     const shops = new Array<Shop>();
     shopsJson.forEach((shopJson, shopIndex) => {
@@ -69,7 +71,7 @@ export class AppApi {
 
   async fetchStampsDb(): Promise<StampDb> {
     const url = new URL(this.data_base_url + '/stamps.json', document.baseURI);
-    const response = await fetch(url.toString());
+    const response = await fetch(url.toString(), { cache: 'no-cache' });
     const stampsJson = (await response.json()) as StampsJson;
     const stampArray = Array<Stamp>();
     Object.keys(stampsJson).forEach((k) => {
