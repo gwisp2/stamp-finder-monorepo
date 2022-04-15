@@ -42,9 +42,9 @@ RUN mkdir /app
 COPY frontend/package.json frontend/package-lock.json /app/
 RUN cd /app && npm install
 COPY frontend /app
-RUN cd /app && REACT_APP_GA_ID=$GA_TAG npm run build
+RUN cd /app && REACT_APP_GA_ID=$GA_TAG npm run build:client:prod
 
 FROM nginx:1.21.6 AS frontend
-COPY --from=frontend-build /app/build /app/html
+COPY --from=frontend-build /app/build-client /app/html
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 RUN mkdir /app/data

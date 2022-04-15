@@ -133,7 +133,7 @@ const FillParentImage = styled.img`
   height: 100%;
   object-fit: contain;
 `;
-const SquareImage: React.VFC<{ alt: string; url: URL | null; className?: string }> = (props) => {
+const SquareImage: React.VFC<{ alt: string; url: string | null; className?: string }> = (props) => {
   return (
     <SquareImageContainer className={props.className}>
       <SquareImageContainerSpacer />
@@ -142,7 +142,7 @@ const SquareImage: React.VFC<{ alt: string; url: URL | null; className?: string 
         draggable="false"
         alt={props.alt}
         className="stamp-image"
-        src={(props.url ?? EmptyImage).toString()}
+        src={props.url ?? EmptyImage}
       />
     </SquareImageContainer>
   );

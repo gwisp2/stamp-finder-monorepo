@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useCallback, useMemo } from 'react';
 import { Col, Container, Nav, Navbar, Row } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useShopsDb, useStampsDb } from 'service/AppApi';
+import { DataPath } from 'service/AppApi';
 import _ from 'underscore';
 import { StampList } from './components/StampList';
 import { StampSearchOptionsSelector } from './components/StampSearchOptionsSelector';
@@ -14,8 +14,8 @@ const App: React.VFC<Record<string, never>> = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const shopsDbQuery = useShopsDb();
-  const stampsDbQuery = useStampsDb();
+  const shopsDbQuery = DataPath.Shops.useQuery();
+  const stampsDbQuery = DataPath.Stamps.useQuery();
 
   const [shopsDb, stampDb] = useMemo(() => {
     const shopsDb = shopsDbQuery.data;

@@ -3,7 +3,7 @@
 **/venv
 **/dist
 **/.idea
-**/build
+**/build*
 **/work
 **/Dockerfile
 **/*.dockerfile

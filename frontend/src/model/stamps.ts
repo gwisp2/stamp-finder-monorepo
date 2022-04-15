@@ -134,7 +134,7 @@ export class Stamp {
   constructor(
     readonly id: number,
     readonly page: URL,
-    readonly imageUrl: URL | null,
+    readonly imageUrl: string | null,
     readonly value: number | null,
     readonly year: number | null,
     readonly categories: Array<string>,
