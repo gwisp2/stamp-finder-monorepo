@@ -35,16 +35,28 @@ ENTRYPOINT ["/app/docker/run_uwsgi.sh"]
 
 # =====================================
 #          Frontend image
-# =====================================                  
-FROM node:17.8-alpine3.14 AS frontend-build
-ARG GA_TAG
+# =====================================       
+FROM node:17.8-alpine3.14 AS node-base
 RUN mkdir /app
 COPY frontend/package.json frontend/package-lock.json /app/
 RUN cd /app && npm install
 COPY frontend /app
+
+FROM node-base AS frontend-build
+ARG GA_TAG
 RUN cd /app && REACT_APP_GA_ID=$GA_TAG npm run build:client:prod
 
 FROM nginx:1.21.6 AS frontend
 COPY --from=frontend-build /app/build-client /app/html
 COPY docker/nginx.conf /etc/nginx/nginx.conf
-RUN mkdir /app/data
+RUN mkdir /app/data /app/ssr
+
+# =====================================
+#      Server Side Renderer image
+# =====================================
+FROM node-base AS server-side-renderer
+ARG GA_TAG
+RUN cd /app && REACT_APP_GA_ID=$GA_TAG npm run build:server:prod && mkdir /app/data /app/ssr
+COPY docker/run_server_side_renderer.sh /app/docker/
+COPY --from=frontend-build /app/build-client/index.html /app/template.html
+ENTRYPOINT [ "/app/docker/run_server_side_renderer.sh" ]
