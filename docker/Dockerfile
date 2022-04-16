@@ -59,6 +59,7 @@ ARG GA_TAG
 RUN cd /app && REACT_APP_GA_ID=$GA_TAG npm run build:server:prod && mkdir /app/data /app/ssr \
     && adduser -DH -g "" -u 1042 sf && chown -R sf:sf /app/data /app/ssr
 COPY docker/run_server_side_renderer.sh /app/docker/
+RUN chmod +x /app/docker/*.sh
 COPY --from=frontend-build /app/build-client/index.html /app/template.html
 USER sf
 ENTRYPOINT [ "/app/docker/run_server_side_renderer.sh" ]
