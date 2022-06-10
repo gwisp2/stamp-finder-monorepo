@@ -72,9 +72,9 @@ class ExtractedShopItems(BaseModel):
                     items.append(ShopItem(name=name, ids=ids, amount=int(amount)))
             elif len(row) == 2 and row[1].startswith("Период: "):
                 # Period raw
-                date_match = re.search(r"\d+.\d+.\d+", row[1])
-                if date_match:
-                    date_str = date_match.group(0)
+                date_matches = re.findall(r"\d+.\d+.\d+", row[1])
+                if date_matches:
+                    date_str = date_matches[-1]
                     report_date = report_date_format.parse(date_str)
 
         if excel_name and report_date and items:
