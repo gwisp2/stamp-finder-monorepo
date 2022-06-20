@@ -57,7 +57,7 @@ export class StampSearchOptionsSelector extends React.Component<Props> {
   }
 
   render(): React.ReactNode {
-    const valueButtons = [18, 55].map((value) => (
+    const valueButtons = [18, 62].map((value) => (
       <Button
         variant="outline-secondary"
         key={`V${value}`}
