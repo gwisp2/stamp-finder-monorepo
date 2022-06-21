@@ -31,17 +31,7 @@ services:
     - 8080:80
     volumes:
     - data-public:/app/data:ro
-    - data-ssr:/app/ssr:ro
-  sf-ssr:
-    build:
-      dockerfile: docker/Dockerfile
-      context: ..
-      target: server-side-renderer
-    container_name: sf-ssr
-    volumes:
-    - data-public:/app/data:ro
-    - data-ssr:/app/ssr:rw
 volumes:
   data-public:
   data-internal:
-  data-ssr:
+

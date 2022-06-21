@@ -14,7 +14,7 @@ RUN useradd -M -u 1042 sf && mkdir -p /app/data/internal /app/data/public && cho
 # Backend requirements
 ENV PYTHONPATH=/app/backend/src
 COPY backend/requirements.txt backend/requirements.txt
-RUN pip3 install -r backend/requirements.txt && pip install uwsgi supervisor
+RUN pip3 install -r backend/requirements.txt && pip install uwsgi
 
 # Backend files
 ENV SFB_CONFIG_PATH=/app/docker/config.yml
@@ -50,16 +50,3 @@ FROM nginx:1.21.6 AS frontend
 COPY --from=frontend-build /app/build-client /app/html
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 RUN mkdir /app/data /app/ssr
-
-# =====================================
-#      Server Side Renderer image
-# =====================================
-FROM node-base AS server-side-renderer
-ARG GA_TAG
-RUN cd /app && REACT_APP_GA_ID=$GA_TAG npm run build:server:prod && mkdir /app/data /app/ssr \
-    && adduser -DH -g "" -u 1042 sf && chown -R sf:sf /app/data /app/ssr
-COPY docker/run_server_side_renderer.sh /app/docker/
-RUN chmod +x /app/docker/*.sh
-COPY --from=frontend-build /app/build-client/index.html /app/template.html
-USER sf
-ENTRYPOINT [ "/app/docker/run_server_side_renderer.sh" ]

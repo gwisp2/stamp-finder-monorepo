@@ -28,10 +28,8 @@
   },
   "scripts": {
     "start": "webpack serve --config ./webpack.client.js --mode=development --open",
-    "build:client:prod": "webpack --config ./webpack.client.js --mode=production",
-    "build:server:prod": "webpack --config ./webpack.server.js --mode=production",
-    "build:client:dev": "webpack --config ./webpack.client.js --mode=development",
-    "build:server:dev": "webpack --config ./webpack.server.js --mode=development",
+    "build:prod": "webpack --config ./webpack.client.js --mode=production",
+    "build:dev": "webpack --config ./webpack.client.js --mode=development",
     "format": "prettier --write src",
     "lint": "eslint --ext .ts,.tsx src"
   },
