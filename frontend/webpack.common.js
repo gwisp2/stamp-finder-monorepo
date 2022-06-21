@@ -28,6 +28,12 @@ module.exports = (env, argv) => {
                 }
             ],
         },
+        optimization: {
+            splitChunks: {
+                name: "vendor",
+                chunks: "all",
+            },
+        },
         plugins: [
             new ForkTsCheckerWebpackPlugin(),
             new ESLintPlugin({ extensions: ["ts", "tsx"] }),
