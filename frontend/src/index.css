@@ -50,3 +50,21 @@
 .dropdown-divider {
   margin: 0.2rem;
 }
+
+.stamp-card-enter {
+  opacity: 0;
+}
+
+.stamp-card-enter-active {
+  opacity: 1;
+  transition: opacity 250ms;
+}
+
+.stamp-card-exit {
+  opacity: 1;
+}
+
+.stamp-card-exit-active {
+  opacity: 0;
+  transition: opacity 250ms;
+}

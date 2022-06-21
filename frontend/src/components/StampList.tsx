@@ -2,6 +2,7 @@ import { CardDisplayOptions, StampCard } from 'components/StampCard';
 import { Stamp } from 'model';
 import React, { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 export interface StampListProps {
   stamps: Array<Stamp>;
@@ -34,15 +35,18 @@ export const StampList: React.VFC<StampListProps> = (props) => {
       hasMore={shownItems.length !== props.stamps.length}
       loader={<h4 key="L">Загрузка...</h4>}
       loadMore={showMoreItems}
-      className="row"
     >
-      {shownItems.map((s) => {
-        return (
-          <div className="col-sm-6 col-md-4 col-xxl-3 mb-2" key={`S${s.id}`}>
-            <StampCard stamp={s} options={props.options} />
-          </div>
-        );
-      })}
+      <TransitionGroup className="row">
+        {shownItems.map((s) => {
+          return (
+            <CSSTransition key={`S${s.id}`} timeout={250} classNames="stamp-card">
+              <div className="col-sm-6 col-md-4 col-xxl-3 mb-2">
+                <StampCard stamp={s} options={props.options} />
+              </div>
+            </CSSTransition>
+          );
+        })}
+      </TransitionGroup>
     </InfiniteScroll>
   );
 };
