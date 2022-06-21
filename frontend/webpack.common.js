@@ -18,7 +18,7 @@ module.exports = (env, argv) => {
                     loader: 'babel-loader',
                 },
                 {
-                    test: /\.(png|jpg|gif)$/i,
+                    test: /\.(png|jpg|gif|svg)$/i,
                     type: 'asset/resource'
                 },
                 {

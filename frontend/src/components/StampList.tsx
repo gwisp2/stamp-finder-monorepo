@@ -3,6 +3,8 @@ import { Stamp } from 'model';
 import React, { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import styled from 'styled-components';
+import NoStampsImage from './icons/no-stamps.svg';
 
 export interface StampListProps {
   stamps: Array<Stamp>;
@@ -14,7 +16,34 @@ export interface StampListState {
   shownItems: Array<Stamp>;
 }
 
+const NoMessagesContainerDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 400px;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;
+
+  img {
+    width: 256px;
+  }
+`;
+
+const NoStampsMessage: React.VFC = () => {
+  return (
+    <NoMessagesContainerDiv>
+      <img src={NoStampsImage} alt="" />
+      <div>Ничего не найдено</div>
+    </NoMessagesContainerDiv>
+  );
+};
+
 export const StampList: React.VFC<StampListProps> = (props) => {
+  if (props.stamps.length === 0) {
+    return <NoStampsMessage />;
+  }
+
   const BatchSize = 20;
   const [shownItems, setShownItems] = useState(props.stamps.slice(0, BatchSize));
 
