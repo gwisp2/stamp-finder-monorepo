@@ -28,6 +28,11 @@
   margin-bottom: 0px !important;
 }
 
+.btn.icon-with-text {
+  /* .btn sets display to inline-block, change it to inline-flex */
+  display: inline-flex !important;
+}
+
 .icon-with-text {
   display: flex;
   align-items: center;

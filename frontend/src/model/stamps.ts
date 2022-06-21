@@ -198,6 +198,10 @@ export class Stamp {
     _.sortBy(shops, (s) => s.displayName);
     return shops.map((s) => [s, shopToItems.get(s)!]);
   }
+
+  isSoldAnywhere(): boolean {
+    return this.shopItems.length !== 0;
+  }
 }
 
 export class StampDb {

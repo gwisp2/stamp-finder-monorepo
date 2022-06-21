@@ -2,16 +2,7 @@ import MoreIcon from '@mui/icons-material/More';
 import { Stamp } from 'model';
 import React, { useCallback, useState } from 'react';
 import { usePopper } from 'react-popper';
-import styled from 'styled-components';
-
-const PopperContainer = styled.div`
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-  border-radius: 5px;
-  background-color: white;
-  padding: 5px;
-  font-size: 14px;
-  z-index: 10;
-`;
+import { PopperContainer } from './PopperContainer';
 
 const StampTextInfo: React.VFC<{ stamp: Stamp }> = React.memo((props) => {
   const s = props.stamp;
