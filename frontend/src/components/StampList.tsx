@@ -1,11 +1,11 @@
-import { StampCard } from 'components/StampCard';
-import { SearchOptions, Stamp } from 'model';
+import { CardDisplayOptions, StampCard } from 'components/StampCard';
+import { Stamp } from 'model';
 import React, { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 
 export interface StampListProps {
   stamps: Array<Stamp>;
-  searchOptions?: SearchOptions;
+  options: CardDisplayOptions;
 }
 
 export interface StampListState {
@@ -39,7 +39,7 @@ export const StampList: React.VFC<StampListProps> = (props) => {
       {shownItems.map((s) => {
         return (
           <div className="col-sm-6 col-md-4 col-xxl-3 mb-2" key={`S${s.id}`}>
-            <StampCard stamp={s} searchOptions={props.searchOptions} />
+            <StampCard stamp={s} options={props.options} />
           </div>
         );
       })}

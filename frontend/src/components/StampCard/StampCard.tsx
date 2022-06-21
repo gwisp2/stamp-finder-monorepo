@@ -1,7 +1,7 @@
 import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
 import ShoppingBasket from '@mui/icons-material/ShoppingBasket';
 import { CustomDropdownToggle } from 'components/CustomToggle';
-import { SearchOptions, Stamp } from 'model';
+import { Stamp } from 'model';
 import React from 'react';
 import { Button, ButtonGroup, Dropdown } from 'react-bootstrap';
 import styled from 'styled-components';
@@ -62,13 +62,13 @@ export const StampCardDropdown: React.VFC<{ stamp: Stamp }> = (props) => {
   );
 };
 
-export const ShopItemsDropdown: React.VFC<{ stamp: Stamp; searchOptions?: SearchOptions }> = (props) => {
+export const ShopItemsDropdown: React.VFC<{ stamp: Stamp; options: CardDisplayOptions }> = (props) => {
   const stamp = props.stamp;
 
   const items = stamp.itemsGroupedByShops();
-  const interestingItems = items.filter(
-    (p) => props.searchOptions === undefined || props.searchOptions.isShopInteresting(p[0]),
-  );
+  const highlightedShops = props.options.highlightedShops;
+  const interestingItems =
+    highlightedShops !== undefined ? items.filter((p) => _.contains(highlightedShops, p[0])) : items;
   const otherItems = items.filter((p) => !_.includes(interestingItems, p));
 
   const color = items.length !== 0 ? 'success' : 'secondary';
@@ -148,13 +148,17 @@ const SquareImage: React.VFC<{ alt: string; url: string | null; className?: stri
   );
 };
 
-export const StampCard: React.VFC<{ stamp: Stamp; searchOptions?: SearchOptions }> = (props) => {
+export interface CardDisplayOptions {
+  highlightedShops?: string[];
+}
+
+export const StampCard: React.VFC<{ stamp: Stamp; options: CardDisplayOptions }> = React.memo((props) => {
   const s = props.stamp;
   return (
     <div className="position-relative shadow-sm bg-light border border-secondary rounded p-2">
       <StampCardHeader stamp={s} />
       <SquareImage alt={'Image of stamp ' + s.id} url={s.imageUrl} className="mb-1" />
-      <ShopItemsDropdown stamp={s} searchOptions={props.searchOptions} />
+      <ShopItemsDropdown stamp={s} options={props.options} />
     </div>
   );
-};
+});

@@ -1,5 +1,6 @@
 import SearchRounded from '@mui/icons-material/SearchRounded';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { CardDisplayOptions } from 'components/StampCard';
 import React, { useCallback, useMemo } from 'react';
 import { Col, Container, Nav, Navbar, Row } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -33,6 +34,16 @@ const App: React.VFC<Record<string, never>> = () => {
   }, []);
 
   const searchOptions = SearchOptions.fromUrlParams(new URLSearchParams(location.search));
+
+  const highlightedShops = Array.isArray(searchOptions.presenceRequired)
+    ? searchOptions.presenceRequired
+    : shopsDb.shops.map((s) => s.id);
+  const cardDisplayOptions: CardDisplayOptions = useMemo(
+    () => ({
+      highlightedShops: highlightedShops,
+    }),
+    [highlightedShops.join(',')],
+  );
   const stamps = stampDb.findStamps(searchOptions);
 
   const knownYears = stampDb.stamps.map((v) => v.year).filter((y) => y !== null);
@@ -76,7 +87,7 @@ const App: React.VFC<Record<string, never>> = () => {
           </div>
         </Col>
         <Col xl={8} xxl={9}>
-          <StampList stamps={stamps} searchOptions={searchOptions} />
+          <StampList stamps={stamps} options={cardDisplayOptions} />
         </Col>
       </Row>
     </Container>

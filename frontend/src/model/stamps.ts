@@ -20,6 +20,39 @@ export class StampSort {
     const dirName = this.order === SortOrder.Natural ? 'вверх' : 'вниз';
     return `${fieldName} (${dirName})`;
   }
+
+  sort(arr: Stamp[]): Stamp[] {
+    return arr.sort(this.compare.bind(this));
+  }
+
+  compare(a: Stamp, b: Stamp): number {
+    return this.reverseMultiplier() * this.compareNullableNumber(this.extractField(a), this.extractField(b));
+  }
+
+  private reverseMultiplier(): number {
+    return this.order === SortOrder.Reversed ? -1 : 1;
+  }
+
+  private extractField(stamp: Stamp): number | null {
+    switch (this.field) {
+      case StampField.Id:
+        return stamp.id;
+      case StampField.Value:
+        return stamp.value;
+    }
+  }
+
+  private compareNullableNumber(a: number | null, b: number | null): number {
+    if (b !== null && a !== null) {
+      return a > b ? 1 : a === b ? 0 : -1;
+    } else if (b === null && a !== null) {
+      return -1;
+    } else if (b !== null && a === null) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
 }
 
 export const ANY = 'any';
@@ -42,6 +75,16 @@ export class SearchOptions {
     readonly contains: string,
     readonly sort: StampSort,
   ) {}
+
+  matches(s: Stamp): boolean {
+    return (
+      this.year.contains(s.year) &&
+      this.value.contains(s.value) &&
+      (!this.presenceRequired || s.isPresentInShop(this.presenceRequired)) &&
+      (this.category === null || s.categories.includes(this.category)) &&
+      s.idNameAndSeries.indexOf(this.contains.toLowerCase()) >= 0
+    );
+  }
 
   static fromUrlParams(params: URLSearchParams): SearchOptions {
     const valueStr = params.get('value');
@@ -108,14 +151,6 @@ export class SearchOptions {
     return params;
   }
 
-  isShopInteresting(shop: Shop): boolean {
-    if (this.presenceRequired === null || this.presenceRequired === ANY) {
-      return true;
-    } else {
-      return _.includes(this.presenceRequired, shop.id);
-    }
-  }
-
   private static toUrlParam(range: NumberRange): string {
     if (range.exact) {
       return range.start !== null ? '' + range.start : '';
@@ -169,38 +204,7 @@ export class StampDb {
   constructor(readonly stamps: Array<Stamp>) {}
 
   findStamps(searchOptions: SearchOptions): Array<Stamp> {
-    const containsLowered = searchOptions.contains.toLowerCase();
-    const filteredStamps = this.stamps.filter((s) => {
-      return (
-        searchOptions.year.contains(s.year) &&
-        searchOptions.value.contains(s.value) &&
-        (!searchOptions.presenceRequired || s.isPresentInShop(searchOptions.presenceRequired)) &&
-        (searchOptions.category === null || s.categories.includes(searchOptions.category)) &&
-        s.idNameAndSeries.indexOf(containsLowered) >= 0
-      );
-    });
-    return filteredStamps.sort((a, b) => {
-      let v = 0;
-      switch (searchOptions.sort.field) {
-        case StampField.Id:
-          v = a.id - b.id;
-          break;
-        case StampField.Value:
-          if (b.value !== null && a.value !== null) {
-            v = a.value - b.value;
-          } else if (b.value === null && a.value !== null) {
-            v = -1;
-          } else if (b.value !== null && a.value === null) {
-            v = 1;
-          } else {
-            v = 0;
-          }
-          break;
-      }
-      if (searchOptions.sort.order === SortOrder.Reversed) {
-        v = -v;
-      }
-      return v;
-    });
+    const filteredStamps = this.stamps.filter((s) => searchOptions.matches(s));
+    return searchOptions.sort.sort(filteredStamps);
   }
 }
