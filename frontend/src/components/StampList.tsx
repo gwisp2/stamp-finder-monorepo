@@ -79,3 +79,4 @@ export const StampList: React.VFC<StampListProps> = React.memo((props) => {
     </InfiniteScroll>
   );
 });
+StampList.displayName = 'StampList';

@@ -48,3 +48,4 @@ export const StampCard: React.VFC<{ stamp: Stamp; options: CardDisplayOptions }>
     </div>
   );
 });
+StampCard.displayName = 'StampCard';

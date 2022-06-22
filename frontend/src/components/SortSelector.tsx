@@ -38,3 +38,4 @@ export const SortSelector: React.VFC<{
     </>
   );
 });
+SortSelector.displayName = 'SortSelector';

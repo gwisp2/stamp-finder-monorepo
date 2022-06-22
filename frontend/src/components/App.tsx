@@ -1,13 +1,13 @@
 import { AmountFoundMessage } from 'components/AmountFoundMessage';
 import { AppNavbar } from 'components/AppNavbar';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { selectStamps } from 'state/api.slice';
 import { useAppSelector } from 'state/hooks';
-import { StampList } from './components/StampList';
-import { StampSearchOptionsSelector } from './components/StampSearchOptionsSelector';
-import { SearchOptions } from './model/search-options';
+import { SearchOptions } from '../model/search-options';
+import { StampList } from './StampList';
+import { StampSearchOptionsSelector } from './StampSearchOptionsSelector';
 
 const App: React.VFC = () => {
   const location = useLocation();
@@ -21,6 +21,7 @@ const App: React.VFC = () => {
 
   const searchOptions = SearchOptions.fromUrlParams(new URLSearchParams(location.search));
   const stamps = useAppSelector((s) => selectStamps(s, searchOptions));
+  const cardDisplayOptions = useMemo(() => ({}), []);
 
   return (
     <Container>
@@ -36,7 +37,7 @@ const App: React.VFC = () => {
           </div>
         </Col>
         <Col xl={8} xxl={9}>
-          <StampList stamps={stamps} options={{}} />
+          <StampList stamps={stamps} options={cardDisplayOptions} />
         </Col>
       </Row>
     </Container>

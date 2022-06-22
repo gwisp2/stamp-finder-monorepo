@@ -59,3 +59,4 @@ export const ShopInfoUploadDialog: React.VFC<{ show: boolean; onUpload?: () => v
       </Modal>
     );
   });
+ShopInfoUploadDialog.displayName = 'ShopInfoUploadDialog';

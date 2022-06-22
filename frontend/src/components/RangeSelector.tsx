@@ -86,3 +86,4 @@ export const RangeSelector: React.VFC<RangeSelectorProps> = React.memo((props) =
     </div>
   );
 });
+RangeSelector.displayName = 'RangeSelector';

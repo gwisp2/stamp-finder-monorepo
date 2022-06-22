@@ -47,3 +47,4 @@ export const YearRangeSelector: React.VFC<YearRangeSelectorProps> = React.memo((
     </div>
   );
 });
+YearRangeSelector.displayName = 'YearRangeSelector';

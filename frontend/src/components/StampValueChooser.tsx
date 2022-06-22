@@ -28,6 +28,7 @@ const ValueShortcutButtons: React.VFC<{
     </ButtonGroup>
   );
 });
+ValueShortcutButtons.displayName = 'ValueShortcutButtons';
 
 export const StampValueChooser: React.VFC<{
   label: string;
@@ -50,3 +51,4 @@ export const StampValueChooser: React.VFC<{
     />
   );
 });
+StampValueChooser.displayName = 'StampValueChooser';

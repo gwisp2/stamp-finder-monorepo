@@ -23,3 +23,4 @@ export const AppNavbar = React.memo(() => {
     </Navbar>
   );
 });
+AppNavbar.displayName = 'AppNavbar';

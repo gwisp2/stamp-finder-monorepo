@@ -2,7 +2,7 @@ import React from 'react';
 import { Form } from 'react-bootstrap';
 import _ from 'underscore';
 
-export const Selector = <T,>(props: {
+interface Props<T> {
   options: T[];
   renderer?: (_: T) => React.ReactNode;
   selected: T;
@@ -10,7 +10,10 @@ export const Selector = <T,>(props: {
   className?: string;
   eq?: 'deep' | 'shallow';
   size?: 'sm' | 'lg';
-}) => {
+}
+
+const typedMemo: <T>(c: T) => T = React.memo;
+export const Selector = typedMemo(<T,>(props: Props<T>) => {
   const eq = props.eq ?? 'shallow';
   const renderer = props.renderer ?? ((v: T) => v);
   const selectedIndex = _.findIndex(props.options, (v) =>
@@ -33,4 +36,5 @@ export const Selector = <T,>(props: {
       })}
     </Form.Select>
   );
-};
+});
+(Selector as unknown as { displayName: string }).displayName = 'Selector';

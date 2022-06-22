@@ -1,4 +1,4 @@
-import App from 'App';
+import App from 'components/App';
 import React from 'react';
 import { useGetShopsQuery, useGetStampsQuery } from 'state/api.slice';
 import { AppSplashScreen } from './components/AppSplashScreen';

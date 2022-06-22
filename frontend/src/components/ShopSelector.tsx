@@ -77,3 +77,4 @@ export const ShopSelector: React.VFC<Props & { label: string; className?: string
     </div>
   );
 });
+ShopSelector.displayName = 'ShopSelector';

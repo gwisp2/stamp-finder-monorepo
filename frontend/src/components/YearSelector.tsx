@@ -13,3 +13,4 @@ export const YearSelector: React.VFC<YearSelectorProps> = React.memo((props) => 
   const values = [null, ..._.range(props.startYear, props.endYear + 1).reverse()];
   return <Selector selected={props.value} options={values} onSelect={props.onSelect} />;
 });
+YearSelector.displayName = 'YearSelector';

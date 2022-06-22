@@ -13,3 +13,4 @@ export const AppSplashScreen: React.VFC<{ error?: string }> = React.memo((props)
     </div>
   );
 });
+AppSplashScreen.displayName = 'AppSplashScreen';

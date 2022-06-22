@@ -10,3 +10,4 @@ export const AmountFoundMessage: React.VFC<{ amount: number }> = React.memo((pro
     </Form.Text>
   );
 });
+AmountFoundMessage.displayName = 'AmountFoundMessage';
