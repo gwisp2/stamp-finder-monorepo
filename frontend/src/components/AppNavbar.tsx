@@ -1,6 +1,7 @@
 import SearchRounded from '@mui/icons-material/SearchRounded';
 import React from 'react';
 import { Nav, Navbar } from 'react-bootstrap';
+import GithubLogo from './icons/github-logo.png'
 
 export const AppNavbar = React.memo(() => {
   return (
@@ -14,7 +15,7 @@ export const AppNavbar = React.memo(() => {
         <Nav className="align-items-end">
           <Nav.Link href="https://github.com/gwisp2/stamp-finder-monorepo" target="_blank">
             <span className="link-with-icon">
-              <img alt="Github logo" className="github-logo" src="github-logo.png" />
+              <img alt="Github logo" className="github-logo" src={GithubLogo} />
               <span>Github</span>
             </span>
           </Nav.Link>
