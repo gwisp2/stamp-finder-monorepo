@@ -3,23 +3,75 @@ import { Stamp } from 'state/api/stamps';
 import _ from 'underscore';
 import { NumberRange } from './number-range';
 
-export enum StampField {
-  Id,
-  Value,
+export class StampField {
+  static Id = new StampField('id', 'По номеру', (s) => s.id);
+  static Value = new StampField('value', 'По номиналу', (s) => s.value);
+  static AllValues = [StampField.Id, StampField.Value];
+
+  private constructor(
+    public readonly id: string,
+    public readonly displayName: string,
+    public readonly extractValue: (s: Stamp) => number | null,
+  ) {}
+
+  toString() {
+    return this.id;
+  }
+
+  static fromString(id: string): StampField {
+    switch (id) {
+      case StampField.Id.id:
+        return StampField.Id;
+      case StampField.Value.id:
+        return StampField.Value;
+      default:
+        throw new Error('Invalid id');
+    }
+  }
 }
 
-export enum SortOrder {
-  Natural,
-  Reversed,
+export class SortOrder {
+  static Asc = new SortOrder('asc');
+  static Desc = new SortOrder('desc');
+
+  private constructor(public readonly id: string) {}
+
+  reverse() {
+    return this === SortOrder.Asc ? SortOrder.Desc : SortOrder.Asc;
+  }
+
+  toString() {
+    return this.id;
+  }
+
+  static fromString(id: string): SortOrder {
+    switch (id) {
+      case SortOrder.Asc.id:
+        return SortOrder.Asc;
+      case SortOrder.Desc.id:
+        return SortOrder.Desc;
+      default:
+        throw new Error('Invalid id');
+    }
+  }
 }
 
 export class StampSort {
   constructor(readonly field: StampField, readonly order: SortOrder) {}
 
-  name(): string {
-    const fieldName = this.field === StampField.Id ? 'По номеру' : 'По номиналу';
-    const dirName = this.order === SortOrder.Natural ? 'вверх' : 'вниз';
-    return `${fieldName} (${dirName})`;
+  applyChange(partial: Partial<StampSort>) {
+    return new StampSort(partial.field ?? this.field, partial.order ?? this.order);
+  }
+
+  toString(): string {
+    return `${this.field} ${this.order}`;
+  }
+
+  static fromString(str: string): StampSort {
+    const sortParts = str.split('-');
+    const field = sortParts[0];
+    const order = sortParts[1];
+    return new StampSort(StampField.fromString(field), SortOrder.fromString(order));
   }
 
   sort(arr: Stamp[]): Stamp[] {
@@ -27,20 +79,13 @@ export class StampSort {
   }
 
   compare(a: Stamp, b: Stamp): number {
-    return this.reverseMultiplier() * this.compareNullableNumber(this.extractField(a), this.extractField(b));
+    return (
+      this.reverseMultiplier() * this.compareNullableNumber(this.field.extractValue(a), this.field.extractValue(b))
+    );
   }
 
   private reverseMultiplier(): number {
-    return this.order === SortOrder.Reversed ? -1 : 1;
-  }
-
-  private extractField(stamp: Stamp): number | null {
-    switch (this.field) {
-      case StampField.Id:
-        return stamp.id;
-      case StampField.Value:
-        return stamp.value;
-    }
+    return this.order === SortOrder.Desc ? -1 : 1;
   }
 
   private compareNullableNumber(a: number | null, b: number | null): number {
@@ -66,7 +111,7 @@ export class SearchOptions {
     null,
     null,
     '',
-    new StampSort(StampField.Id, SortOrder.Reversed),
+    new StampSort(StampField.Id, SortOrder.Desc),
   );
 
   constructor(
@@ -116,13 +161,7 @@ export class SearchOptions {
       categoryStr !== null ? (categoryStr !== '<null>' ? categoryStr : null) : SearchOptions.Default.category;
     const present =
       presentStr !== null ? SearchOptions.stringListfromUrlParam(presentStr) : SearchOptions.Default.presenceRequired;
-    let sort = SearchOptions.Default.sort;
-    if (sortStr !== null) {
-      const sortParts = sortStr.split('-');
-      const field = Number(sortParts[0]);
-      const order = Number(sortParts[1]);
-      sort = new StampSort(field, order);
-    }
+    const sort = sortStr !== null ? StampSort.fromString(sortStr) : SearchOptions.Default.sort;
     return new SearchOptions(value, year, category, present, containsStr || '', sort);
   }
 
