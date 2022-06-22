@@ -24,19 +24,16 @@ module.exports = (env, argv) => {
         new CopyWebpackPlugin({
             patterns: [
                 {
-                    from: 'public',
-                    globOptions: {
-                        ignore: ["**/index.html"]
-                    },
+                    from: 'public'
                 }
             ]
         }),
         new HtmlWebpackPlugin({
-            template: 'public/index.html'
+            template: 'src/index.html'
         })
     ];
     config.module.rules = [
-        ...config.module.rules,        
+        ...config.module.rules,
         {
             test: /\.css$/i,
             use: [MiniCssExtractPlugin.loader, "css-loader"]
