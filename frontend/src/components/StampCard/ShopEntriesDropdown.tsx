@@ -57,12 +57,11 @@ export const ShopEntriesDropdown: React.VFC<{ stamp: Stamp; options: CardDisplay
   const popup = useCloseablePopup(<ShopEntriesView stamp={stamp} entries={shopEntries} options={props.options} />);
 
   return (
-    <div ref={popup.containerRef}>
+    <div ref={popup.containerRef} {...popup.containerProps}>
       <Button
         ref={popup.setReferenceElement}
         target="_blank"
         href={stamp.page.toString()}
-        {...popup.containerProps}
         variant={buttonColor}
         className="icon-with-text w-100"
       >
