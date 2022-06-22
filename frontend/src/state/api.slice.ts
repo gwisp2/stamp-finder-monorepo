@@ -35,16 +35,20 @@ const baseQueryWithErrorDecoding: BaseQueryFn<string | FetchArgs, unknown, unkno
     return result;
   }
 };
+
+const dataBaseUrl = process.env.REACT_APP_DATA_URL ?? 'data';
+const callBaseUrl = process.env.REACT_APP_CALL_URL ?? 'api';
+
 const apiSlice = createApi({
   baseQuery: baseQueryWithErrorDecoding,
   tagTypes: ['shops'],
   endpoints: (builder) => ({
     getStamps: builder.query({
-      query: () => '/data/stamps.json',
+      query: () => `${dataBaseUrl}/stamps.json`,
       transformResponse: (r: RawStamps) => decodeStamps('/data/', r),
     }),
     getShops: builder.query({
-      query: () => '/data/shops.json',
+      query: () => `${dataBaseUrl}/shops.json`,
       transformResponse: decodeShops,
       providesTags: ['shops'],
     }),
@@ -53,7 +57,7 @@ const apiSlice = createApi({
         const formData = new FormData();
         formData.append('file', file);
         return {
-          url: 'https://sf.gwisp.dev/api/upload',
+          url: `${callBaseUrl}/upload`,
           method: 'POST',
           body: formData,
         };
