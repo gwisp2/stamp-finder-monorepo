@@ -20,7 +20,7 @@ const App: React.VFC = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const searchOptions = SearchOptions.fromUrlParams(new URLSearchParams(location.search));
+  const searchOptions = SearchOptions.fromUrlParamsString(location.search);
   const stamps = useAppSelector((s) => selectStamps(s, searchOptions));
   const cardDisplayOptions = useMemo(() => ({}), []);
   const [afterOptionsDiv, setAfterOptionsDiv] = useState<HTMLDivElement | null>(null);

@@ -165,6 +165,10 @@ export class SearchOptions {
     return new SearchOptions(value, year, category, present, containsStr || '', sort);
   }
 
+  static fromUrlSearchString(str: string): SearchOptions {
+    return SearchOptions.fromUrlParams(new URLSearchParams(str));
+  }
+
   private static stringListfromUrlParam(p: string): string[] | typeof ANY {
     if (p == ANY) {
       return ANY;
@@ -205,6 +209,10 @@ export class SearchOptions {
       params.set('contains', this.contains);
     }
     return params;
+  }
+
+  toUrlSearchString(): string {
+    return this.toUrlParams().toString();
   }
 
   private static toUrlParam(range: NumberRange): string {
