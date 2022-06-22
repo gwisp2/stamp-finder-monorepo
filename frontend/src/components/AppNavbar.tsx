@@ -1,7 +1,7 @@
 import SearchRounded from '@mui/icons-material/SearchRounded';
 import React from 'react';
 import { Nav, Navbar } from 'react-bootstrap';
-import GithubLogo from './icons/github-logo.png'
+import GithubLogo from './icons/github-logo.png';
 
 export const AppNavbar = React.memo(() => {
   return (
