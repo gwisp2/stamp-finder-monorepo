@@ -1,5 +1,5 @@
-import { Stamp } from 'model';
 import React from 'react';
+import { Stamp } from 'state/api/stamps';
 import styled from 'styled-components';
 import { CardDisplayOptions } from './common';
 import EmptyImage from './empty.png';

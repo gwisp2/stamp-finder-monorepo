@@ -1,163 +1,83 @@
-import { RangeSelector } from 'components/RangeSelector';
 import { Selector } from 'components/Selector';
 import { ShopSelector } from 'components/ShopSelector';
 import { YearRangeSelector } from 'components/YearRangeSelector';
-import { ANY, NumberRange, SearchOptions, Shop, SortOrder, StampField, StampSort } from 'model';
-import plural from 'plural-ru';
-import React from 'react';
-import { Button, ButtonGroup, Form } from 'react-bootstrap';
+import { SearchOptions } from 'model';
+import React, { ReactNode } from 'react';
+import { Form } from 'react-bootstrap';
+import { selectAllStamps } from 'state/api.slice';
+import { useAppSelector } from 'state/hooks';
+import _ from 'underscore';
+import { SortSelector } from './SortSelector';
+import { StampValueChooser } from './StampValueChooser';
 
 interface Props {
-  startYear: number;
-  endYear: number;
   options: SearchOptions;
-  numberOfFoundStamps?: number;
-  listOfCategories: Array<string>;
-  listOfShops: Array<Shop>;
   onChange: (newOptions: SearchOptions) => void;
+  bottomInfo?: ReactNode;
 }
 
-const AllSorts = Array<StampSort>(
-  new StampSort(StampField.Id, SortOrder.Natural),
-  new StampSort(StampField.Id, SortOrder.Reversed),
-  new StampSort(StampField.Value, SortOrder.Natural),
-  new StampSort(StampField.Value, SortOrder.Reversed),
-);
+const useStampsStats = () => {
+  return useAppSelector((state) => {
+    const stamps = selectAllStamps(state);
+    const stampYears = stamps.map((s) => s.year).filter((y): y is number => y !== null);
+    const stampCategories = _.sortBy(_.unique(stamps.flatMap((s) => s.categories)));
+    return { minYear: _.min(stampYears), maxYear: _.max(stampYears), categories: stampCategories };
+  }, _.isEqual);
+};
 
-export class StampSearchOptionsSelector extends React.Component<Props> {
-  private onChange(
-    change: Partial<{
-      valueRange: NumberRange;
-      yearRange: NumberRange;
-      category: string | null;
-      presenceRequired: null | string[] | typeof ANY;
-      contains: string;
-      sort: StampSort;
-    }>,
-  ) {
-    const options = {
-      valueRange: this.props.options.value,
-      yearRange: this.props.options.year,
-      category: this.props.options.category,
-      presenceRequired: this.props.options.presenceRequired,
-      sort: this.props.options.sort,
-      contains: this.props.options.contains,
-      ...change,
-    };
-    this.props.onChange(
-      new SearchOptions(
-        options.valueRange,
-        options.yearRange,
-        options.category,
-        options.presenceRequired,
-        options.contains,
-        options.sort,
-      ),
-    );
-  }
-
-  render(): React.ReactNode {
-    const valueButtons = [18, 62].map((value) => (
-      <Button
-        variant="outline-secondary"
-        key={`V${value}`}
-        onClick={() => this.onChange({ valueRange: new NumberRange(value, value) })}
-      >
-        {value}
-      </Button>
-    ));
-    valueButtons.push(
-      <Button
-        key="VAny"
-        variant="outline-secondary"
-        className="btn btn-outline-secondary"
-        onClick={() => this.onChange({ valueRange: new NumberRange(null, null) })}
-      >
-        Все
-      </Button>,
-    );
-    const listOfCategories = [null, ...this.props.listOfCategories];
-
-    return (
-      <div>
-        <RangeSelector
-          className="mb-3"
-          label={
-            <div>
-              Номинал:{' '}
-              <ButtonGroup size="sm" aria-label="Номиналы" className="ms-1">
-                {valueButtons}
-              </ButtonGroup>
-            </div>
-          }
-          value={this.props.options.value}
-          onChange={(r) => this.onChange({ valueRange: r })}
-        />
-        <YearRangeSelector
-          className="mb-3"
-          label="Год выпуска:"
-          startYear={this.props.startYear}
-          endYear={this.props.endYear}
-          value={this.props.options.year}
-          onChange={(r) => this.onChange({ yearRange: r })}
-        />
-        <div className="mb-3">
-          <Form.Label>Название содержит:</Form.Label>
-          <div>
-            <Form.Control
-              name="contains"
-              type="text"
-              className="w-100"
-              value={this.props.options.contains}
-              onChange={(e) => this.onChange({ contains: e.target.value })}
-            />
-          </div>
-        </div>
-        <div className="mb-3">
-          <Form.Label>Рубрика:</Form.Label>
-          <Selector
-            options={listOfCategories}
-            selected={this.props.options.category}
-            onSelect={(cat) => this.onChange({ category: cat })}
+export const StampSearchOptionsSelector: React.VFC<Props> = React.memo((props) => {
+  const { minYear, maxYear, categories } = useStampsStats();
+  const onChange = (change: Partial<SearchOptions>) => props.onChange(props.options.applyChange(change));
+  return (
+    <div>
+      <StampValueChooser
+        className="mb-3"
+        value={props.options.value}
+        onChange={(newRange) => onChange({ value: newRange })}
+        shortcutValues={[18, 62]}
+        label="Номинал:"
+      />
+      <YearRangeSelector
+        className="mb-3"
+        label="Год выпуска:"
+        startYear={minYear}
+        endYear={maxYear}
+        value={props.options.year}
+        onChange={(r) => onChange({ year: r })}
+      />
+      <div className="mb-3">
+        <Form.Label>Название содержит:</Form.Label>
+        <div>
+          <Form.Control
+            name="contains"
+            type="text"
+            className="w-100"
+            value={props.options.contains}
+            onChange={(e) => onChange({ contains: e.target.value })}
           />
         </div>
-        <div className="mb-3">
-          <Form.Label>
-            Наличие:{' '}
-            <ButtonGroup size="sm" aria-label="Номиналы" className="ms-1">
-              <Button variant="outline-secondary" onClick={() => this.onChange({ presenceRequired: null })}>
-                Не обязательно
-              </Button>
-              <Button variant="outline-secondary" onClick={() => this.onChange({ presenceRequired: ANY })}>
-                Где угодно
-              </Button>
-            </ButtonGroup>
-          </Form.Label>
-          <ShopSelector
-            allShops={this.props.listOfShops}
-            selectedIds={this.props.options.presenceRequired}
-            onChange={(e) => this.onChange({ presenceRequired: e })}
-          />
-        </div>
-        <div className="mb-3">
-          <Form.Label>Сортировка:</Form.Label>
-          <Selector
-            eq="deep"
-            selected={this.props.options.sort}
-            renderer={(sort) => sort.name()}
-            options={AllSorts}
-            onSelect={(sort) => this.onChange({ sort: sort })}
-          />
-        </div>
-        {this.props.numberOfFoundStamps !== undefined ? (
-          <Form.Text>
-            По запросу {plural(this.props.numberOfFoundStamps, 'найдена', 'найдено', 'найдено')}{' '}
-            {this.props.numberOfFoundStamps} {plural(this.props.numberOfFoundStamps, 'марка', 'марки', 'марок')}.
-          </Form.Text>
-        ) : (
-          ''
-        )}
       </div>
-    );
-  }
-}
+      <div className="mb-3">
+        <Form.Label>Рубрика:</Form.Label>
+        <Selector
+          options={[null, ...categories]}
+          selected={props.options.category}
+          onSelect={(cat) => onChange({ category: cat })}
+        />
+      </div>
+      <ShopSelector
+        label="Наличие:"
+        className="mb-3"
+        value={props.options.presenceRequired}
+        onChange={(v) => onChange({ presenceRequired: v })}
+      />
+      <SortSelector
+        label="Сортировка:"
+        className="mb-3"
+        value={props.options.sort}
+        onChange={(v) => onChange({ sort: v })}
+      />
+      {props.bottomInfo}
+    </div>
+  );
+});

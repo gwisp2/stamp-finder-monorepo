@@ -7,9 +7,9 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = (env, argv) => {
     const config = {
         ...common(env, argv),
-        entry: './src/EntryClient.tsx',
+        entry: './src/entrypoint.tsx',
         output: {
-            path: path.resolve(__dirname, 'build-client'),
+            path: path.resolve(__dirname, 'build'),
             assetModuleFilename: 'static/media/[name].[contenthash][ext][query]',
             filename: 'static/js/[name].[contenthash].js',
             sourceMapFilename: '[file].map',

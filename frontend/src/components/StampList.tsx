@@ -1,8 +1,8 @@
 import { CardDisplayOptions, StampCard } from 'components/StampCard';
-import { Stamp } from 'model';
 import React, { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { Stamp } from 'state/api/stamps';
 import styled from 'styled-components';
 import NoStampsImage from './icons/no-stamps.svg';
 
@@ -39,7 +39,7 @@ const NoStampsMessage: React.VFC = () => {
   );
 };
 
-export const StampList: React.VFC<StampListProps> = (props) => {
+export const StampList: React.VFC<StampListProps> = React.memo((props) => {
   if (props.stamps.length === 0) {
     return <NoStampsMessage />;
   }
@@ -78,4 +78,4 @@ export const StampList: React.VFC<StampListProps> = (props) => {
       </TransitionGroup>
     </InfiniteScroll>
   );
-};
+});

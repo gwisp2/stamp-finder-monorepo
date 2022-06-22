@@ -1,14 +1,19 @@
 import ShoppingBasket from '@mui/icons-material/ShoppingBasket';
-import { Shop, ShopItem, Stamp } from 'model';
 import React, { useCallback, useState } from 'react';
-import { Button, Dropdown } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { usePopper } from 'react-popper';
+import { selectGroupedItemsForStamp } from 'state/api.slice';
+import { Item, Shop } from 'state/api/shops';
+import { Stamp } from 'state/api/stamps';
+import { useAppSelector } from 'state/hooks';
 import _ from 'underscore';
 import { CardDisplayOptions } from './common';
 import { PopperContainer } from './PopperContainer';
 import './StampCard.css';
 
-const ShopEntry: React.VFC<{ entry: [Shop, ShopItem[]] }> = (props) => {
+type ShopEntry = [Shop, Item[]];
+
+const ShopEntryView: React.VFC<{ entry: ShopEntry }> = (props) => {
   const [shop, items] = props.entry;
   return (
     <div>
@@ -18,25 +23,28 @@ const ShopEntry: React.VFC<{ entry: [Shop, ShopItem[]] }> = (props) => {
   );
 };
 
-export const ShopEntries: React.VFC<{ stamp: Stamp; options: CardDisplayOptions }> = (props) => {
-  if (!props.stamp.isSoldAnywhere()) {
+export const ShopEntriesView: React.VFC<{ stamp: Stamp; entries: ShopEntry[]; options: CardDisplayOptions }> = (
+  props,
+) => {
+  const entries = props.entries;
+  if (entries.length === 0) {
     return <>Нет в продаже</>;
   }
 
-  const entries = props.stamp.itemsGroupedByShops();
-  const highlightedShops = props.options.highlightedShops;
+  // Partition entries into highlighed and others
+  const highlightedShopIds = props.options.highlightedShops;
   const highlightedEntries =
-    highlightedShops !== undefined ? entries.filter((p) => _.contains(highlightedShops, p[0].id)) : entries;
+    highlightedShopIds !== undefined ? entries.filter((p) => _.contains(highlightedShopIds, p[0].id)) : entries;
   const otherEntries = entries.filter((p) => !_.includes(highlightedEntries, p));
 
   return (
     <div>
       {highlightedEntries.map((entry) => (
-        <ShopEntry key={entry[0].id} entry={entry} />
+        <ShopEntryView key={entry[0].id} entry={entry} />
       ))}
-      {highlightedEntries.length !== 0 && otherEntries.length !== 0 && <Dropdown.Divider />}
+      {highlightedEntries.length !== 0 && otherEntries.length !== 0 && <hr />}
       {otherEntries.map((entry) => (
-        <ShopEntry key={entry[0].id} entry={entry} />
+        <ShopEntryView key={entry[0].id} entry={entry} />
       ))}
     </div>
   );
@@ -44,7 +52,8 @@ export const ShopEntries: React.VFC<{ stamp: Stamp; options: CardDisplayOptions 
 
 export const ShopEntriesDropdown: React.VFC<{ stamp: Stamp; options: CardDisplayOptions }> = (props) => {
   const stamp = props.stamp;
-  const color = stamp.shopItems.length !== 0 ? 'success' : 'secondary';
+  const shopEntries = useAppSelector(selectGroupedItemsForStamp(props.stamp));
+  const buttonColor = shopEntries.length !== 0 ? 'success' : 'secondary';
 
   const [isOpen, setOpen] = useState(false);
   const openPopup = useCallback(() => setOpen(true), []);
@@ -65,7 +74,7 @@ export const ShopEntriesDropdown: React.VFC<{ stamp: Stamp; options: CardDisplay
         onClick={openPopup}
         onMouseEnter={openPopup}
         onMouseLeave={closePopup}
-        variant={color}
+        variant={buttonColor}
         className="icon-with-text w-100"
       >
         <ShoppingBasket fontSize="small" /> <span className="ms-1">В магазин</span>
@@ -79,7 +88,7 @@ export const ShopEntriesDropdown: React.VFC<{ stamp: Stamp; options: CardDisplay
           style={styles.popper}
           {...attributes.popper}
         >
-          <ShopEntries stamp={stamp} options={props.options} />
+          <ShopEntriesView stamp={stamp} entries={shopEntries} options={props.options} />
         </PopperContainer>
       )}
     </>

@@ -13,7 +13,7 @@ export interface YearRangeSelectorProps {
   onChange?: (range: NumberRange) => void;
 }
 
-export const YearRangeSelector: React.VFC<YearRangeSelectorProps> = (props) => {
+export const YearRangeSelector: React.VFC<YearRangeSelectorProps> = React.memo((props) => {
   const onChange = (change: { start?: number | null; end?: number | null }) => {
     const range = {
       start: props.value.start,
@@ -46,4 +46,4 @@ export const YearRangeSelector: React.VFC<YearRangeSelectorProps> = (props) => {
       </FormRow>
     </div>
   );
-};
+});

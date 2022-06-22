@@ -1,7 +1,7 @@
 import MoreIcon from '@mui/icons-material/More';
-import { Stamp } from 'model';
 import React, { useCallback, useState } from 'react';
 import { usePopper } from 'react-popper';
+import { Stamp } from 'state/api/stamps';
 import { PopperContainer } from './PopperContainer';
 
 const StampTextInfo: React.VFC<{ stamp: Stamp }> = React.memo((props) => {

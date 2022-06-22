@@ -1,6 +1,7 @@
+import { Item } from 'state/api/shops';
+import { Stamp } from 'state/api/stamps';
 import _ from 'underscore';
 import { NumberRange } from './number-range';
-import { Shop, ShopItem } from './shops';
 
 export enum StampField {
   Id,
@@ -56,6 +57,7 @@ export class StampSort {
 }
 
 export const ANY = 'any';
+export type ShopRequirement = null | string[] | typeof ANY;
 
 export class SearchOptions {
   static Default = new SearchOptions(
@@ -71,16 +73,31 @@ export class SearchOptions {
     readonly value: NumberRange,
     readonly year: NumberRange,
     readonly category: string | null,
-    readonly presenceRequired: null | string[] | typeof ANY,
+    readonly presenceRequired: ShopRequirement,
     readonly contains: string,
     readonly sort: StampSort,
   ) {}
 
-  matches(s: Stamp): boolean {
+  applyChange(change: Partial<SearchOptions>): SearchOptions {
+    const coalesce = <T>(newV: T | undefined, oldV: T): T => (newV !== undefined ? newV : oldV);
+    return new SearchOptions(
+      coalesce(change.value, this.value),
+      coalesce(change.year, this.year),
+      coalesce(change.category, this.category),
+      coalesce(change.presenceRequired, this.presenceRequired),
+      coalesce(change.contains, this.contains),
+      coalesce(change.sort, this.sort),
+    );
+  }
+
+  matches(s: Stamp, shopItems: Item[]): boolean {
     return (
       this.year.contains(s.year) &&
       this.value.contains(s.value) &&
-      (!this.presenceRequired || s.isPresentInShop(this.presenceRequired)) &&
+      (!this.presenceRequired ||
+        (Array.isArray(this.presenceRequired) &&
+          _.any(shopItems, (item) => _.contains(this.presenceRequired || [], item.shopId))) ||
+        (this.presenceRequired === ANY && shopItems.length !== 0)) &&
       (this.category === null || s.categories.includes(this.category)) &&
       s.idNameAndSeries.indexOf(this.contains.toLowerCase()) >= 0
     );
@@ -159,56 +176,5 @@ export class SearchOptions {
       const endStr = range.end !== null ? '' + range.end : '';
       return startStr + '~' + endStr;
     }
-  }
-}
-
-export class Stamp {
-  readonly idNameAndSeries: string;
-  shopItems: ShopItem[];
-
-  constructor(
-    readonly id: number,
-    readonly page: URL,
-    readonly imageUrl: string | null,
-    readonly value: number | null,
-    readonly year: number | null,
-    readonly categories: Array<string>,
-    readonly series: string | null,
-    readonly name: string | null,
-  ) {
-    this.idNameAndSeries = (id + '|' + (name || '') + '|' + (series || '')).toLowerCase();
-    this.shopItems = [];
-  }
-
-  isPresentInShop(shop: string[] | typeof ANY): boolean {
-    if (shop === ANY) {
-      return this.shopItems.length !== 0;
-    }
-    return _.any(this.shopItems, (item) => _.contains(shop, item.shop.id));
-  }
-
-  itemsGroupedByShops(): [Shop, ShopItem[]][] {
-    const shopToItems = new Map<Shop, ShopItem[]>();
-    for (const item of this.shopItems) {
-      const shopItems = shopToItems.get(item.shop) ?? [];
-      shopItems.push(item);
-      shopToItems.set(item.shop, shopItems);
-    }
-    const shops = [...shopToItems.keys()];
-    _.sortBy(shops, (s) => s.displayName);
-    return shops.map((s) => [s, shopToItems.get(s)!]);
-  }
-
-  isSoldAnywhere(): boolean {
-    return this.shopItems.length !== 0;
-  }
-}
-
-export class StampDb {
-  constructor(readonly stamps: Array<Stamp>) {}
-
-  findStamps(searchOptions: SearchOptions): Array<Stamp> {
-    const filteredStamps = this.stamps.filter((s) => searchOptions.matches(s));
-    return searchOptions.sort.sort(filteredStamps);
   }
 }
