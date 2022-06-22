@@ -7,8 +7,8 @@ const ScrollToTopButtonContainer = styled.div`
   --button-size: 60px;
   --scrollbar-size: calc(100vw - 100%);
   position: fixed;
-  top: calc(100vh - var(--button-size) * 1.3);
-  left: calc(100vw - var(--button-size) * 1.3 - var(--scrollbar-size));
+  bottom: calc(var(--button-size) * 0.3);
+  right: calc(var(--button-size) * 0.3 + var(--scrollbar-size));
   width: var(--button-size);
   height: var(--button-size);
   background-color: black;
