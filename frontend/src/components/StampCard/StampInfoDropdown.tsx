@@ -1,8 +1,7 @@
 import MoreIcon from '@mui/icons-material/More';
-import React, { useCallback, useState } from 'react';
-import { usePopper } from 'react-popper';
+import React from 'react';
 import { Stamp } from 'state/api/stamps';
-import { PopperContainer } from './PopperContainer';
+import { useCloseablePopup } from './popup';
 
 const StampTextInfo: React.VFC<{ stamp: Stamp }> = React.memo((props) => {
   const s = props.stamp;
@@ -31,33 +30,13 @@ const StampTextInfo: React.VFC<{ stamp: Stamp }> = React.memo((props) => {
 });
 
 export const StampInfoDropdown: React.VFC<{ stamp: Stamp }> = (props) => {
-  const [isOpen, setOpen] = useState(false);
-  const openPopup = useCallback(() => setOpen(true), []);
-  const closePopup = useCallback(() => setOpen(false), []);
-
-  const [referenceElement, setReferenceElement] = useState<HTMLElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
-
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    modifiers: [],
-  });
+  const popup = useCloseablePopup(<StampTextInfo stamp={props.stamp} />);
   return (
-    <>
-      <div ref={setReferenceElement} onClick={openPopup} onMouseEnter={openPopup} onMouseLeave={closePopup}>
+    <div ref={popup.containerRef} {...popup.containerProps}>
+      <div ref={popup.setReferenceElement}>
         <MoreIcon fontSize="small" className="d-block" />
       </div>
-      {isOpen && (
-        <PopperContainer
-          ref={setPopperElement}
-          onBlur={closePopup}
-          onMouseEnter={openPopup}
-          onMouseLeave={closePopup}
-          style={styles.popper}
-          {...attributes.popper}
-        >
-          <StampTextInfo stamp={props.stamp} />
-        </PopperContainer>
-      )}
-    </>
+      {popup.elements}
+    </div>
   );
 };

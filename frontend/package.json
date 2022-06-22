@@ -25,7 +25,8 @@
     "redux": "^4.2.0",
     "styled-components": "^5.3.5",
     "underscore": "^1.13.2",
-    "use-debounce": "^8.0.1"
+    "use-debounce": "^8.0.1",
+    "use-onclickoutside": "^0.4.1"
   },
   "scripts": {
     "start": "webpack serve --config ./webpack.client.js --mode=development --open",

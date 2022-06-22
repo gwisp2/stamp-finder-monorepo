@@ -1,14 +1,13 @@
 import ShoppingBasket from '@mui/icons-material/ShoppingBasket';
-import React, { useCallback, useState } from 'react';
+import React from 'react';
 import { Button } from 'react-bootstrap';
-import { usePopper } from 'react-popper';
 import { selectGroupedItemsForStamp } from 'state/api.slice';
 import { Item, Shop } from 'state/api/shops';
 import { Stamp } from 'state/api/stamps';
 import { useAppSelector } from 'state/hooks';
 import _ from 'underscore';
 import { CardDisplayOptions } from './common';
-import { PopperContainer } from './PopperContainer';
+import { useCloseablePopup } from './popup';
 import './StampCard.css';
 
 type ShopEntry = [Shop, Item[]];
@@ -55,42 +54,21 @@ export const ShopEntriesDropdown: React.VFC<{ stamp: Stamp; options: CardDisplay
   const shopEntries = useAppSelector(selectGroupedItemsForStamp(props.stamp));
   const buttonColor = shopEntries.length !== 0 ? 'success' : 'secondary';
 
-  const [isOpen, setOpen] = useState(false);
-  const openPopup = useCallback(() => setOpen(true), []);
-  const closePopup = useCallback(() => setOpen(false), []);
-
-  const [referenceElement, setReferenceElement] = useState<HTMLElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
-
-  const { styles, attributes } = usePopper(referenceElement, popperElement);
+  const popup = useCloseablePopup(<ShopEntriesView stamp={stamp} entries={shopEntries} options={props.options} />);
 
   return (
-    <>
+    <div ref={popup.containerRef}>
       <Button
-        ref={setReferenceElement}
+        ref={popup.setReferenceElement}
         target="_blank"
         href={stamp.page.toString()}
-        onTouchStart={openPopup}
-        onClick={openPopup}
-        onMouseEnter={openPopup}
-        onMouseLeave={closePopup}
+        {...popup.containerProps}
         variant={buttonColor}
         className="icon-with-text w-100"
       >
         <ShoppingBasket fontSize="small" /> <span className="ms-1">В магазин</span>
       </Button>
-      {isOpen && (
-        <PopperContainer
-          ref={setPopperElement}
-          onBlur={closePopup}
-          onMouseEnter={openPopup}
-          onMouseLeave={closePopup}
-          style={styles.popper}
-          {...attributes.popper}
-        >
-          <ShopEntriesView stamp={stamp} entries={shopEntries} options={props.options} />
-        </PopperContainer>
-      )}
-    </>
+      {popup.elements}
+    </div>
   );
 };
