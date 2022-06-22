@@ -1,21 +1,18 @@
 import React, { useEffect } from 'react';
-import { Form, Modal } from 'react-bootstrap';
+import { Alert, Button, Form, Modal, Spinner } from 'react-bootstrap';
+import { useUpdateShopsMutation } from 'state/api.slice';
+import { ApiErrorAlert } from './ApiErrorAlert';
 
 export const ShopInfoUploadDialog: React.VFC<{ show: boolean; onUpload?: () => void; onHide?: () => void }> =
   React.memo((props) => {
     const [file, setFile] = React.useState<File | undefined>(undefined);
-    // const mutation = useShopUpload();
+    const [uploadFile, mutation] = useUpdateShopsMutation();
 
     useEffect(() => {
       // Reset on showing or hiding
       setFile(undefined);
+      mutation.reset();
     }, [props.show]);
-
-    // useEffect(() => {
-    //   if (mutation.isSuccess && props.onHide !== undefined) {
-    //     props.onHide();
-    //   }
-    // }, [mutation.isSuccess]);
 
     return (
       <Modal show={props.show} onHide={props.onHide}>
@@ -38,24 +35,25 @@ export const ShopInfoUploadDialog: React.VFC<{ show: boolean; onUpload?: () => v
               onChange={(e) => setFile((e.target as unknown as { files: File[] }).files[0])}
             />
           </Form.Group>
-
-          {/* {mutation.isError && <ApiErrorAlert error={mutation.error} />} */}
+          {mutation.isSuccess && <Alert variant="success">Данные обновлены</Alert>}
+          {mutation.isError && <ApiErrorAlert error={mutation.error} />}
         </Modal.Body>
-
-        {/* <Modal.Footer>
-        {mutation.isLoading && <Spinner animation="border" />}
-        <Button
-          variant="primary"
-          onClick={() => {
-            if (file !== undefined) {
-              mutation.mutate(file);
-            }
-          }}
-          disabled={file === undefined || mutation.isLoading}
-        >
-          Загрузить
-        </Button>
-      </Modal.Footer> */}
+        {
+          <Modal.Footer>
+            {mutation.isLoading && <Spinner animation="border" />}
+            <Button
+              variant="primary"
+              onClick={() => {
+                if (file !== undefined) {
+                  uploadFile(file);
+                }
+              }}
+              disabled={file === undefined || mutation.isLoading}
+            >
+              Загрузить
+            </Button>
+          </Modal.Footer>
+        }
       </Modal>
     );
   });

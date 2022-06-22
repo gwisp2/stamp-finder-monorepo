@@ -47,6 +47,6 @@ ARG GA_TAG
 RUN cd /app && REACT_APP_GA_ID=$GA_TAG npm run build:prod
 
 FROM nginx:1.21.6 AS frontend
-COPY --from=frontend-build /app/build-client /app/html
+COPY --from=frontend-build /app/build /app/html
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 RUN mkdir /app/data /app/ssr

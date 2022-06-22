@@ -1,6 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { BaseQueryFn, createApi, FetchArgs, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { SearchOptions } from 'model';
+import { createApiError, createUnknownError } from 'state/errors';
 import _ from 'underscore';
 import { decodeShops, Item, Shop, ShopsState } from './api/shops';
 import { decodeStamps, RawStamps, Stamp } from './api/stamps';
@@ -8,16 +9,57 @@ import { RootState } from './store';
 export type { ShopsState } from './api/shops';
 export type { StampsState } from './api/stamps';
 
+const baseQuery = fetchBaseQuery({ baseUrl: '/' });
+const baseQueryWithErrorDecoding: BaseQueryFn<string | FetchArgs, unknown, unknown> = async (
+  args,
+  api,
+  extraOptions,
+) => {
+  const result = await baseQuery(args, api, extraOptions);
+  if (
+    result.error &&
+    typeof result.error.data === 'object' &&
+    result.error.data !== null &&
+    'message' in result.error.data
+  ) {
+    const message = (result.error.data as { message: string }).message;
+    return { status: 'FETCH_ERROR', data: undefined, error: createApiError(message) };
+  } else if (result.error) {
+    console.log(result.error);
+    return {
+      status: 'FETCH_ERROR',
+      data: undefined,
+      error: createUnknownError(`HTTP ${result.meta?.response?.status}`),
+    };
+  } else {
+    return result;
+  }
+};
 const apiSlice = createApi({
-  baseQuery: fetchBaseQuery({ baseUrl: '/data' }),
+  baseQuery: baseQueryWithErrorDecoding,
+  tagTypes: ['shops'],
   endpoints: (builder) => ({
     getStamps: builder.query({
-      query: () => '/stamps.json',
+      query: () => '/data/stamps.json',
       transformResponse: (r: RawStamps) => decodeStamps('/data/', r),
     }),
     getShops: builder.query({
-      query: () => '/shops.json',
+      query: () => '/data/shops.json',
       transformResponse: decodeShops,
+      providesTags: ['shops'],
+    }),
+    updateShops: builder.mutation<undefined, File>({
+      query: (file: File) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        return {
+          url: 'https://sf.gwisp.dev/api/upload',
+          method: 'POST',
+          body: formData,
+        };
+      },
+      transformResponse: () => undefined,
+      invalidatesTags: ['shops'],
     }),
   }),
 });
@@ -47,5 +89,5 @@ export const selectStamps = createSelector(
   },
 );
 
-export const { useGetStampsQuery, useGetShopsQuery } = apiSlice;
+export const { useGetStampsQuery, useGetShopsQuery, useUpdateShopsMutation } = apiSlice;
 export default apiSlice;
