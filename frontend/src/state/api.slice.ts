@@ -1,10 +1,10 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { BaseQueryFn, createApi, FetchArgs, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { SearchOptions } from 'model';
-import { createApiError, createUnknownError } from 'state/errors';
 import _ from 'underscore';
 import { decodeShops, Item, Shop, ShopsState } from './api/shops';
 import { decodeStamps, RawStamps, Stamp } from './api/stamps';
+import { API_ERROR_STATUS, FETCH_ERROR_STATUS } from './errors';
 import { RootState } from './store';
 export type { ShopsState } from './api/shops';
 export type { StampsState } from './api/stamps';
@@ -22,15 +22,10 @@ const baseQueryWithErrorDecoding: BaseQueryFn<string | FetchArgs, unknown, unkno
     result.error.data !== null &&
     'message' in result.error.data
   ) {
-    const message = (result.error.data as { message: string }).message;
-    return { status: 'FETCH_ERROR', data: undefined, error: createApiError(message) };
+    const message = (result.error.data as { message?: string | null }).message;
+    return { error: { status: API_ERROR_STATUS, data: message?.toString() ?? '<?>' } };
   } else if (result.error) {
-    console.log(result.error);
-    return {
-      status: 'FETCH_ERROR',
-      data: undefined,
-      error: createUnknownError(`HTTP ${result.meta?.response?.status}`),
-    };
+    return { error: { status: FETCH_ERROR_STATUS, data: `HTTP ${result.meta?.response?.status}` } };
   } else {
     return result;
   }

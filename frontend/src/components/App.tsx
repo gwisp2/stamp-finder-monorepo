@@ -24,6 +24,7 @@ const App: React.VFC = () => {
   const stamps = useAppSelector((s) => selectStamps(s, searchOptions));
   const cardDisplayOptions = useMemo(() => ({}), []);
   const [afterOptionsDiv, setAfterOptionsDiv] = useState<HTMLDivElement | null>(null);
+
   return (
     <>
       <Container>

@@ -1,45 +1,26 @@
-export interface ApiError {
-  type: 'ApiError';
+export const API_ERROR_STATUS = 'API_ERROR';
+export const FETCH_ERROR_STATUS = 'FETCH_ERROR';
+
+export interface GenericError<S extends string> {
+  status: S;
   message: string;
 }
-
-export interface UnknownError {
-  type: 'UnknownError';
-  message: string;
-}
-
-export type ResultError = ApiError | UnknownError;
 
 export function formatError(err: unknown): string {
-  if (isApiError(err)) {
-    return err.message;
-  } else if (isUnknownError(err)) {
-    return `Неизвестная ошибка: ${err.message}`;
+  const unknownErrorMessage = 'Неизвестная ошибка';
+  if (typeof err !== 'object' || err === null) {
+    return unknownErrorMessage;
+  }
+
+  const status = (err as { status: unknown }).status;
+  const data = (err as { data: unknown }).data;
+  if (typeof data !== 'string' || typeof status !== 'string') {
+    return unknownErrorMessage;
+  }
+
+  if (status === API_ERROR_STATUS || status === FETCH_ERROR_STATUS) {
+    return data;
   } else {
     return 'Неизвестная ошибка';
   }
-}
-
-export function createApiError(message: string): ApiError {
-  return { type: 'ApiError', message: message };
-}
-
-export function isApiError(value: unknown): value is ApiError {
-  if (typeof value !== 'object' || value === null || !('type' in value)) {
-    return false;
-  }
-  const type = (value as { type: unknown }).type;
-  return type === 'ApiError';
-}
-
-export function createUnknownError(message: string): UnknownError {
-  return { type: 'UnknownError', message: message };
-}
-
-export function isUnknownError(value: unknown): value is UnknownError {
-  if (typeof value !== 'object' || value === null || !('type' in value)) {
-    return false;
-  }
-  const type = (value as { type: unknown }).type;
-  return type === 'UnknownError';
 }
