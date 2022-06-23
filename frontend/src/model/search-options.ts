@@ -139,12 +139,18 @@ export class SearchOptions {
     return (
       this.year.contains(s.year) &&
       this.value.contains(s.value) &&
-      (!this.presenceRequired ||
-        (Array.isArray(this.presenceRequired) &&
-          _.any(shopItems, (item) => _.contains(this.presenceRequired || [], item.shopId))) ||
-        (this.presenceRequired === ANY && shopItems.length !== 0)) &&
+      this.presenceMatches(shopItems) &&
       (this.category === null || s.categories.includes(this.category)) &&
-      s.idNameAndSeries.indexOf(this.contains.toLowerCase()) >= 0
+      (this.contains.length === 0 || s.idNameAndSeries.indexOf(this.contains.toLowerCase()) >= 0)
+    );
+  }
+
+  private presenceMatches(shopItems: Item[]): boolean {
+    return (
+      !this.presenceRequired ||
+      (Array.isArray(this.presenceRequired) &&
+        _.any(shopItems, (item) => _.contains(this.presenceRequired || [], item.shopId))) ||
+      (this.presenceRequired === ANY && shopItems.length !== 0)
     );
   }
 
