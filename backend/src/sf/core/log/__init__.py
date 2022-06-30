@@ -25,7 +25,7 @@ def info(message: str, *args: Any, **kwargs: Any) -> None:
 
 
 def warn(message: str, *args: Any, **kwargs: Any) -> None:
-    ImplementationStorage.get().log("WARN", message, *args, **kwargs)
+    ImplementationStorage.get().log("WARNING", message, *args, **kwargs)
 
 
 def error(message: str, *args: Any, **kwargs: Any) -> None:

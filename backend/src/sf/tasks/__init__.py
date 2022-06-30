@@ -5,6 +5,7 @@ from docopt import docopt
 
 from sf.tasks.task import Task, UnknownTask, UnknownTaskType
 from sf.tasks.task_images_build import TaskImagesBuild
+from sf.tasks.task_images_crop import TaskImagesCrop
 from sf.tasks.task_shops_join import TaskShopsJoin
 from sf.tasks.task_shops_parse_xls import TaskShopsParseXls
 from sf.tasks.task_shops_scrape import TaskShopsScrape
@@ -20,6 +21,7 @@ cli_tasks: List[UnknownTaskType] = [
     TaskStampsReformat,
     TaskStampsScrapeCategories,
     TaskStampsScrapeNew,
+    TaskImagesCrop,
 ]
 
 

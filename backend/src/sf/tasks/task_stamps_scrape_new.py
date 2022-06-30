@@ -3,10 +3,13 @@ import os
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+import cv2
+import numpy as np
 import requests
 from PIL import Image
 
 from sf.core import PositionPageParser, StampEntry, StampsJson, data_fetch, log
+from sf.core.stamp_cropper import crop_stamp
 from sf.tasks.task import Task
 from sf.tasks.task_stamps_scrape_categories import TaskStampsScrapeCategories
 
@@ -53,7 +56,16 @@ class TaskStampsScrapeNew(Task):
                         image = Image.open(
                             io.BytesIO(requests.get(stamp_info.image_url).content)
                         ).convert("RGB")
-                        image.save(os.path.join(self.db, image_path))
+                        open_cv_image = np.array(image)
+                        open_cv_image = open_cv_image[:, :, ::-1].copy()  # RGB -> BGR
+
+                        crop_result = crop_stamp(open_cv_image)
+                        for entry in crop_result.log_lines:
+                            log.info(f"=> {entry}")
+
+                        cv2.imwrite(
+                            os.path.join(self.db, image_path), crop_result.result
+                        )
                     else:
                         image_path = None
 
