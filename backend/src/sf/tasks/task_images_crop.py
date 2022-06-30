@@ -1,5 +1,5 @@
 from multiprocessing import Pool, cpu_count
-from pathlib import Path, PurePath
+from pathlib import Path
 from typing import Any, Dict
 
 import cv2

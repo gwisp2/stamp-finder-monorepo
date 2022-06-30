@@ -1,6 +1,6 @@
 from collections import deque
 from dataclasses import dataclass, field
-from typing import Literal, Union
+from typing import Literal, Union, List
 
 import cv2
 import numpy as np
@@ -10,7 +10,7 @@ import numpy as np
 class Window:
     start: int
     end: int
-    points: list[int]
+    points: List[int]
 
     def __post_init__(self):
         self.median = int(np.median(self.points))
@@ -36,7 +36,7 @@ class CropResult:
     result: Union[np.ndarray, None] = None
     crop_rect: Union[Rect, None] = None
 
-    log_lines: list[str] = field(default_factory=lambda: [])
+    log_lines: List[str] = field(default_factory=lambda: [])
     debug_img: np.ndarray = None
 
     def print_log(self):
@@ -54,7 +54,7 @@ class CropResult:
 # Returns
 #   list[Window] or list of Nones if desired amount of segments could not be found
 # Use-case: find lines with many circles that make up a border around a stamp
-def find_most_dense_windows(arr, window_size, num_windows):
+def find_most_dense_windows(arr, window_size, num_windows) -> Union[List[Window], List[None]]:
     if not arr:
         return [None] * num_windows
 
@@ -90,7 +90,7 @@ def find_most_dense_windows(arr, window_size, num_windows):
 
 
 def _crop_stamp(
-    source, frame_type: Literal["white", "black"], debug=False
+        source, frame_type: Literal["white", "black"], debug=False
 ) -> CropResult:
     result = CropResult(result=source)
 
@@ -155,7 +155,7 @@ def _crop_stamp(
         r
         for r in rects
         if np.abs(r.width - target_rect_w) <= rect_size_dev
-        and np.abs(r.height - target_rect_h) <= rect_size_dev
+           and np.abs(r.height - target_rect_h) <= rect_size_dev
     ]
 
     if debug:
@@ -171,9 +171,9 @@ def _crop_stamp(
     yw_1, yw_2 = find_most_dense_windows(cy, window_size=target_rect_h, num_windows=2)
 
     if (
-        xw_1 is None
-        or yw_1 is None
-        or any(w.num_points < 5 for w in [xw_1, xw_2, yw_1, yw_2])
+            xw_1 is None
+            or yw_1 is None
+            or any(w.num_points < 5 for w in [xw_1, xw_2, yw_1, yw_2])
     ):
         result.log(
             "Didn't manage to find 2 horizontal or vertical lines of at least 5 circles"
@@ -190,7 +190,7 @@ def _crop_stamp(
     result.crop_rect = Rect(
         min_x=min_x, min_y=min_y, width=max_x - min_x + 1, height=max_y - min_y + 1
     )
-    result.result = source[min_y : max_y + 1, min_x : max_x + 1]
+    result.result = source[min_y: max_y + 1, min_x: max_x + 1]
 
     if debug:
         cv2.rectangle(debug_img, (min_x, min_y), (max_x, max_y), (111, 10, 131), 1)
