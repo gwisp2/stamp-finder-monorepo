@@ -31,7 +31,7 @@ export const StampSearchOptionsSelector: React.VFC<Props> = React.memo((props) =
   const { minYear, maxYear, categories } = useStampsStats();
   const onChange = (change: Partial<SearchOptions>) => props.onChange(props.options.applyChange(change));
   const onOptionChangeCallback = <T extends keyof SearchOptions>(optionName: T) =>
-    useCallback((v: SearchOptions[T]) => onChange({ [optionName]: v }), [props.onChange]);
+    useCallback((v: SearchOptions[T]) => onChange({ [optionName]: v }), [props.onChange, props.options]);
   return (
     <div>
       <StampValueChooser
