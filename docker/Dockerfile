@@ -14,6 +14,7 @@ RUN useradd -M -u 1042 sf && mkdir -p /app/data/internal /app/data/public && cho
 # Backend requirements
 ENV PYTHONPATH=/app/backend/src
 COPY backend/requirements.txt backend/requirements.txt
+RUN apt-get update && apt-get install -y ffmpeg libsm6 libxext6 && apt-get clean
 RUN pip3 install -r backend/requirements.txt && pip install uwsgi
 
 # Backend files
