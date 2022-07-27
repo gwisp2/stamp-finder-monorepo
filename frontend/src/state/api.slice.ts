@@ -39,11 +39,17 @@ const apiSlice = createApi({
   tagTypes: ['shops'],
   endpoints: (builder) => ({
     getStamps: builder.query({
-      query: () => `${dataBaseUrl}/stamps.json`,
+      query: () => ({
+        url: `${dataBaseUrl}/stamps.json`,
+        cache: 'no-cache',
+      }),
       transformResponse: (r: RawStamps) => decodeStamps('/data/', r),
     }),
     getShops: builder.query({
-      query: () => `${dataBaseUrl}/shops.json`,
+      query: () => ({
+        url: `${dataBaseUrl}/shops.json`,
+        cache: 'no-cache',
+      }),
       transformResponse: decodeShops,
       providesTags: ['shops'],
     }),
