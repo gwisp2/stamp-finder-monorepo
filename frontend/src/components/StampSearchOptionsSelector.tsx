@@ -25,7 +25,7 @@ const useStampsStats = () => {
   }, _.isEqual);
 };
 
-const ShortcutValues = [18, 62];
+const ShortcutValues = [19, 62];
 
 export const StampSearchOptionsSelector: React.VFC<Props> = React.memo((props) => {
   const { minYear, maxYear, categories } = useStampsStats();
