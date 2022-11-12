@@ -214,7 +214,7 @@ class PositionPageParser:
                         typ = cells[1]
                         price = cells[2]
                         if price:
-                            price = price.replace("\xa0", " ").replace(",", ".")
+                            price = price.strip().replace("\xa0", " ").replace(",", ".")
                         if price and price.endswith("руб."):
                             price = Decimal(price[:-4].strip())
                         elif price is None:
