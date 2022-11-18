@@ -27,8 +27,8 @@ class BuyOffer(BaseModel):
             rows = tbody.find_all("tr")
             last_art = None
             for row in rows:
-                cells = [td.text for td in row.find_all("td")]
-                cells = [c if c != "\xa0" else None for c in cells]
+                cells = [td.text.strip() for td in row.find_all("td")]
+                cells = [c if c != "" else None for c in cells]
                 art_cell = cells[0]
                 art = art_cell or last_art
                 last_art = art
