@@ -153,6 +153,26 @@ expected_values_dict: Dict[str, List[StampBaseInfo]] = {
             present=True,
         )
     ],
+    "40949.html": [
+        StampBaseInfo(
+            id=2988,
+            image_url="https://rusmarka.ru//files/sitedata/401/1439/8fb96e7d-d12d-423a-8d9e-4331357eb4b5.jpg",
+            value=Decimal("65.00"),
+            year=2022,
+            series="Курорты Северного Кавказа",
+            name="Курорт «Архыз»",
+            present=True,
+        ),
+        StampBaseInfo(
+            id=2989,
+            image_url="https://rusmarka.ru//files/sitedata/401/1439/286a795e-75b7-4154-a4bc-8189fc6a3d4e.jpg",
+            value=Decimal("65.00"),
+            year=2022,
+            series="Курорты Северного Кавказа",
+            name="Курорт «Эльбрус»",
+            present=True,
+        ),
+    ],
 }
 page_name_list = [k for k, v in expected_values_dict.items()]
 

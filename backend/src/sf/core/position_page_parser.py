@@ -206,8 +206,8 @@ class PositionPageParser:
                     rows: List[Tag] = tbody.find_all("tr")
                     last_art = None
                     for row in rows:
-                        cells = [td.text for td in row.find_all("td")]
-                        cells = [c if c != "\xa0" else None for c in cells]
+                        cells = [td.text.strip() for td in row.find_all("td")]
+                        cells = [c if c != "" else None for c in cells]
                         art_cell = cells[0]
                         art = art_cell or last_art
                         last_art = art
@@ -220,7 +220,7 @@ class PositionPageParser:
                         elif price is None:
                             price = None
                         else:
-                            raise ParseException(f"Can't parse price: '{price}'")
+                            raise ParseException(f"Can't parse price: '{price}' (cells are {cells})")
                         if art is not None and typ is not None and price is not None:
                             range_art_match = re.search(r"(\d+)-(\d+)", art)
                             single_art_match = re.search(r"(\d+)", art)
