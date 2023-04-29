@@ -1,52 +1,85 @@
-import { useSfDatabase } from 'api/SfDatabase';
-import { AmountFoundMessage } from 'components/AmountFoundMessage';
-import { AppNavbar } from 'components/AppNavbar';
-import React, { useCallback, useMemo, useState } from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { SearchOptions } from '../model/SearchOptions';
-import { ScrollToTopButton } from './ScrollToTopButton';
+import { RestartAlt } from '@mui/icons-material';
+import { Box, InputLabel, Typography } from '@mui/material';
+import Button from '@mui/material/Button';
+import { Stamp, useSfDatabase } from 'api/SfDatabase';
+import plural from 'plural-ru';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { useLatest } from 'react-use';
+import { FixedSizeGrid } from 'react-window';
+import { SearchOptions } from '../model';
+import { AppLayout } from './AppLayout';
+import { createFormDataFromSearchOptions, SearchOptionsForm, useSearchOptionsForm } from './SearchOptionsForm';
+import { ShareUrlButton } from './ShareUrlButton';
 import { StampList } from './StampList';
-import { StampSearchOptionsSelector } from './StampSearchOptionsSelector';
+
+function generateUrl(searchOptions: SearchOptions): string {
+  const loc = document.location;
+  return loc.protocol + '//' + loc.host + loc.pathname + '?' + searchOptions.toUrlSearchString();
+}
 
 const App: React.FC = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
+  const initialOptions = useMemo(() => SearchOptions.fromUrlParams(new URLSearchParams(document.location.search)), []);
 
-  const handleSearch = useCallback((newOptions: SearchOptions) => {
-    const params = newOptions.toUrlParams();
-    navigate('/search?' + params.toString());
-    window.scrollTo(0, 0);
+  // Scrolling
+  const stampsGridRef = useRef<FixedSizeGrid<Stamp[]>>(null);
+
+  // Search options
+  const db = useSfDatabase();
+  const searchOptionsForm = useSearchOptionsForm(db, initialOptions);
+  const [searchOptions, setSearchOptions] = useState(initialOptions);
+  const latestSearchOptions = useLatest(searchOptions);
+  const handleSearchOptions = useCallback((searchOptions: SearchOptions) => {
+    window.history.replaceState(null, '', generateUrl(searchOptions));
+    setSearchOptions(searchOptions);
+    stampsGridRef.current?.scrollTo({ scrollTop: 0 });
   }, []);
+  const handleReset = useCallback(() => {
+    searchOptionsForm.reset(createFormDataFromSearchOptions(db, SearchOptions.Default), {});
+  }, [db]);
 
-  const searchOptions = SearchOptions.fromUrlSearchString(location.search);
+  // Filter list of stamps
   const stamps = searchOptions.filterAndSort(useSfDatabase().stamps);
-  const cardDisplayOptions = useMemo(() => ({}), []);
-  const [afterOptionsDiv, setAfterOptionsDiv] = useState<HTMLDivElement | null>(null);
 
-  return (
-    <>
-      <Container>
-        <AppNavbar />
-        <Row>
-          <Col xl={4} xxl={3} className="search-options-column mb-3">
-            <div className="search-options-container position-sticky bg-light p-2 rounded border shadow-sm border-secondary">
-              <StampSearchOptionsSelector
-                options={searchOptions}
-                onChange={handleSearch}
-                bottomInfo={<AmountFoundMessage amount={stamps.length} />}
-              ></StampSearchOptionsSelector>
-            </div>
-            <div ref={setAfterOptionsDiv} style={{ height: '1px' }}></div>
-          </Col>
-          <Col xl={8} xxl={9}>
-            <StampList stamps={stamps} options={cardDisplayOptions} />
-          </Col>
-        </Row>
-      </Container>
-      {afterOptionsDiv && <ScrollToTopButton target={afterOptionsDiv} />}
-    </>
+  // Rendering
+  const drawerContent = (
+    <Box height="100%" display="flex" flexDirection="column">
+      <SearchOptionsForm db={db} handle={searchOptionsForm} onChange={handleSearchOptions} />
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <InputLabel component="div">
+          {`По запросу ${plural(stamps.length, 'найдена', 'найдено', 'найдено')} ${stamps.length} ${plural(
+            stamps.length,
+            'марка',
+            'марки',
+            'марок',
+          )}`}
+          .
+        </InputLabel>
+      </Box>
+      <Box flexBasis={1} flexGrow={1} maxHeight="100%"></Box>
+      <Box display="flex" justifyContent="end" gap={1}>
+        <ShareUrlButton
+          makeShareData={useCallback(
+            () => ({
+              title: 'Поиск марок',
+              url: generateUrl(latestSearchOptions.current),
+            }),
+            [],
+          )}
+        />
+        <Button variant="outlined" onClick={handleReset} startIcon={<RestartAlt />}>
+          Сбросить
+        </Button>
+      </Box>
+    </Box>
   );
+
+  const mainContent = <StampList innerRef={stampsGridRef} stamps={stamps} />;
+  const mainTitle = (
+    <Typography variant="h6" paddingTop="4px" component="div">
+      Stamp Finder
+    </Typography>
+  );
+  return <AppLayout drawerContent={drawerContent} mainContent={mainContent} mainTitle={mainTitle} />;
 };
 
 export default App;

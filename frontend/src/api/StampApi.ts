@@ -1,35 +1,21 @@
 import React from 'react';
-import { Config } from './ConfigLoader';
 import { ApiError, fetchJsonFromSources } from './fetch-helper';
 import { RawShops } from './RawShops';
 import { RawStamps } from './RawStamps';
 import { SfDatabase } from './SfDatabase';
 
 export class StampApi {
-  constructor(private config: Config) {}
+  stampsSources: string[];
+  shopsSources: string[];
 
-  async uploadShopDataFile(file: File): Promise<void> {
-    try {
-      const data = new FormData();
-      data.append('file', file);
-      const result = await fetch(this.config.api.upload, {
-        method: 'POST',
-        body: data,
-      });
-      if (!result.ok) {
-        const errMessage = await result
-          .json()
-          .then((result) => result.message)
-          .catch(() => `Error fetching ${result.url}\nResponse status: ${result.status} ${result.statusText}`);
-        throw new ApiError(errMessage);
-      }
-    } catch (err) {
-      throw ApiError.wrap(err);
-    }
+  constructor() {
+    this.stampsSources = process.env.SF_STAMPS_DATA_URL.split(';');
+    this.shopsSources = process.env.SF_SHOPS_DATA_URL.split(';');
   }
 
   async loadDatabase(): Promise<SfDatabase> {
     try {
+      console.log('Loading database');
       const stamps = await this.loadStamps();
       const shops = await this.loadShops();
       return new SfDatabase(stamps, shops);
@@ -39,7 +25,7 @@ export class StampApi {
   }
 
   private async loadStamps(): Promise<RawStamps> {
-    const result = await fetchJsonFromSources(this.config.sources.stamps);
+    const result = await fetchJsonFromSources(this.stampsSources);
     return {
       baseUrl: result.url.replace(/[^/]*$/, ''),
       stamps: result.content,
@@ -47,7 +33,7 @@ export class StampApi {
   }
 
   private async loadShops(): Promise<RawShops> {
-    return (await fetchJsonFromSources(this.config.sources.shops)).content;
+    return (await fetchJsonFromSources(this.shopsSources)).content;
   }
 }
 

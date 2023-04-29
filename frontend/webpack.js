@@ -1,14 +1,14 @@
 const path = require('path');
 
+const Dotenv = require('dotenv-webpack');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const ESLintPlugin = require('eslint-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = (_env, argv) => {
   return {
-    entry: './src/entrypoint.tsx',
+    entry: './src/index.tsx',
     output: {
       path: path.resolve(__dirname, 'build'),
       assetModuleFilename: 'static/media/[name].[contenthash][ext][query]',
@@ -57,8 +57,12 @@ module.exports = (_env, argv) => {
       },
     },
     plugins: [
+      new Dotenv({
+        path: './.env',
+        allowEmptyValues: true, // allow empty variables (e.g. `FOO=`) (treat it as empty string, rather than missing)
+        defaults: true, // load '.env.defaults' as the default values if empty.
+      }),
       new ForkTsCheckerWebpackPlugin(),
-      new ESLintPlugin({ extensions: ['ts', 'tsx'] }),
       new MiniCssExtractPlugin({
         filename: 'static/css/[name].[contenthash].css',
       }),

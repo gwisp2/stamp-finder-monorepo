@@ -33,7 +33,7 @@ export class SortOrder {
   static Asc = new SortOrder('asc');
   static Desc = new SortOrder('desc');
 
-  private constructor(public readonly id: string) {}
+  private constructor(public readonly id: 'asc' | 'desc') {}
 
   reverse() {
     return this === SortOrder.Asc ? SortOrder.Desc : SortOrder.Asc;
@@ -58,12 +58,8 @@ export class SortOrder {
 export class StampSort {
   constructor(readonly field: StampField, readonly order: SortOrder) {}
 
-  applyChange(partial: Partial<StampSort>) {
-    return new StampSort(partial.field ?? this.field, partial.order ?? this.order);
-  }
-
   toString(): string {
-    return `${this.field} ${this.order}`;
+    return `${this.field}-${this.order}`;
   }
 
   static fromString(str: string): StampSort {
@@ -71,10 +67,6 @@ export class StampSort {
     const field = sortParts[0];
     const order = sortParts[1];
     return new StampSort(StampField.fromString(field), SortOrder.fromString(order));
-  }
-
-  sort(arr: Stamp[]): Stamp[] {
-    return arr.sort(this.compare.bind(this));
   }
 
   compare(a: Stamp, b: Stamp): number {
@@ -101,38 +93,27 @@ export class StampSort {
 }
 
 export const ANY = 'any';
-export type ShopRequirement = null | string[] | typeof ANY;
+export type ShopRequirement = string[] | typeof ANY;
 
 export class SearchOptions {
   static Default = new SearchOptions(
     new NumberRange(null, null),
     new NumberRange(1998, null),
     null,
-    null,
+    [],
     '',
     new StampSort(StampField.Id, SortOrder.Desc),
   );
+  static DefaultAsStringMap = SearchOptions.Default.asStringMap();
 
   constructor(
     readonly value: NumberRange,
     readonly year: NumberRange,
     readonly category: string | null,
-    readonly presenceRequired: ShopRequirement,
+    readonly availabilityRequired: ShopRequirement,
     readonly contains: string,
     readonly sort: StampSort,
   ) {}
-
-  applyChange(change: Partial<SearchOptions>): SearchOptions {
-    const coalesce = <T>(newV: T | undefined, oldV: T): T => (newV !== undefined ? newV : oldV);
-    return new SearchOptions(
-      coalesce(change.value, this.value),
-      coalesce(change.year, this.year),
-      coalesce(change.category, this.category),
-      coalesce(change.presenceRequired, this.presenceRequired),
-      coalesce(change.contains, this.contains),
-      coalesce(change.sort, this.sort),
-    );
-  }
 
   filterAndSort(stamps: Stamp[]): Stamp[] {
     return stamps.filter((s) => this.matches(s)).sort((a, b) => this.sort.compare(a, b));
@@ -142,95 +123,68 @@ export class SearchOptions {
     return (
       this.year.contains(s.year) &&
       this.value.contains(s.value) &&
-      this.presenceMatches(s.shopItems) &&
+      this.availabilityMatches(s.shopItems) &&
       (this.category === null || s.categories.includes(this.category)) &&
       (this.contains.length === 0 || s.idNameAndSeries.indexOf(this.contains.toLowerCase()) >= 0)
     );
   }
 
-  private presenceMatches(shopItems: Item[]): boolean {
-    return (
-      !this.presenceRequired ||
-      (Array.isArray(this.presenceRequired) &&
-        _.some(shopItems, (item) => _.includes(this.presenceRequired || [], item.shop.id))) ||
-      (this.presenceRequired === ANY && shopItems.length !== 0)
-    );
+  private availabilityMatches(shopItems: Item[]): boolean {
+    if (this.availabilityRequired === ANY) {
+      return shopItems.length !== 0;
+    } else if (this.availabilityRequired.length === 0) {
+      return true;
+    } else {
+      return _.some(shopItems, (item) => _.includes(this.availabilityRequired || [], item.shop.id));
+    }
   }
 
   static fromUrlParams(params: URLSearchParams): SearchOptions {
-    const valueStr = params.get('value');
-    const yearStr = params.get('year');
-    const categoryStr = params.get('category');
-    const containsStr = params.get('contains');
-    const presentStr = params.get('present');
-    const sortStr = params.get('sort');
-    const value = valueStr !== null ? SearchOptions.fromUrlParam(valueStr) : SearchOptions.Default.value;
-    const year = yearStr !== null ? SearchOptions.fromUrlParam(yearStr) : SearchOptions.Default.year;
-    const category =
-      categoryStr !== null ? (categoryStr !== '<null>' ? categoryStr : null) : SearchOptions.Default.category;
-    const present =
-      presentStr !== null ? SearchOptions.stringListfromUrlParam(presentStr) : SearchOptions.Default.presenceRequired;
-    const sort = sortStr !== null ? StampSort.fromString(sortStr) : SearchOptions.Default.sort;
-    return new SearchOptions(value, year, category, present, containsStr || '', sort);
+    const stringMap = _.clone(this.DefaultAsStringMap);
+    for (const [k, v] of params.entries()) {
+      stringMap[k] = v;
+    }
+    return new SearchOptions(
+      NumberRange.fromString(stringMap['value']),
+      NumberRange.fromString(stringMap['year']),
+      stringMap['category'] ? stringMap['category'] : null,
+      SearchOptions.parseListOfShopsFromString(stringMap['available']),
+      stringMap['contains'],
+      StampSort.fromString(stringMap['sort']),
+    );
   }
 
-  static fromUrlSearchString(str: string): SearchOptions {
-    return SearchOptions.fromUrlParams(new URLSearchParams(str));
-  }
-
-  private static stringListfromUrlParam(p: string): string[] | typeof ANY {
-    if (p == ANY) {
+  private static parseListOfShopsFromString(str: string): string[] | typeof ANY {
+    if (str === ANY) {
       return ANY;
+    } else if (!str) {
+      return [];
     }
-    return p.split(',');
+    return str.split(',');
   }
 
-  private static fromUrlParam(p: string): NumberRange {
-    const parts = p.split('~');
-    if (parts.length === 1) {
-      return NumberRange.exact(parts[0] !== '' ? Number(parts[0]) : null);
-    } else {
-      const start = parts[0] !== '' ? Number(parts[0]) : null;
-      const end = parts[1] !== '' ? Number(parts[1]) : null;
-      return NumberRange.between(start, end);
-    }
+  asStringMap(): Record<string, string> {
+    return {
+      value: this.value.toString(),
+      year: this.year.toString(),
+      category: this.category ?? '',
+      available: this.availabilityRequired === ANY ? ANY : this.availabilityRequired.join(','),
+      sort: this.sort.toString(),
+      contains: this.contains,
+    };
   }
 
   toUrlParams(): URLSearchParams {
     const params = new URLSearchParams();
-    if (!_.isEqual(SearchOptions.Default.value, this.value)) {
-      params.set('value', SearchOptions.toUrlParam(this.value));
-    }
-    if (!_.isEqual(SearchOptions.Default.year, this.year)) {
-      params.set('year', SearchOptions.toUrlParam(this.year));
-    }
-    if (this.category !== SearchOptions.Default.category) {
-      params.set('category', this.category ?? '<null>');
-    }
-    if (this.presenceRequired !== null && this.presenceRequired.length !== 0) {
-      const v = this.presenceRequired === ANY ? ANY : this.presenceRequired.join(',');
-      params.set('present', v);
-    }
-    if (!_.isEqual(this.sort, SearchOptions.Default.sort)) {
-      params.set('sort', this.sort.field + '-' + this.sort.order);
-    }
-    if (!_.isEqual(this.contains, SearchOptions.Default.contains)) {
-      params.set('contains', this.contains);
+    for (const [k, v] of Object.entries(this.asStringMap())) {
+      if (!_.isEqual(SearchOptions.DefaultAsStringMap[k], v)) {
+        params.set(k, v);
+      }
     }
     return params;
   }
 
   toUrlSearchString(): string {
     return this.toUrlParams().toString();
-  }
-
-  private static toUrlParam(range: NumberRange): string {
-    if (range.exact) {
-      return range.start !== null ? '' + range.start : '';
-    } else {
-      const startStr = range.start !== null ? '' + range.start : '';
-      const endStr = range.end !== null ? '' + range.end : '';
-      return startStr + '~' + endStr;
-    }
   }
 }

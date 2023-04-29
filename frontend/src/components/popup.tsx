@@ -1,16 +1,7 @@
+import { Box } from '@mui/material';
 import { ReactNode, useCallback, useRef, useState } from 'react';
 import { usePopper } from 'react-popper';
-import styled from 'styled-components';
 import useOnClickOutside from 'use-onclickoutside';
-
-export const PopperContainer = styled.div`
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-  border-radius: 5px;
-  background-color: white;
-  padding: 5px;
-  font-size: 14px;
-  z-index: 10;
-`;
 
 export const useCloseablePopup = (children: ReactNode) => {
   const [isOpen, setOpen] = useState(false);
@@ -25,9 +16,18 @@ export const useCloseablePopup = (children: ReactNode) => {
   const { styles, attributes } = usePopper(referenceElement, popperElement);
 
   const elements = isOpen ? (
-    <PopperContainer ref={setPopperElement} style={styles.popper} {...attributes.popper}>
+    <Box
+      ref={setPopperElement}
+      style={styles.popper}
+      {...attributes.popper}
+      padding={1}
+      boxShadow="0 0 5px rgba(0, 0, 0, 0.3)"
+      borderRadius="5px"
+      zIndex={10}
+      bgcolor="white"
+    >
       {children}
-    </PopperContainer>
+    </Box>
   ) : (
     <></>
   );

@@ -1,89 +1,117 @@
-import { FormRow } from 'components/Form';
-import { NumberRange, parseNumber, toString } from 'model';
-import React, { useEffect, useState } from 'react';
-import { Form } from 'react-bootstrap';
-import { Selector } from './Selector';
+import { Box, InputAdornment, InputLabel } from '@mui/material';
+import { parseNumberFromInput } from 'model';
+import React, { useEffect } from 'react';
+import { FieldPathByValue, FieldValues, useWatch } from 'react-hook-form';
+import { FormHandle } from './FormHandle';
+import { RangeShortcut, RangeShortcutsDropdown } from './RangeShortcutsDropdown';
+import { RHFOutlinedInput, RHFSwitch } from './react-hook-form-mui';
+import { setFormValue, typedMemo } from './utilities';
 
-export interface RangeSelectorProps {
-  className?: string;
+export interface RangeSelectorProps<TFormData extends FieldValues> {
+  formHandle: FormHandle<TFormData>;
+  isExactPath: FieldPathByValue<TFormData, boolean>;
+  startPath: FieldPathByValue<TFormData, string>;
+  endPath: FieldPathByValue<TFormData, string>;
+
+  lowerBound?: number;
+  upperBound?: number;
+  unit?: string;
+
+  shortcuts?: RangeShortcut[];
   label?: React.ReactNode;
-  value: NumberRange;
-  onChange?: (range: NumberRange) => void;
 }
 
-const coalesce = <T,>(x: T | undefined, defaultValue: T): T => {
-  return x !== undefined ? x : defaultValue;
-};
+interface RangePointInputProps<TFormData extends FieldValues> {
+  startAdornmentText?: string;
+  endAdornmentText?: string;
+  formHandle: FormHandle<TFormData>;
+  edgePath: FieldPathByValue<TFormData, string>;
+  lowerBound?: number | null;
+  upperBound?: number | null;
+}
 
-export const RangeSelector: React.FC<RangeSelectorProps> = React.memo((props) => {
-  const [startStr, setStartStr] = useState(toString(props.value.start));
-  const [endStr, setEndStr] = useState(toString(props.value.end));
-
-  // Update start & end string on external change
-  useEffect(() => {
-    const prevStart = parseNumber(startStr);
-    const prevEnd = parseNumber(endStr);
-    if (prevStart !== props.value.start) {
-      setStartStr(toString(props.value.start));
-    }
-    if (prevEnd !== props.value.end) {
-      setEndStr(toString(props.value.end));
-    }
-  }, [props.value]);
-
-  const update = (change: { start?: string; end?: string; exact?: boolean }) => {
-    // Update start/end strings
-    const newStart = coalesce(change.start, toString(props.value.start));
-    const newEnd = coalesce(change.end, toString(props.value.end));
-    const newExact = change.exact ?? props.value.exact;
-    setStartStr(newStart);
-    setEndStr(newEnd);
-
-    // Parse those strings to numbers
-    const newStartNumber = parseNumber(newStart);
-    const newEndNumber = parseNumber(newEnd);
-    if (props.onChange !== undefined) {
-      const newRange = newExact ? NumberRange.exact(newStartNumber) : NumberRange.between(newStartNumber, newEndNumber);
-      props.onChange(newRange);
-    }
-  };
-
+const RangePointInput = typedMemo(function RangePointInput<TFormData extends FieldValues>(
+  props: RangePointInputProps<TFormData>,
+) {
   return (
-    <div className={props.className}>
-      <FormRow className="mb-2">
-        {props.label}
-        <Selector
-          size="sm"
-          className="ms-2"
-          options={[true, false]}
-          selected={props.value.exact}
-          renderer={(v) => (v ? 'Ровно' : 'Между')}
-          onSelect={(v) => update({ exact: v })}
-        />
-      </FormRow>
-      {!props.value.exact ? (
-        <FormRow>
-          <Form.Label className="me-1">От: </Form.Label>
-          <Form.Control
-            name="startStr"
-            type="number"
-            value={startStr}
-            onChange={(e) => update({ start: e.target.value })}
-          />
-          <Form.Label className="me-1 ms-1">До: </Form.Label>
-          <Form.Control name="endStr" type="number" value={endStr} onChange={(e) => update({ end: e.target.value })} />
-        </FormRow>
-      ) : (
-        <FormRow>
-          <Form.Control
-            name="exactStr"
-            type="number"
-            value={startStr}
-            onChange={(e) => update({ start: e.target.value })}
-          />
-        </FormRow>
-      )}
-    </div>
+    <RHFOutlinedInput
+      handle={props.formHandle}
+      path={props.edgePath}
+      inputMode="numeric"
+      pattern="[0-9]*"
+      startAdornment={
+        props.startAdornmentText ? <InputAdornment position="start">{props.startAdornmentText}</InputAdornment> : null
+      }
+      endAdornment={
+        props.endAdornmentText ? <InputAdornment position="end">{props.endAdornmentText}</InputAdornment> : null
+      }
+    />
   );
 });
-RangeSelector.displayName = 'RangeSelector';
+
+export const RangeSelector = typedMemo(function RangeSelector<TFormData extends FieldValues>(
+  props: RangeSelectorProps<TFormData>,
+) {
+  // Extract some props
+  const formHandle = props.formHandle;
+  // Handle changes: trigger other fields so that validation errors are shown all fields
+  const isExact: boolean = useWatch({ control: formHandle.control, name: props.isExactPath });
+  const startValue = parseNumberFromInput(useWatch({ control: formHandle.control, name: props.startPath }));
+  const endValue = parseNumberFromInput(useWatch({ control: formHandle.control, name: props.endPath }));
+  useEffect(() => {
+    formHandle.trigger(props.startPath);
+    formHandle.trigger(props.endPath);
+  }, [startValue, endValue, isExact]);
+
+  return (
+    <>
+      <Box display="flex" justifyContent="space-between">
+        <div>
+          <InputLabel>{props.label}</InputLabel>
+        </div>
+        <Box display="flex">
+          <RHFSwitch handle={formHandle} path={props.isExactPath} />
+          {props.shortcuts && (
+            <RangeShortcutsDropdown
+              unit={props.unit}
+              shortcuts={props.shortcuts}
+              onSelect={(range) => {
+                const values = range.toFormValuesWithSwitch();
+                setFormValue(formHandle, props.startPath, values.min);
+                setFormValue(formHandle, props.endPath, values.max);
+                if (!values.isExact) {
+                  setFormValue(formHandle, props.isExactPath, false);
+                }
+              }}
+            />
+          )}
+        </Box>
+      </Box>
+      {!isExact ? (
+        <Box sx={{ display: 'flex', gap: '1em' }}>
+          <RangePointInput
+            formHandle={formHandle}
+            edgePath={props.startPath}
+            startAdornmentText="от"
+            endAdornmentText={props.unit}
+          />
+          <RangePointInput
+            formHandle={formHandle}
+            edgePath={props.endPath}
+            startAdornmentText="до"
+            endAdornmentText={props.unit}
+          />
+        </Box>
+      ) : (
+        <RangePointInput
+          formHandle={formHandle}
+          edgePath={props.startPath}
+          lowerBound={props.lowerBound}
+          upperBound={props.upperBound}
+          startAdornmentText="ровно"
+          endAdornmentText={props.unit}
+        />
+      )}
+    </>
+  );
+});

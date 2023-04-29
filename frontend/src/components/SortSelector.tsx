@@ -1,41 +1,40 @@
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import { SortOrder, StampField, StampSort } from 'model';
-import React from 'react';
-import { Button, Form } from 'react-bootstrap';
-import { FormRow } from './Form';
-import { Selector } from './Selector';
+import { Box, IconButton } from '@mui/material';
+import { StampField } from 'model';
+import { FieldPathByValue, FieldValues, useController } from 'react-hook-form';
+import { FormHandle } from './FormHandle';
+import { RHFSelect } from './react-hook-form-mui';
 
-const SortOrderSelector: React.FC<{ value: SortOrder; onChange: (_: SortOrder) => void }> = (props) => {
-  const ArrowComponent = props.value === SortOrder.Asc ? ArrowUpwardIcon : ArrowDownwardIcon;
-  return (
-    <Button variant="none" size="sm" onClick={() => props.onChange(props.value.reverse())}>
-      <ArrowComponent />
-    </Button>
-  );
-};
+export interface SortSelectorProps<TFormData extends FieldValues> {
+  formHandle: FormHandle<TFormData>;
+  fieldIdPath: FieldPathByValue<TFormData, string>;
+  directionPath: FieldPathByValue<TFormData, 'asc' | 'desc'>;
+}
 
-export const SortSelector: React.FC<{
-  className?: string;
-  label: string;
-  value: StampSort;
-  onChange: (sort: StampSort) => void;
-}> = React.memo((props) => {
-  const onChange = (change: Partial<StampSort>) => props.onChange(props.value.applyChange(change));
+export function SortSelector<TFormData extends FieldValues>(props: SortSelectorProps<TFormData>) {
+  const dirController = useController({
+    control: props.formHandle.control,
+    name: props.directionPath,
+  });
+  const flippedDirection = dirController.field.value === 'asc' ? 'desc' : 'asc';
+  const ArrowComponent = dirController.field.value === 'asc' ? ArrowUpwardIcon : ArrowDownwardIcon;
+  const allFieldValues = StampField.AllValues.map((field) => ({
+    value: field.id,
+    label: field.displayName,
+  }));
   return (
-    <>
-      <Form.Label>{props.label}</Form.Label>
-      <FormRow className={props.className}>
-        <Selector
-          eq="deep"
-          selected={props.value.field}
-          renderer={(field) => field.displayName}
-          options={StampField.AllValues}
-          onSelect={(field) => onChange({ field })}
-        />
-        <SortOrderSelector value={props.value.order} onChange={(order) => onChange({ order })} />
-      </FormRow>
-    </>
+    <Box display="flex">
+      <RHFSelect handle={props.formHandle} path={props.fieldIdPath} values={allFieldValues} />
+      <IconButton
+        sx={{ ml: '0' }}
+        size="medium"
+        color="inherit"
+        edge="start"
+        onClick={() => dirController.field.onChange(flippedDirection)}
+      >
+        <ArrowComponent />
+      </IconButton>
+    </Box>
   );
-});
-SortSelector.displayName = 'SortSelector';
+}
