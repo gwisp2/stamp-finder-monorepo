@@ -15,7 +15,7 @@ const coalesce = <T,>(x: T | undefined, defaultValue: T): T => {
   return x !== undefined ? x : defaultValue;
 };
 
-export const RangeSelector: React.VFC<RangeSelectorProps> = React.memo((props) => {
+export const RangeSelector: React.FC<RangeSelectorProps> = React.memo((props) => {
   const [startStr, setStartStr] = useState(toString(props.value.start));
   const [endStr, setEndStr] = useState(toString(props.value.end));
 

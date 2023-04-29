@@ -1,3 +1,0 @@
-# Default configuration file to be used in docker container
-internal_dir: /app/data/internal
-public_dir: /app/data/public

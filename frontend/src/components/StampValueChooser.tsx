@@ -3,7 +3,7 @@ import React from 'react';
 import { Button, ButtonGroup } from 'react-bootstrap';
 import { RangeSelector } from './RangeSelector';
 
-const ValueShortcutButtons: React.VFC<{
+const ValueShortcutButtons: React.FC<{
   values: number[];
   onChange: (newRange: NumberRange) => void;
 }> = React.memo((props) => {
@@ -30,7 +30,7 @@ const ValueShortcutButtons: React.VFC<{
 });
 ValueShortcutButtons.displayName = 'ValueShortcutButtons';
 
-export const StampValueChooser: React.VFC<{
+export const StampValueChooser: React.FC<{
   label: string;
   value: NumberRange;
   onChange: (newRange: NumberRange) => void;

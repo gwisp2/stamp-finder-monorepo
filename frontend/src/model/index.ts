@@ -1,3 +1,3 @@
-export * from './number-range';
-export * from './search-options';
+export * from './NumberRange';
+export * from './SearchOptions';
 export * from './utility';

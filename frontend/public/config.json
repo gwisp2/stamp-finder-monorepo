@@ -1,0 +1,12 @@
+{
+  "sources": {
+    "stamps": ["data/stamps.json"],
+    "shops": ["data/shops.json"]
+  },
+  "api": {
+    "upload": "api/upload"
+  },
+  "analytics": {
+    "google": "G-TTB9GY8JE9"
+  }
+}

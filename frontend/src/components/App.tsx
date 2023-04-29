@@ -1,16 +1,15 @@
+import { useSfDatabase } from 'api/SfDatabase';
 import { AmountFoundMessage } from 'components/AmountFoundMessage';
 import { AppNavbar } from 'components/AppNavbar';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { selectStamps } from 'state/api.slice';
-import { useAppSelector } from 'state/hooks';
-import { SearchOptions } from '../model/search-options';
+import { SearchOptions } from '../model/SearchOptions';
 import { ScrollToTopButton } from './ScrollToTopButton';
 import { StampList } from './StampList';
 import { StampSearchOptionsSelector } from './StampSearchOptionsSelector';
 
-const App: React.VFC = () => {
+const App: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -21,7 +20,7 @@ const App: React.VFC = () => {
   }, []);
 
   const searchOptions = SearchOptions.fromUrlSearchString(location.search);
-  const stamps = useAppSelector((s) => selectStamps(s, searchOptions));
+  const stamps = searchOptions.filterAndSort(useSfDatabase().stamps);
   const cardDisplayOptions = useMemo(() => ({}), []);
   const [afterOptionsDiv, setAfterOptionsDiv] = useState<HTMLDivElement | null>(null);
 

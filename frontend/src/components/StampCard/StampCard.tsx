@@ -1,13 +1,13 @@
+import { Stamp } from 'api/SfDatabase';
 import React from 'react';
-import { Stamp } from 'state/api/stamps';
 import styled from 'styled-components';
-import { CardDisplayOptions } from './common';
+import { CardDisplayOptions } from './CardDisplayOptions';
 import EmptyImage from './empty.png';
 import { ShopEntriesDropdown } from './ShopEntriesDropdown';
 import './StampCard.css';
 import { StampInfoDropdown } from './StampInfoDropdown';
 
-const StampCardHeader: React.VFC<{ stamp: Stamp }> = (props) => {
+const StampCardHeader: React.FC<{ stamp: Stamp }> = (props) => {
   const s = props.stamp;
   return (
     <div className="mb-1 ps-1 d-flex justify-content-between border-bottom align-items-center">
@@ -24,11 +24,11 @@ const FillParentImage = styled.img`
   height: 100%;
   object-fit: contain;
 `;
-const SquareImage: React.VFC<{ alt: string; url: string | null; className: string }> = (props) => {
+const SquareImage: React.FC<{ alt: string; url: string | null; className: string }> = (props) => {
   return (
     <div className={`ratio ratio-1x1 ${props.className}`}>
       <FillParentImage
-        loading="lazy"
+        loading="eager"
         draggable="false"
         alt={props.alt}
         className="stamp-image"
@@ -38,7 +38,7 @@ const SquareImage: React.VFC<{ alt: string; url: string | null; className: strin
   );
 };
 
-export const StampCard: React.VFC<{ stamp: Stamp; options: CardDisplayOptions }> = React.memo((props) => {
+export const StampCard: React.FC<{ stamp: Stamp; options: CardDisplayOptions }> = React.memo((props) => {
   const s = props.stamp;
   return (
     <div className="position-relative shadow-sm bg-light border border-secondary rounded p-2">

@@ -1,19 +1,15 @@
-import UpdateIcon from '@mui/icons-material/Update';
+import { Shop, useSfDatabase } from 'api/SfDatabase';
+import _ from 'lodash';
 import { ANY, ShopRequirement } from 'model';
-import React, { useState } from 'react';
+import React from 'react';
 import { Button, ButtonGroup, Form } from 'react-bootstrap';
-import { selectAllShops } from 'state/api.slice';
-import { Shop } from 'state/api/shops';
-import { useAppSelector } from 'state/hooks';
-import _ from 'underscore';
-import { ShopInfoUploadDialog } from './ShopInfoUploadDialog';
 
 interface Props {
   onChange: (newValue: ShopRequirement) => void;
   value: ShopRequirement;
 }
 
-const ShopDropdown: React.VFC<Props> = (props) => {
+const ShopDropdown: React.FC<Props> = (props) => {
   const handleChange = (shopId: string, checked: boolean) => {
     const prevSelectedIds = props.value === ANY ? allShops.map((s) => s.id) : props.value ?? [];
     const newSelectedIds = prevSelectedIds.filter((id) => id !== shopId);
@@ -25,15 +21,14 @@ const ShopDropdown: React.VFC<Props> = (props) => {
     );
   };
 
-  const [dialogShown, setDialogShown] = useState(false);
-  const allShops = useAppSelector(selectAllShops);
+  const allShops = useSfDatabase().shops;
   const isShopSelected = (shop: Shop) =>
-    props.value === ANY || (props.value !== null && _.contains(props.value, shop.id));
+    props.value === ANY || (props.value !== null && _.includes(props.value, shop.id));
 
   return (
     <>
       <div className="mt-2">
-        {allShops.map((shop) => (
+        {allShops.map((shop: Shop) => (
           <Form.Check
             key={shop.id}
             type="checkbox"
@@ -43,23 +38,11 @@ const ShopDropdown: React.VFC<Props> = (props) => {
           />
         ))}
       </div>
-      <div className="mt-2">
-        <Button
-          variant="outline-secondary"
-          size="sm"
-          className="w-100 icon-with-text"
-          onClick={() => setDialogShown(true)}
-        >
-          <UpdateIcon fontSize={'small'} />
-          <span>Обновить</span>
-        </Button>
-      </div>
-      <ShopInfoUploadDialog show={dialogShown} onHide={() => setDialogShown(false)} />
     </>
   );
 };
 
-export const ShopSelector: React.VFC<Props & { label: string; className?: string }> = React.memo((props) => {
+export const ShopSelector: React.FC<Props & { label: string; className?: string }> = React.memo((props) => {
   return (
     <div className={props.className}>
       <Form.Label>

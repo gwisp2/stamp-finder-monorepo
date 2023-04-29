@@ -1,8 +1,7 @@
+import { Stamp } from 'api/SfDatabase';
 import { CardDisplayOptions, StampCard } from 'components/StampCard';
 import React, { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { Stamp } from 'state/api/stamps';
 import styled from 'styled-components';
 import NoStampsImage from './icons/no-stamps.svg';
 
@@ -30,7 +29,7 @@ const NoMessagesContainerDiv = styled.div`
   }
 `;
 
-const NoStampsMessage: React.VFC = () => {
+const NoStampsMessage: React.FC = () => {
   return (
     <NoMessagesContainerDiv>
       <img src={NoStampsImage} alt="" />
@@ -39,7 +38,7 @@ const NoStampsMessage: React.VFC = () => {
   );
 };
 
-export const StampList: React.VFC<StampListProps> = React.memo((props) => {
+export const StampList: React.FC<StampListProps> = React.memo((props) => {
   if (props.stamps.length === 0) {
     return <NoStampsMessage />;
   }
@@ -65,17 +64,15 @@ export const StampList: React.VFC<StampListProps> = React.memo((props) => {
       loader={<h4 key="L">Загрузка...</h4>}
       loadMore={showMoreItems}
     >
-      <TransitionGroup className="row">
+      <div className="row">
         {shownItems.map((s) => {
           return (
-            <CSSTransition key={`S${s.id}`} timeout={250} classNames="stamp-card">
-              <div className="col-sm-6 col-md-4 col-xxl-3 mb-2">
-                <StampCard stamp={s} options={props.options} />
-              </div>
-            </CSSTransition>
+            <div key={s.id} className="col-sm-6 col-md-4 col-xxl-3 mb-2">
+              <StampCard stamp={s} options={props.options} />
+            </div>
           );
         })}
-      </TransitionGroup>
+      </div>
     </InfiniteScroll>
   );
 });

@@ -1,7 +1,7 @@
 import React from 'react';
 import BeatLoader from 'react-spinners/BeatLoader';
 
-export const AppSplashScreen: React.VFC<{
+export const AppSplashScreen: React.FC<{
   error?: {
     title: string;
     description: string;
@@ -15,7 +15,7 @@ export const AppSplashScreen: React.VFC<{
           <p>
             <strong>{props.error.title}</strong>
           </p>
-          <p>{props.error.description}</p>
+          <pre>{props.error.description}</pre>
         </div>
       )}
     </div>

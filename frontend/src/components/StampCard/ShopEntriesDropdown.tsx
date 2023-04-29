@@ -1,19 +1,14 @@
 import ShoppingBasket from '@mui/icons-material/ShoppingBasket';
+import { ItemGroup, Stamp } from 'api/SfDatabase';
+import _ from 'lodash';
 import React from 'react';
 import { Button } from 'react-bootstrap';
-import { selectGroupedItemsForStamp } from 'state/api.slice';
-import { Item, Shop } from 'state/api/shops';
-import { Stamp } from 'state/api/stamps';
-import { useAppSelector } from 'state/hooks';
-import _ from 'underscore';
-import { CardDisplayOptions } from './common';
+import { CardDisplayOptions } from './CardDisplayOptions';
 import { useCloseablePopup } from './popup';
 import './StampCard.css';
 
-type ShopEntry = [Shop, Item[]];
-
-const ShopEntryView: React.VFC<{ entry: ShopEntry }> = (props) => {
-  const [shop, items] = props.entry;
+const ShopEntryView: React.FC<{ entry: ItemGroup }> = (props) => {
+  const { shop, items } = props.entry;
   return (
     <div>
       <strong className="d-inline-block me-2">{shop.displayName}</strong>
@@ -22,7 +17,7 @@ const ShopEntryView: React.VFC<{ entry: ShopEntry }> = (props) => {
   );
 };
 
-export const ShopEntriesView: React.VFC<{ stamp: Stamp; entries: ShopEntry[]; options: CardDisplayOptions }> = (
+export const ShopEntriesView: React.FC<{ stamp: Stamp; entries: ItemGroup[]; options: CardDisplayOptions }> = (
   props,
 ) => {
   const entries = props.entries;
@@ -33,25 +28,25 @@ export const ShopEntriesView: React.VFC<{ stamp: Stamp; entries: ShopEntry[]; op
   // Partition entries into highlighed and others
   const highlightedShopIds = props.options.highlightedShops;
   const highlightedEntries =
-    highlightedShopIds !== undefined ? entries.filter((p) => _.contains(highlightedShopIds, p[0].id)) : entries;
+    highlightedShopIds !== undefined ? entries.filter((p) => _.includes(highlightedShopIds, p.shop.id)) : entries;
   const otherEntries = entries.filter((p) => !_.includes(highlightedEntries, p));
 
   return (
     <div>
       {highlightedEntries.map((entry) => (
-        <ShopEntryView key={entry[0].id} entry={entry} />
+        <ShopEntryView key={entry.shop.id} entry={entry} />
       ))}
       {highlightedEntries.length !== 0 && otherEntries.length !== 0 && <hr />}
       {otherEntries.map((entry) => (
-        <ShopEntryView key={entry[0].id} entry={entry} />
+        <ShopEntryView key={entry.shop.id} entry={entry} />
       ))}
     </div>
   );
 };
 
-export const ShopEntriesDropdown: React.VFC<{ stamp: Stamp; options: CardDisplayOptions }> = (props) => {
+export const ShopEntriesDropdown: React.FC<{ stamp: Stamp; options: CardDisplayOptions }> = (props) => {
   const stamp = props.stamp;
-  const shopEntries = useAppSelector(selectGroupedItemsForStamp(props.stamp));
+  const shopEntries = stamp.shopItemGroups;
   const buttonColor = shopEntries.length !== 0 ? 'success' : 'secondary';
 
   const popup = useCloseablePopup(<ShopEntriesView stamp={stamp} entries={shopEntries} options={props.options} />);

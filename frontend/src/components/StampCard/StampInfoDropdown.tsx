@@ -1,9 +1,9 @@
 import MoreIcon from '@mui/icons-material/More';
+import { Stamp } from 'api/SfDatabase';
 import React from 'react';
-import { Stamp } from 'state/api/stamps';
 import { useCloseablePopup } from './popup';
 
-const StampTextInfo: React.VFC<{ stamp: Stamp }> = React.memo((props) => {
+const StampTextInfo: React.FC<{ stamp: Stamp }> = React.memo((props) => {
   const s = props.stamp;
   return (
     <div>
@@ -29,7 +29,7 @@ const StampTextInfo: React.VFC<{ stamp: Stamp }> = React.memo((props) => {
   );
 });
 
-export const StampInfoDropdown: React.VFC<{ stamp: Stamp }> = (props) => {
+export const StampInfoDropdown: React.FC<{ stamp: Stamp }> = (props) => {
   const popup = useCloseablePopup(<StampTextInfo stamp={props.stamp} />);
   return (
     <div ref={popup.containerRef} {...popup.containerProps}>

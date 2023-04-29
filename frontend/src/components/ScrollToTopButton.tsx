@@ -35,7 +35,7 @@ const ScrollToTopButtonContainer = styled.div`
   }
 `;
 
-export const ScrollToTopButton: React.VFC<{ target: HTMLElement }> = (props) => {
+export const ScrollToTopButton: React.FC<{ target: HTMLElement }> = (props) => {
   const scrollToTop = useCallback(() => window.scrollTo(0, 0), []);
   const showButton = useScrollTrigger({ disableHysteresis: true, threshold: props.target.offsetTop });
   if (showButton) {

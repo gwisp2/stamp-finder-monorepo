@@ -1,13 +1,12 @@
 import { AppRoot } from 'AppRoot';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import './index.css';
 
 const start = async () => {
   // Render
-  const root = document.getElementById('root')!;
-  ReactDOM.render(<AppRoot />, root);
+  const root = createRoot(document.getElementById('root')!);
+  root.render(<AppRoot />);
 };
 
 start();

@@ -1,12 +1,10 @@
+import { useSfDatabase } from 'api/SfDatabase';
 import { Selector } from 'components/Selector';
 import { ShopSelector } from 'components/ShopSelector';
 import { YearRangeSelector } from 'components/YearRangeSelector';
 import { SearchOptions } from 'model';
 import React, { ReactNode, useCallback } from 'react';
 import { Form } from 'react-bootstrap';
-import { selectAllStamps } from 'state/api.slice';
-import { useAppSelector } from 'state/hooks';
-import _ from 'underscore';
 import { SortSelector } from './SortSelector';
 import { StampValueChooser } from './StampValueChooser';
 
@@ -16,19 +14,10 @@ interface Props {
   bottomInfo?: ReactNode;
 }
 
-const useStampsStats = () => {
-  return useAppSelector((state) => {
-    const stamps = selectAllStamps(state);
-    const stampYears = stamps.map((s) => s.year).filter((y): y is number => y !== null);
-    const stampCategories = _.sortBy(_.unique(stamps.flatMap((s) => s.categories)));
-    return { minYear: _.min(stampYears), maxYear: _.max(stampYears), categories: stampCategories };
-  }, _.isEqual);
-};
+const ShortcutValues = [19, 65];
 
-const ShortcutValues = [19, 62];
-
-export const StampSearchOptionsSelector: React.VFC<Props> = React.memo((props) => {
-  const { minYear, maxYear, categories } = useStampsStats();
+export const StampSearchOptionsSelector: React.FC<Props> = React.memo((props) => {
+  const { minYear, maxYear, categories } = useSfDatabase().stats;
   const onChange = (change: Partial<SearchOptions>) => props.onChange(props.options.applyChange(change));
   const onOptionChangeCallback = <T extends keyof SearchOptions>(optionName: T) =>
     useCallback((v: SearchOptions[T]) => onChange({ [optionName]: v }), [props.onChange, props.options]);

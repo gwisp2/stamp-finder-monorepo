@@ -1,6 +1,6 @@
+import _ from 'lodash';
 import React from 'react';
 import { Form } from 'react-bootstrap';
-import _ from 'underscore';
 
 interface Props<T> {
   options: T[];
@@ -15,7 +15,7 @@ interface Props<T> {
 const typedMemo: <T>(c: T) => T = React.memo;
 export const Selector = typedMemo(<T,>(props: Props<T>) => {
   const eq = props.eq ?? 'shallow';
-  const renderer = props.renderer ?? ((v: T) => v);
+  const renderer = props.renderer ?? ((v: T) => (v ? String(v) : ''));
   const selectedIndex = _.findIndex(props.options, (v) =>
     eq === 'deep' ? _.isEqual(props.selected, v) : props.selected === v,
   );

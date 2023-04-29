@@ -6,7 +6,7 @@ import { Button, Form } from 'react-bootstrap';
 import { FormRow } from './Form';
 import { Selector } from './Selector';
 
-const SortOrderSelector: React.VFC<{ value: SortOrder; onChange: (_: SortOrder) => void }> = (props) => {
+const SortOrderSelector: React.FC<{ value: SortOrder; onChange: (_: SortOrder) => void }> = (props) => {
   const ArrowComponent = props.value === SortOrder.Asc ? ArrowUpwardIcon : ArrowDownwardIcon;
   return (
     <Button variant="none" size="sm" onClick={() => props.onChange(props.value.reverse())}>
@@ -15,7 +15,7 @@ const SortOrderSelector: React.VFC<{ value: SortOrder; onChange: (_: SortOrder) 
   );
 };
 
-export const SortSelector: React.VFC<{
+export const SortSelector: React.FC<{
   className?: string;
   label: string;
   value: StampSort;

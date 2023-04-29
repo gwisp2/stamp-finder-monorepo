@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
+import { ReactElement, useEffect } from 'react';
 import ReactGA from 'react-ga4';
 import { useLocation } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
 
-export const GAWrapper: React.FC<{ tag?: string }> = (props) => {
+export const GAWrapper: React.FC<{ tag?: string; children: ReactElement }> = (props) => {
   const location = useLocation();
 
   // Initialize GA
@@ -17,7 +17,7 @@ export const GAWrapper: React.FC<{ tag?: string }> = (props) => {
   const [debouncedLocationSearch] = useDebounce(location.search, 2000);
   useEffect(() => {
     if (props.tag) {
-      ReactGA.pageview(location.pathname + location.search);
+      ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search });
     }
   }, [props.tag, debouncedLocationSearch]);
 
