@@ -12,6 +12,10 @@ var (
 	regexPrice    = regexp.MustCompile(`\d+,\d+`)
 )
 
+const (
+	maxStampsInRange = 40
+)
+
 func makeRangeSlice(min, max int) []int {
 	a := make([]int, max-min+1)
 	for i := range a {
@@ -24,7 +28,7 @@ func parseStampIds(s string) []int {
 	if m := regexpIdRange.FindStringSubmatch(s); m != nil {
 		start, err1 := strconv.Atoi(m[1])
 		end, err2 := strconv.Atoi(m[2])
-		if err1 != nil || err2 != nil {
+		if err1 != nil || err2 != nil || start >= end || (end-start+1) >= maxStampsInRange {
 			return nil
 		}
 		return makeRangeSlice(start, end)
