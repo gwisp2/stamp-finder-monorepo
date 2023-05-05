@@ -68,7 +68,7 @@ export const zSearchOptions = z
       direction: z.union([z.literal('asc'), z.literal('desc')]).transform((v) => SortOrder.fromString(v)),
     }),
   })
-  .transform((val, ctx) => {
+  .transform((val) => {
     const selectedShops = val.shops.filter((s) => s.selected);
     let shopRequirement: ShopRequirement = selectedShops.map((s) => s.shopId);
     if (shopRequirement.length === val.shops.length) {
