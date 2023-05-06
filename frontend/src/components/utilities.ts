@@ -1,5 +1,5 @@
 import React from 'react';
-import { FieldPathByValue, FieldPathValue, FieldValues } from 'react-hook-form';
+import { FieldPathByValue, FieldValues } from 'react-hook-form';
 import { FormHandle } from './FormHandle';
 
 // Normal React.memo does not type well with functional components that have type parameters
@@ -14,5 +14,5 @@ export function setFormValue<TFormData extends FieldValues, TValue>(
   path: FieldPathByValue<TFormData, TValue>,
   value: TValue,
 ) {
-  formHandle.setValue(path, value as unknown as FieldPathValue<TFormData, typeof path>);
+  formHandle.setValue(path, value as never);
 }
