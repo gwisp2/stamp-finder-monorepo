@@ -3,8 +3,8 @@ import { Box, Card, CardActions, CardContent, Divider, Typography } from '@mui/m
 import Button from '@mui/material/Button';
 import { Stamp } from 'api/SfDatabase';
 import React from 'react';
-import EmptyImage from './icons/no-stamps.svg';
 import { StampInfoDropdown } from './StampInfoDropdown';
+import EmptyImage from './icons/no-stamps.svg';
 
 export const StampCard = React.memo(function StampCard(props: { stamp: Stamp }) {
   const s = props.stamp;

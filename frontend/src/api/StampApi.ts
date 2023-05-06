@@ -1,8 +1,8 @@
 import React from 'react';
-import { ApiError, fetchJsonFromSources } from './fetch-helper';
 import { RawShops } from './RawShops';
 import { RawStamps } from './RawStamps';
 import { SfDatabase } from './SfDatabase';
+import { ApiError, fetchJsonFromSources } from './fetch-helper';
 
 export class StampApi {
   stampsSources: string[];

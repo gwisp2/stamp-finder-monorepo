@@ -8,7 +8,7 @@ import { useLatest } from 'react-use';
 import { FixedSizeGrid } from 'react-window';
 import { SearchOptions } from '../model';
 import { AppLayout } from './AppLayout';
-import { createFormDataFromSearchOptions, SearchOptionsForm, useSearchOptionsForm } from './SearchOptionsForm';
+import { SearchOptionsForm, createFormDataFromSearchOptions, useSearchOptionsForm } from './SearchOptionsForm';
 import { ShareUrlButton } from './ShareUrlButton';
 import { StampList } from './StampList';
 

@@ -22,9 +22,9 @@ import z from 'zod';
 import { FormHandle } from './FormHandle';
 import { RangeSelector } from './RangeSelector';
 import { RangeShortcut } from './RangeShortcutsDropdown';
-import { RHFOutlinedInput, RHFSelect, RHFSwitch } from './react-hook-form-mui';
 import { SortSelector } from './SortSelector';
 import { YearRangeSelector } from './YearRangeSelector';
+import { RHFOutlinedInput, RHFSelect, RHFSwitch } from './react-hook-form-mui';
 
 interface Props {
   db: SfDatabase;
