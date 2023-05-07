@@ -21,7 +21,8 @@
     "react-virtualized-auto-sizer": "^1.0.15",
     "react-window": "^1.8.9",
     "use-onclickoutside": "^0.4.1",
-    "zod": "^3.21.4"
+    "zod": "^3.21.4",
+    "zustand": "^4.3.8"
   },
   "scripts": {
     "start": "webpack serve --config ./webpack.js --mode=development --open",
