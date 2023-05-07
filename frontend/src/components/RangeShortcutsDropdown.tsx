@@ -37,6 +37,7 @@ export function RangeShortcutsDropdown(props: RangeShortcutsDropdownProps) {
           <MenuItem
             key={index}
             selected={false}
+            sx={{ pl: 1, pr: 1 }}
             onClick={() => {
               props.onSelect?.(shortcut.range);
               setShown(false);
