@@ -10,9 +10,10 @@ import { SfDatabaseProvider } from 'api/SfDatabase';
 import { StampApi, StampApiProvider } from 'api/StampApi';
 import App from 'components/App';
 import { GAWrapper } from 'components/GAWrapper';
-import React from 'react';
+import React, { useEffect } from 'react';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { useAsync } from 'react-use';
+import { startSyncFavoritesBetweenTabs } from './api/FavoritesManager';
 import { ApiError } from './api/fetch-helper';
 
 async function loadEverything() {
@@ -25,6 +26,8 @@ const AppLoader: React.FC = () => {
   // If you are wondering why everything is loaded twice in development
   // https://stackoverflow.com/questions/72238175/why-useeffect-running-twice-and-how-to-handle-it-well-in-react
   const asyncData = useAsync(loadEverything, []);
+  // Sync favorites between tabs
+  useEffect(() => startSyncFavoritesBetweenTabs(), []);
   if (asyncData.value) {
     const gaTag = process.env.SF_GA_TAG;
     return (
