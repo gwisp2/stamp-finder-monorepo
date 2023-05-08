@@ -1,11 +1,12 @@
-import { RestartAlt } from '@mui/icons-material';
-import { Box, InputLabel, Typography } from '@mui/material';
+import { RestartAlt, Star, StarBorder } from '@mui/icons-material';
+import { Box, Checkbox, InputLabel, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import { Stamp, useSfDatabase } from 'api/SfDatabase';
 import plural from 'plural-ru';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useLatest } from 'react-use';
 import { FixedSizeGrid } from 'react-window';
+import { useFavoritesStore } from '../api/FavoritesManager';
 import { SearchOptions } from '../model';
 import { AppLayout } from './AppLayout';
 import { SearchOptionsForm, createFormDataFromSearchOptions, useSearchOptionsForm } from './SearchOptionsForm';
@@ -37,12 +38,21 @@ const App: React.FC = () => {
     searchOptionsForm.reset(createFormDataFromSearchOptions(db, SearchOptions.Default), {});
   }, [db]);
 
+  // Favorites
+  const [showFavorites, setShowFavorites] = useState(false);
+  const favoriteStamps = useFavoritesStore((store) => (showFavorites ? store.filterFavorites(db.stamps) : []));
+
   // Filter list of stamps
-  const stamps = searchOptions.filterAndSort(useSfDatabase().stamps);
+  let stamps: Stamp[];
+  if (!showFavorites) {
+    stamps = searchOptions.filterAndSort(db.stamps);
+  } else {
+    stamps = favoriteStamps;
+  }
 
   // Rendering
   const drawerContent = (
-    <Box height="100%" display="flex" flexDirection="column">
+    <Box height="100%" display={!showFavorites ? 'flex' : 'none'} flexDirection="column">
       <SearchOptionsForm db={db} handle={searchOptionsForm} onChange={handleSearchOptions} />
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <InputLabel component="div">
@@ -75,9 +85,18 @@ const App: React.FC = () => {
 
   const mainContent = <StampList innerRef={stampsGridRef} stamps={stamps} />;
   const mainTitle = (
-    <Typography variant="h6" paddingTop="4px" component="div">
-      Stamp Finder
-    </Typography>
+    <>
+      <Typography variant="h6" component="div" flexGrow={1}>
+        Stamp Finder
+      </Typography>
+      <Checkbox
+        sx={{ color: 'inherit !important' }}
+        checked={showFavorites}
+        onChange={(e) => setShowFavorites(e.target.checked)}
+        icon={<StarBorder />}
+        checkedIcon={<Star />}
+      />
+    </>
   );
   return <AppLayout drawerContent={drawerContent} mainContent={mainContent} mainTitle={mainTitle} />;
 };

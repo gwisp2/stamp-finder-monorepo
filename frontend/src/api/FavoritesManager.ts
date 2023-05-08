@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
+import { Stamp } from './SfDatabase';
 
 const LOCAL_STORAGE_KEY = 'favorites';
 
@@ -7,6 +8,7 @@ export interface FavoritesStore {
   favorites: Record<number, boolean | undefined>;
   isFavorite: (stampId: number) => boolean;
   setFavorite: (stampId: number, isFavorite: boolean) => void;
+  filterFavorites: (stamps: Stamp[]) => Stamp[];
 }
 
 export const useFavoritesStore = create<FavoritesStore>()(
@@ -26,6 +28,9 @@ export const useFavoritesStore = create<FavoritesStore>()(
           }
           return { favorites: newFavorites };
         });
+      },
+      filterFavorites: (stamps: Stamp[]) => {
+        return stamps.filter((s) => get().isFavorite(s.id));
       },
     }),
     {
