@@ -8,8 +8,8 @@ import (
 	"os/exec"
 	"path"
 	"sf/internal/data"
+	"sf/internal/files"
 	"sf/internal/rusmarka"
-	"sf/internal/utility"
 	"text/template"
 	"time"
 )
@@ -40,7 +40,7 @@ func NewPipeline(options *PipelineOptions) *Pipeline {
 
 func (pipeline *Pipeline) Initialize() error {
 	for _, dir := range []string{pipeline.options.RootPath, pipeline.repoPath, pipeline.thumbnailsPath, pipeline.pagesPath} {
-		if err := os.Mkdir(dir, 0755); err != nil && !os.IsExist(err) {
+		if err := os.Mkdir(dir, 0o755); err != nil && !os.IsExist(err) {
 			return err
 		}
 	}
@@ -159,19 +159,19 @@ func (pipeline *Pipeline) Update(firstTime bool) error {
 			return err
 		}
 		// Create pages directory
-		err = os.Mkdir(pipeline.pagesPath, 0755)
+		err = os.Mkdir(pipeline.pagesPath, 0o755)
 		if err != nil {
 			return err
 		}
 		dataPath := path.Join(pipeline.pagesPath, "data")
-		err = os.Mkdir(dataPath, 0755)
+		err = os.Mkdir(dataPath, 0o755)
 		if err != nil {
 			return err
 		}
 
 		// Copy frontend files
 		if pipeline.options.FrontendFiles != "" {
-			err = utility.CopyDirectoryContents(pipeline.options.FrontendFiles, pipeline.pagesPath)
+			err = files.CopyDirectoryContents(pipeline.options.FrontendFiles, pipeline.pagesPath)
 			if err != nil {
 				return fmt.Errorf("error copying frontend files: %w", err)
 			}
@@ -203,18 +203,18 @@ func (pipeline *Pipeline) Update(firstTime bool) error {
 		if scrapeResult != nil {
 			shopsJson = append(shopsJson, scrapeResult.ToShopsJsonShop())
 		}
-		err = utility.SaveAsJsonToFile(shopsJson, path.Join(dataPath, "shops.json"))
+		err = files.SaveAsJsonToFile(shopsJson, path.Join(dataPath, "shops.json"))
 		if err != nil {
 			return fmt.Errorf("failed to write shops.json: %w", err)
 		}
 
 		// Copy images
 		imagesDirPath := path.Join(dataPath, "images")
-		err = os.Mkdir(imagesDirPath, 0755)
+		err = os.Mkdir(imagesDirPath, 0o755)
 		if err != nil {
 			return err
 		}
-		err = utility.CopyDirectoryContents(pipeline.thumbnailsPath, imagesDirPath)
+		err = files.CopyDirectoryContents(pipeline.thumbnailsPath, imagesDirPath)
 		if err != nil {
 			return err
 		}

@@ -1,6 +1,7 @@
 package rusmarka
 
 import (
+	"errors"
 	"github.com/gocolly/colly"
 	"log"
 	"net/url"
@@ -36,7 +37,8 @@ func (collector *AdvancedCollyCollector) visitWithRetry(pageUrl string) error {
 		if err == nil {
 			return nil
 		}
-		if urlErr, ok := err.(*url.Error); ok {
+		var urlErr *url.Error
+		if errors.As(err, &urlErr) {
 			if urlErr.Timeout() && nRetriesLeft > 0 {
 				log.Printf("Timeout fetching %s, waiting for 30 seconds", pageUrl)
 				time.Sleep(30 * time.Second)

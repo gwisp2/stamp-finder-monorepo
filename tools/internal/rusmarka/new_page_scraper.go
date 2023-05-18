@@ -72,7 +72,7 @@ func scrapePageParts(pageUrl string) (*scrapedPage, error) {
 		items = ExtractRusmarkaItems(html)
 		html.ForEach("h2.marka-post-title", func(index int, h2 *colly.HTMLElement) {
 			stampIds := parseStampIds(h2.Text)
-			if stampIds != nil {
+			if len(stampIds) != 0 {
 				h2text := strings.TrimSpace(h2.Text)
 				part := scrapedPagePart{
 					title:           h2text,

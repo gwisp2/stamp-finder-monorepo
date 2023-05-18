@@ -8,7 +8,7 @@ import (
 	"github.com/samber/lo"
 	"os"
 	"sf/internal/data"
-	"sf/internal/utility"
+	"sf/internal/files"
 	"strconv"
 	"strings"
 	"time"
@@ -129,7 +129,7 @@ func (scraper *AvailabilityScraper) Scrape(urls []string) (*AvailabilityScrapeRe
 		Timestamp:         time.Now().Unix(),
 		VisitedPages:      urls,
 	}
-	if err := utility.SaveAsJsonToFile(result, scraper.destFilePath); err != nil {
+	if err := files.SaveAsJsonToFile(result, scraper.destFilePath); err != nil {
 		return nil, err
 	}
 	return result, nil

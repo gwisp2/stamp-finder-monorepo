@@ -100,7 +100,7 @@ func ScrapeAndUpdateCategories(stampsJson *data.StampsJson) (int, error) {
 		for _, pageUrl := range pageUrls {
 			pageId := extractPageId(pageUrl)
 			if pageId != "" {
-				prevCategoryNames, _ := pageId2categoryNames[pageId]
+				prevCategoryNames := pageId2categoryNames[pageId]
 				pageId2categoryNames[pageId] = append(prevCategoryNames, cat.name)
 			}
 		}
@@ -110,7 +110,7 @@ func ScrapeAndUpdateCategories(stampsJson *data.StampsJson) (int, error) {
 	for _, entry := range stampsJson.Entries {
 		pageId := extractPageId(entry.Page)
 		if pageId != "" {
-			newStampCategories, _ := pageId2categoryNames[pageId]
+			newStampCategories := pageId2categoryNames[pageId]
 			if newStampCategories == nil {
 				newStampCategories = make([]string, 0)
 			}

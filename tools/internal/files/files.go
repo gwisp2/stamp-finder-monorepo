@@ -1,4 +1,4 @@
-package utility
+package files
 
 import (
 	"encoding/json"
@@ -12,7 +12,7 @@ func CopyFile(src string, dst string) error {
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(dst, bytes, 0644)
+	return os.WriteFile(dst, bytes, 0o644)
 }
 
 func CopyFileToDirectory(src string, dstDir string) error {
@@ -29,7 +29,7 @@ func CopyDirectoryContents(src string, dst string) error {
 			// Directory: copy recursively
 			srcDir := path.Join(src, file.Name())
 			dstDir := path.Join(dst, file.Name())
-			err := os.Mkdir(dstDir, 0755)
+			err := os.Mkdir(dstDir, 0o755)
 			if err != nil && !os.IsExist(err) {
 				return fmt.Errorf("error copying %s: %w", srcDir, err)
 			}
@@ -53,12 +53,4 @@ func SaveAsJsonToFile(obj interface{}, dst string) error {
 		return err
 	}
 	return os.WriteFile(dst, bytes, 0644)
-}
-
-func LoadAsJsonFromFile(obj interface{}, src string) error {
-	bytes, err := os.ReadFile(src)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(bytes, obj)
 }
