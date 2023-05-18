@@ -97,7 +97,7 @@ func main() {
 		}
 		log.Printf("Updated categories for %d stamp(s)\n", nStampCategoriesUpdated)
 	}
-	if nStampCategoriesUpdated > 0 && addedNewStamps {
+	if nStampCategoriesUpdated > 0 || addedNewStamps {
 		err := stampsJson.SaveToFile(stampsJsonPath)
 		if err != nil {
 			log.Fatalln(err)
