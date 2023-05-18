@@ -63,7 +63,7 @@ func scrapePageParts(pageUrl string) (*scrapedPage, error) {
 	var pageTitle string
 	var items []RusmarkaItem
 	parts := make([]scrapedPagePart, 0)
-	collector := colly.NewCollector()
+	collector := newAdvancedCollyCollector()
 	collector.OnHTML("html", func(html *colly.HTMLElement) {
 		pageTitle = strings.TrimSpace(html.DOM.Find("title").Text())
 		items = ExtractRusmarkaItems(html)
@@ -93,7 +93,7 @@ func scrapePageParts(pageUrl string) (*scrapedPage, error) {
 			}
 		})
 	})
-	err := collector.Visit(pageUrl)
+	err := collector.visitWithRetry(pageUrl)
 	if err != nil {
 		return nil, err
 	}

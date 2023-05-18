@@ -6,8 +6,6 @@ import (
 	mapset "github.com/deckarep/golang-set/v2"
 	"github.com/gocolly/colly"
 	"github.com/thoas/go-funk"
-	"log"
-	"net/url"
 	"os"
 	"sf/internal/data"
 	"sf/internal/utility"
@@ -106,7 +104,7 @@ func (scraper *AvailabilityScraper) Scrape(urls []string) (*AvailabilityScrapeRe
 	var availableStampIds []int
 
 	// Configure the colly collector
-	collector := colly.NewCollector(colly.AllowURLRevisit())
+	collector := newAdvancedCollyCollector()
 	collector.OnHTML("div.marka-post > table > tbody", func(e *colly.HTMLElement) {
 		for _, rusmarkaItem := range ExtractRusmarkaItems(e) {
 			if rusmarkaItem.available {
@@ -118,20 +116,8 @@ func (scraper *AvailabilityScraper) Scrape(urls []string) (*AvailabilityScrapeRe
 	progress.SetRefreshRate(30 * time.Second)
 	progress.Start()
 	for _, pageUrl := range urls {
-		nRetriesLeft := 2
-		for {
-			err := collector.Visit(pageUrl)
-			if err == nil {
-				break
-			}
-			if urlErr, ok := err.(*url.Error); ok {
-				if urlErr.Timeout() && nRetriesLeft > 0 {
-					log.Printf("Timeout fetching %s, waiting for 30 seconds", pageUrl)
-					time.Sleep(30 * time.Second)
-					nRetriesLeft -= 1
-					continue
-				}
-			}
+		err := collector.visitWithRetry(pageUrl)
+		if err != nil {
 			return nil, err
 		}
 		progress.Increment()

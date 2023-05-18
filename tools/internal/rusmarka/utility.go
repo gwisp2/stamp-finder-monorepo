@@ -1,9 +1,13 @@
 package rusmarka
 
 import (
+	"github.com/gocolly/colly"
+	"log"
+	"net/url"
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 var (
@@ -15,6 +19,34 @@ var (
 const (
 	maxStampsInRange = 40
 )
+
+type AdvancedCollyCollector struct {
+	*colly.Collector
+}
+
+func newAdvancedCollyCollector() *AdvancedCollyCollector {
+	collector := colly.NewCollector(colly.AllowURLRevisit())
+	return &AdvancedCollyCollector{collector}
+}
+
+func (collector *AdvancedCollyCollector) visitWithRetry(pageUrl string) error {
+	nRetriesLeft := 2
+	for {
+		err := collector.Visit(pageUrl)
+		if err == nil {
+			return nil
+		}
+		if urlErr, ok := err.(*url.Error); ok {
+			if urlErr.Timeout() && nRetriesLeft > 0 {
+				log.Printf("Timeout fetching %s, waiting for 30 seconds", pageUrl)
+				time.Sleep(30 * time.Second)
+				nRetriesLeft -= 1
+				continue
+			}
+		}
+		return err
+	}
+}
 
 func makeRangeSlice(min, max int) []int {
 	a := make([]int, max-min+1)

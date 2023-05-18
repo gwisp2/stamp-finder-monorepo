@@ -35,7 +35,7 @@ func extractPageId(pageUrl string) string {
 
 func collectCategoryList() (categories []category, err error) {
 	categories = make([]category, 0)
-	collector := colly.NewCollector()
+	collector := newAdvancedCollyCollector()
 	collector.OnHTML("select[name=category]", func(selectElement *colly.HTMLElement) {
 		selectElement.ForEach("option", func(index int, optionElement *colly.HTMLElement) {
 			value := optionElement.Attr("value")
@@ -45,7 +45,7 @@ func collectCategoryList() (categories []category, err error) {
 			}
 		})
 	})
-	err = collector.Visit("https://rusmarka.ru/catalog/marki/year/0.aspx")
+	err = collector.visitWithRetry("https://rusmarka.ru/catalog/marki/year/0.aspx")
 	if len(categories) == 0 {
 		err = errors.New("no categories found")
 	}
@@ -54,7 +54,7 @@ func collectCategoryList() (categories []category, err error) {
 
 func CollectStampPageUrls(catalogUrl string) ([]string, error) {
 	pages := make([]string, 0)
-	collector := colly.NewCollector()
+	collector := newAdvancedCollyCollector()
 	collector.OnHTML("a[href^='/catalog/marki/position/']", func(a *colly.HTMLElement) {
 		stampsPageUrl := a.Attr("href")
 		if stampsPageUrl[0] == '/' {
@@ -62,7 +62,7 @@ func CollectStampPageUrls(catalogUrl string) ([]string, error) {
 		}
 		pages = append(pages, stampsPageUrl)
 	})
-	err := collector.Visit(catalogUrl)
+	err := collector.visitWithRetry(catalogUrl)
 	pages = funk.UniqString(pages)
 	return pages, err
 }
