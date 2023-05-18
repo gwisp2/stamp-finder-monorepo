@@ -34,4 +34,4 @@ COPY --from=builder /app/sfwatch /app/bin/sfwatch
 COPY --from=frontend-builder /frontend/build /app/frontend
 
 VOLUME ["/app/storage"]
-ENTRYPOINT ["/app/bin/sfwatch", "-r", "/app/storage", "-f", "/app/frontend", "-d", "wrangler pages publish --project-name $CLOUDFLARE_PROJECT_NAME --branch $CLOUDFLARE_PROJECT_BRANCH {{ .PagesPath }}"]
+ENTRYPOINT ["/app/bin/sfwatch", "-r", "/app/storage", "-f", "/app/frontend", "-d", "wrangler pages deploy --project-name $CLOUDFLARE_PROJECT_NAME --branch $CLOUDFLARE_PROJECT_BRANCH {{ .PagesPath }}"]
