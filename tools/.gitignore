@@ -10,3 +10,6 @@ go.work
 .idea/
 vendor/
 # END
+work/
+/sfscrape
+/sfwatch
