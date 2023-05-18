@@ -5,7 +5,7 @@ import (
 	"github.com/cheggaaa/pb/v3"
 	mapset "github.com/deckarep/golang-set/v2"
 	"github.com/gocolly/colly"
-	"github.com/thoas/go-funk"
+	"github.com/samber/lo"
 	"os"
 	"sf/internal/data"
 	"sf/internal/utility"
@@ -98,7 +98,7 @@ func ExtractRusmarkaItems(body *colly.HTMLElement) []RusmarkaItem {
 
 func (scraper *AvailabilityScraper) Scrape(urls []string) (*AvailabilityScrapeResult, error) {
 	// Remove duplicated urls
-	urls = funk.UniqString(urls)
+	urls = lo.Uniq(urls)
 
 	// Ids of stamps which can be bought, to be populated
 	var availableStampIds []int
@@ -125,7 +125,7 @@ func (scraper *AvailabilityScraper) Scrape(urls []string) (*AvailabilityScrapeRe
 	progress.Finish()
 
 	result := &AvailabilityScrapeResult{
-		AvailableStampIds: funk.UniqInt(availableStampIds),
+		AvailableStampIds: lo.Uniq(availableStampIds),
 		Timestamp:         time.Now().Unix(),
 		VisitedPages:      urls,
 	}

@@ -3,7 +3,7 @@ package data
 import (
 	"encoding/json"
 	mapset "github.com/deckarep/golang-set/v2"
-	"github.com/thoas/go-funk"
+	"github.com/samber/lo"
 	"log"
 	"sync"
 )
@@ -52,7 +52,7 @@ func (metadata *ThumbnailsMetadata) Add(newEntry *ThumbnailMetadataEntry) {
 func (metadata *ThumbnailsMetadata) forgetSrcName(name string) {
 	entry, ok := metadata.srcName2entry[name]
 	if ok {
-		entry.SrcNames = funk.Without(entry.SrcNames, name).([]string)
+		entry.SrcNames = lo.Without(entry.SrcNames, name)
 		delete(metadata.srcName2entry, name)
 	}
 }

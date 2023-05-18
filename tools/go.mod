@@ -9,7 +9,8 @@ require (
 	github.com/gocolly/colly v1.2.0
 	github.com/h2non/bimg v1.1.9
 	github.com/jessevdk/go-flags v1.5.0
-	github.com/thoas/go-funk v0.9.3
+	github.com/samber/lo v1.38.1
+	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17
 )
 
 require (

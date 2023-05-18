@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/gocolly/colly"
 	"github.com/h2non/bimg"
-	"github.com/thoas/go-funk"
+	"github.com/samber/lo"
 	"io"
 	"log"
 	"net/http"
@@ -113,9 +113,9 @@ func ScrapeStampsFromNewPage(pageUrl string) (*ScrapedStamps, error) {
 		return nil, err
 	}
 
-	idsOnPage := funk.UniqInt(funk.FlatMap(page.parts, func(part scrapedPagePart) []int {
+	idsOnPage := lo.Uniq(lo.FlatMap(page.parts, func(part scrapedPagePart, index int) []int {
 		return part.ids
-	}).([]int))
+	}))
 
 	var knownStampIds []int
 	scrapedStamps := &ScrapedStamps{
@@ -126,7 +126,7 @@ func ScrapeStampsFromNewPage(pageUrl string) (*ScrapedStamps, error) {
 		// Don't add the same stamp id multiple times
 		alreadyKnown := false
 		for _, id := range part.ids {
-			if funk.Contains(knownStampIds, id) {
+			if lo.Contains(knownStampIds, id) {
 				alreadyKnown = true
 			}
 			knownStampIds = append(knownStampIds, id)
@@ -143,7 +143,7 @@ func ScrapeStampsFromNewPage(pageUrl string) (*ScrapedStamps, error) {
 			}
 			value := 0.0
 			for _, item := range page.items {
-				if funk.Contains(item.ids, id) {
+				if lo.Contains(item.ids, id) {
 					value = item.price / float64(len(item.ids))
 					break
 				}

@@ -4,7 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gocolly/colly"
-	"github.com/thoas/go-funk"
+	"github.com/samber/lo"
+	"golang.org/x/exp/slices"
 	"log"
 	"regexp"
 	"sf/internal/data"
@@ -63,7 +64,7 @@ func CollectStampPageUrls(catalogUrl string) ([]string, error) {
 		pages = append(pages, stampsPageUrl)
 	})
 	err := collector.visitWithRetry(catalogUrl)
-	pages = funk.UniqString(pages)
+	pages = lo.Uniq(pages)
 	return pages, err
 }
 
@@ -80,7 +81,7 @@ func collectStampPageUrlsForCategory(cat category) ([]string, error) {
 		}
 		pages = append(pages, stampPageUrls...)
 	}
-	return funk.UniqString(pages), nil
+	return lo.Uniq(pages), nil
 }
 
 func ScrapeAndUpdateCategories(stampsJson *data.StampsJson) (int, error) {
@@ -115,7 +116,7 @@ func ScrapeAndUpdateCategories(stampsJson *data.StampsJson) (int, error) {
 			}
 			sort.Strings(newStampCategories)
 			sort.Strings(entry.Categories)
-			if !funk.Equal(newStampCategories, entry.Categories) {
+			if !slices.Equal(newStampCategories, entry.Categories) {
 				entry.Categories = newStampCategories
 				nStampsUpdates += 1
 			}

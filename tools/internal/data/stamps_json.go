@@ -3,7 +3,7 @@ package data
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/thoas/go-funk"
+	"github.com/samber/lo"
 	"log"
 	"os"
 	"path"
@@ -38,7 +38,7 @@ func (stampsJson *StampsJson) AllPages() []string {
 	for _, entry := range stampsJson.Entries {
 		pages = append(pages, entry.Page)
 	}
-	return funk.UniqString(pages)
+	return lo.Uniq(pages)
 }
 
 func (stampsJson *StampsJson) ReplaceImagePathsToThumbnails(thumbnails *ThumbnailsMetadata) error {
