@@ -1,10 +1,12 @@
 package rusmarka
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/gocolly/colly"
-	"github.com/h2non/bimg"
 	"github.com/samber/lo"
+	"image"
+	"image/png"
 	"io"
 	"log"
 	"net/http"
@@ -42,21 +44,22 @@ func downloadImage(url string) ([]byte, error) {
 	}
 
 	// Download response body
-	bytes, err := io.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("error downloading image from %s: %w", url, err)
 	}
 
 	// Convert image to png
-	image := bimg.NewImage(bytes)
-	pngBytes, err := image.Process(bimg.Options{
-		Quality: 100,
-		Type:    bimg.PNG,
-	})
+	stampImage, _, err := image.Decode(bytes.NewReader(bodyBytes))
+	if err != nil {
+		return nil, fmt.Errorf("error decofing image %s: %w", url, err)
+	}
+	var pngImageBuffer bytes.Buffer
+	err = png.Encode(&pngImageBuffer, stampImage)
 	if err != nil {
 		return nil, fmt.Errorf("error converting image to png: %w", err)
 	}
-	return pngBytes, nil
+	return pngImageBuffer.Bytes(), nil
 }
 
 func scrapePageParts(pageUrl string) (*scrapedPage, error) {

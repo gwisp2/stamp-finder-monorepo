@@ -18,13 +18,12 @@ RUN cd /frontend && npm install && npm run build:prod
 # -----------------
 
 FROM golang:1.20.3-bullseye as builder
-RUN apt-get update && apt-get install -y libvips-dev && rm -rf /var/lib/apt/lists/*
 COPY tools/ /app
 RUN --mount=type=cache,target=/root/.cache/go-build \
     cd /app && go build -buildvcs=false ./cmd/sfwatch
 
 FROM node:20-bullseye AS backend
-RUN apt-get update && apt-get install -y libvips && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && rm -rf /var/lib/apt/lists/*
 RUN npm install -g wrangler
 
 # Copy app binaries

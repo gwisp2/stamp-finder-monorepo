@@ -1,11 +1,14 @@
 package sf
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"github.com/anthonynsimon/bild/transform"
 	mapset "github.com/deckarep/golang-set/v2"
-	"github.com/h2non/bimg"
+	"image"
+	"image/jpeg"
 	"os"
 	"path"
 	"runtime"
@@ -25,26 +28,18 @@ func maxInt(a int, b int) int {
 	return b
 }
 
-func makeThumbnail(image *bimg.Image) ([]byte, error) {
-	size, err := image.Size()
-	if err != nil {
-		return nil, err
-	}
-	imageSize := maxInt(size.Width, size.Height)
+func makeThumbnail(image image.Image) *image.RGBA {
+	size := image.Bounds()
+	imageSize := maxInt(size.Dx(), size.Dy())
 	var newWidth, newHeight int
 	if imageSize <= ThumbnailSize {
-		newWidth = size.Width
-		newHeight = size.Height
+		newWidth = size.Dx()
+		newHeight = size.Dy()
 	} else {
-		newWidth = size.Width * ThumbnailSize / imageSize
-		newHeight = size.Height * ThumbnailSize / imageSize
+		newWidth = size.Dx() * ThumbnailSize / imageSize
+		newHeight = size.Dy() * ThumbnailSize / imageSize
 	}
-	return image.Process(bimg.Options{
-		Width:   newWidth,
-		Height:  newHeight,
-		Quality: 100,
-		Type:    bimg.WEBP,
-	})
+	return transform.Resize(image, newWidth, newHeight, transform.Linear)
 }
 
 type ThumbnailTask struct {
@@ -71,7 +66,7 @@ func computeSha256(bytes []byte) string {
 func GenerateThumbnail(task *ThumbnailTask) *ThumbnailTaskResult {
 	// Read the source image bytes
 	srcPath := path.Join(task.SrcDir, task.SrcName)
-	imageBytes, err := bimg.Read(srcPath)
+	imageBytes, err := os.ReadFile(srcPath)
 	if err != nil {
 		return &ThumbnailTaskResult{
 			Task:  task,
@@ -91,7 +86,16 @@ func GenerateThumbnail(task *ThumbnailTask) *ThumbnailTaskResult {
 	}
 
 	// Thumbnail was not computed before, computing it now
-	thumbnailBytes, err := makeThumbnail(bimg.NewImage(imageBytes))
+	origImage, _, err := image.Decode(bytes.NewReader(imageBytes))
+	if err != nil {
+		return &ThumbnailTaskResult{
+			Task:  task,
+			Error: fmt.Errorf("error decoding image %s: %w", task.SrcName, err),
+		}
+	}
+	thumbnailImage := makeThumbnail(origImage)
+	var thumbnailBuffer bytes.Buffer
+	err = jpeg.Encode(&thumbnailBuffer, thumbnailImage, &jpeg.Options{Quality: 90})
 	if err != nil {
 		return &ThumbnailTaskResult{
 			Task:  task,
@@ -100,9 +104,16 @@ func GenerateThumbnail(task *ThumbnailTask) *ThumbnailTaskResult {
 	}
 
 	// Compute destination file name & write result
-	dstName := fmt.Sprintf("%s.webp", computeSha256(thumbnailBytes))
+	thumbnailBytes := thumbnailBuffer.Bytes()
+	dstName := fmt.Sprintf("%s.jpg", computeSha256(thumbnailBytes))
 	dstPath := path.Join(task.DstDir, dstName)
-	err = bimg.Write(dstPath, thumbnailBytes)
+	err = os.WriteFile(dstPath, thumbnailBytes, 0o666)
+	if err != nil {
+		return &ThumbnailTaskResult{
+			Task:  task,
+			Error: fmt.Errorf("error writing image: %w", err),
+		}
+	}
 
 	// Add to metadata
 	task.Metadata.Add(&data.ThumbnailMetadataEntry{

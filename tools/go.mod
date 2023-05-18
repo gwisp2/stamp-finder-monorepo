@@ -3,11 +3,11 @@ module sf
 go 1.20
 
 require (
+	github.com/anthonynsimon/bild v0.13.0
 	github.com/cheggaaa/pb/v3 v3.1.2
 	github.com/deckarep/golang-set/v2 v2.3.0
 	github.com/go-git/go-git/v5 v5.6.1
 	github.com/gocolly/colly v1.2.0
-	github.com/h2non/bimg v1.1.9
 	github.com/jessevdk/go-flags v1.5.0
 	github.com/samber/lo v1.38.1
 	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17
