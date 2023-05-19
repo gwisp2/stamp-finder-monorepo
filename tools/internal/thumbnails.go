@@ -64,14 +64,17 @@ func computeSha256(bytes []byte) string {
 }
 
 func GenerateThumbnail(task *ThumbnailTask) *ThumbnailTaskResult {
+	errorResult := func(err error) *ThumbnailTaskResult {
+		return &ThumbnailTaskResult{
+			Task: task, Error: err,
+		}
+	}
+
 	// Read the source image bytes
 	srcPath := path.Join(task.SrcDir, task.SrcName)
 	imageBytes, err := os.ReadFile(srcPath)
 	if err != nil {
-		return &ThumbnailTaskResult{
-			Task:  task,
-			Error: fmt.Errorf("error reading image: %w", err),
-		}
+		return errorResult(fmt.Errorf("error reading image: %w", err))
 	}
 
 	// Query thumbnail metadata
@@ -88,19 +91,13 @@ func GenerateThumbnail(task *ThumbnailTask) *ThumbnailTaskResult {
 	// Thumbnail was not computed before, computing it now
 	origImage, _, err := image.Decode(bytes.NewReader(imageBytes))
 	if err != nil {
-		return &ThumbnailTaskResult{
-			Task:  task,
-			Error: fmt.Errorf("error decoding image %s: %w", task.SrcName, err),
-		}
+		return errorResult(fmt.Errorf("error decoding image %s: %w", task.SrcName, err))
 	}
 	thumbnailImage := makeThumbnail(origImage)
 	var thumbnailBuffer bytes.Buffer
 	err = jpeg.Encode(&thumbnailBuffer, thumbnailImage, &jpeg.Options{Quality: 90})
 	if err != nil {
-		return &ThumbnailTaskResult{
-			Task:  task,
-			Error: fmt.Errorf("error making thumbnail %w", err),
-		}
+		return errorResult(fmt.Errorf("error making thumbnail %w", err))
 	}
 
 	// Compute destination file name & write result
@@ -109,10 +106,7 @@ func GenerateThumbnail(task *ThumbnailTask) *ThumbnailTaskResult {
 	dstPath := path.Join(task.DstDir, dstName)
 	err = os.WriteFile(dstPath, thumbnailBytes, 0o666)
 	if err != nil {
-		return &ThumbnailTaskResult{
-			Task:  task,
-			Error: fmt.Errorf("error writing image: %w", err),
-		}
+		return errorResult(fmt.Errorf("error writing image: %w", err))
 	}
 
 	// Add to metadata
@@ -148,7 +142,7 @@ func LoadLastThumbnailMetadata(dstDir string, errorIfAbsent bool) (*data.Thumbna
 func MakeImageThumbnails(srcDir string, dstDir string) error {
 	files, err := os.ReadDir(srcDir)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	thumbnailTasks := make(chan *ThumbnailTask)
