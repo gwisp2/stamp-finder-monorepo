@@ -9,8 +9,8 @@ export class StampApi {
   shopsSources: string[];
 
   constructor() {
-    this.stampsSources = process.env.SF_STAMPS_DATA_URL.split(';');
-    this.shopsSources = process.env.SF_SHOPS_DATA_URL.split(';');
+    this.stampsSources = import.meta.env.VITE_SF_STAMPS_DATA_URL.split(';');
+    this.shopsSources = import.meta.env.VITE_SF_SHOPS_DATA_URL.split(';');
   }
 
   async loadDatabase(): Promise<SfDatabase> {

@@ -29,7 +29,7 @@ const AppLoader: React.FC = () => {
   // Sync favorites between tabs
   useEffect(() => startSyncFavoritesBetweenTabs(), []);
   if (asyncData.value) {
-    const gaTag = process.env.SF_GA_TAG;
+    const gaTag = import.meta.env.VITE_SF_GA_TAG;
     return (
       <StampApiProvider value={asyncData.value.stampApi}>
         <SfDatabaseProvider value={asyncData.value.database}>

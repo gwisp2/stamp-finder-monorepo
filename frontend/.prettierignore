@@ -1,4 +1,3 @@
-build/
-build.json
+dist/
 **/.git
 **/node_modules
