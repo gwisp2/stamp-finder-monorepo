@@ -7,9 +7,9 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useLatest } from 'react-use';
 import { FixedSizeGrid } from 'react-window';
 import { useFavoritesStore } from '../api/FavoritesManager';
-import { SearchOptions } from '../model';
+import { SearchOptions, useSearchOptionsForm } from '../model';
 import { AppLayout } from './AppLayout';
-import { SearchOptionsForm, createFormDataFromSearchOptions, useSearchOptionsForm } from './SearchOptionsForm';
+import { SearchOptionsForm } from './SearchOptionsForm';
 import { ShareUrlButton } from './ShareUrlButton';
 import { StampList } from './StampList';
 
@@ -22,7 +22,7 @@ const App: React.FC = () => {
   const initialOptions = useMemo(() => SearchOptions.fromUrlParams(new URLSearchParams(document.location.search)), []);
 
   // Scrolling
-  const stampsGridRef = useRef<FixedSizeGrid<Stamp[]>>(null);
+  const stampsGridRef = useRef<FixedSizeGrid>(null);
 
   // Search options
   const db = useSfDatabase();
@@ -35,8 +35,8 @@ const App: React.FC = () => {
     stampsGridRef.current?.scrollTo({ scrollTop: 0 });
   }, []);
   const handleReset = useCallback(() => {
-    searchOptionsForm.reset(createFormDataFromSearchOptions(db, SearchOptions.Default), {});
-  }, [db]);
+    searchOptionsForm.reset(SearchOptions.Default.toFormData(db), {});
+  }, [db, searchOptionsForm]);
 
   // Favorites
   const [showFavorites, setShowFavorites] = useState(false);
@@ -73,7 +73,7 @@ const App: React.FC = () => {
               title: 'Поиск марок',
               url: generateUrl(latestSearchOptions.current),
             }),
-            [],
+            [latestSearchOptions],
           )}
         />
         <Button variant="outlined" onClick={handleReset} startIcon={<RestartAlt />}>

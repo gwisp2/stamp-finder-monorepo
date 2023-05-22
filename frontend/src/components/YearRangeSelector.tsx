@@ -58,7 +58,7 @@ export const YearRangeSelector = typedMemo(function YearRangeSelector<TFormData 
   useEffect(() => {
     formHandle.trigger(props.startPath);
     formHandle.trigger(props.endPath);
-  }, [startValue, endValue]);
+  }, [formHandle, props.startPath, props.endPath, startValue, endValue]);
 
   return (
     <Box sx={{ display: 'flex', gap: '1em' }}>

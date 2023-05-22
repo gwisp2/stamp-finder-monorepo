@@ -21,11 +21,46 @@ const NoStampsMessage: React.FC = () => {
   );
 };
 
+interface StampGridData {
+  gutterHoriz: number;
+  gutterVert: number;
+  nColumns: number;
+  nRows: number;
+  columnWidth: number;
+  stamps: Stamp[];
+  handleMountedItem: (element: HTMLDivElement | null) => void;
+}
+
+const StampGridItem = (props: {
+  columnIndex: number;
+  rowIndex: number;
+  style: React.CSSProperties;
+  data: StampGridData;
+}) => {
+  const { data, columnIndex, rowIndex } = props;
+  const { stamps, columnWidth, nColumns, gutterHoriz } = data;
+  return (
+    <div
+      ref={props.data.handleMountedItem}
+      style={{
+        ..._.omit(props.style, 'height'),
+        top: ((props.style.top ?? 0) as number) + 20,
+        left: gutterHoriz + (columnWidth + gutterHoriz) * columnIndex,
+        width: columnWidth,
+      }}
+    >
+      {rowIndex * nColumns + columnIndex < stamps.length && (
+        <StampCard stamp={stamps[rowIndex * nColumns + columnIndex]} />
+      )}
+    </div>
+  );
+};
+
 const StampListImpl = React.memo(function StampListImpl(props: {
   stamps: Stamp[];
   width: number;
   height: number;
-  innerRef?: React.RefObject<FixedSizeGrid<Stamp[]>>;
+  innerRef?: React.RefObject<FixedSizeGrid>;
 }): React.ReactElement {
   // Determine layout parameters
   const gutterHoriz = 16;
@@ -41,7 +76,7 @@ const StampListImpl = React.memo(function StampListImpl(props: {
   //   in such case we render only the first row to determine card height
   const [cardHeight, setCardHeight] = useState(0);
   const lastColumnWidth = useRef<number>(0);
-  const handleMountedDiv = useCallback(
+  const handleMountedItem = useCallback(
     (div: HTMLDivElement | null) => {
       if (div !== null && lastColumnWidth.current !== columnWidth) {
         lastColumnWidth.current = columnWidth;
@@ -50,6 +85,16 @@ const StampListImpl = React.memo(function StampListImpl(props: {
     },
     [columnWidth],
   );
+  const gridData: StampGridData = {
+    gutterHoriz,
+    gutterVert,
+    nColumns,
+    nRows,
+    columnWidth,
+    stamps: props.stamps,
+    handleMountedItem,
+  };
+
   return (
     <FixedSizeGrid
       ref={props.innerRef}
@@ -59,23 +104,9 @@ const StampListImpl = React.memo(function StampListImpl(props: {
       columnCount={nColumns}
       columnWidth={columnWidthPassedToGrid}
       rowHeight={cardHeight + gutterVert}
-      itemData={props.stamps}
+      itemData={gridData}
     >
-      {({ columnIndex, rowIndex, style, data }) => (
-        <div
-          ref={handleMountedDiv}
-          style={{
-            ..._.omit(style, 'height'),
-            top: ((style.top ?? 0) as number) + 20,
-            left: gutterHoriz + (columnWidth + gutterHoriz) * columnIndex,
-            width: columnWidth,
-          }}
-        >
-          {rowIndex * nColumns + columnIndex < data.length && (
-            <StampCard stamp={data[rowIndex * nColumns + columnIndex]} />
-          )}
-        </div>
-      )}
+      {StampGridItem}
     </FixedSizeGrid>
   );
 });
@@ -85,13 +116,6 @@ export const StampList: React.FC<StampListProps> = (props) => {
     return <NoStampsMessage />;
   }
 
-  // Optimization: reuse previous list of stamps if new one has the same contents
-  // As a result StampListImpl will not be rendered extra time
-  const stampsRef = useRef<Stamp[]>([]);
-  if (!_.isEqual(stampsRef.current, props.stamps)) {
-    stampsRef.current = props.stamps;
-  }
-
   return (
     <AutoSizer>
       {(args: { width?: number; height?: number }) => (
@@ -99,7 +123,7 @@ export const StampList: React.FC<StampListProps> = (props) => {
           innerRef={props.innerRef}
           width={args.width ?? 1}
           height={args.height ?? 1}
-          stamps={stampsRef.current}
+          stamps={props.stamps}
         />
       )}
     </AutoSizer>

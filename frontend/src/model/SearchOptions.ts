@@ -1,6 +1,12 @@
-import { Item, Stamp } from 'api/SfDatabase';
+import { Item, SfDatabase, Stamp } from 'api/SfDatabase';
 import _ from 'lodash';
-import { NumberRange } from './NumberRange';
+import { NumberRange, zNumberRange, zNumberRangeWithSwitch } from './NumberRange';
+import z from 'zod';
+import { zNullableInputString } from './utility.ts';
+import { FormHandle } from '../components/FormHandle.ts';
+import { useMemo } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export class StampField {
   static Id = new StampField('id', 'По номеру', (s) => s.id);
@@ -187,4 +193,71 @@ export class SearchOptions {
   toUrlSearchString(): string {
     return this.toUrlParams().toString();
   }
+
+  toFormData(db: SfDatabase): SearchOptionsFormData {
+    return {
+      valueRange: this.value.toFormValuesWithSwitch(),
+      yearRange: this.year.toFormValues(),
+      nameQuery: this.contains,
+      category: this.category ?? '',
+      shops: db.shops.map((shop) => ({
+        shopId: shop.id,
+        displayLabel: `${shop.displayName} [${shop.reportDate}]`,
+        selected: this.availabilityRequired === ANY || (this.availabilityRequired?.includes(shop.id) ?? false),
+      })),
+      sort: {
+        fieldId: this.sort.field.id,
+        direction: this.sort.order.id,
+      },
+    };
+  }
+}
+
+// zSearchOptions is a zod schema that transforms form data to SearchOptions object
+export const zSearchOptions = z
+  .strictObject({
+    valueRange: zNumberRangeWithSwitch,
+    yearRange: zNumberRange,
+    nameQuery: z.string(),
+    category: zNullableInputString,
+    shops: z.array(
+      z.strictObject({
+        shopId: z.string(),
+        displayLabel: z.string(),
+        selected: z.boolean(),
+      }),
+    ),
+    sort: z.strictObject({
+      fieldId: z.string().transform((v) => StampField.fromString(v)),
+      direction: z.union([z.literal('asc'), z.literal('desc')]).transform((v) => SortOrder.fromString(v)),
+    }),
+  })
+  .transform((val) => {
+    const selectedShops = val.shops.filter((s) => s.selected);
+    let shopRequirement: ShopRequirement = selectedShops.map((s) => s.shopId);
+    if (shopRequirement.length === val.shops.length) {
+      shopRequirement = ANY;
+    }
+    return new SearchOptions(
+      val.valueRange,
+      val.yearRange,
+      val.category,
+      shopRequirement,
+      val.nameQuery,
+      new StampSort(val.sort.fieldId, val.sort.direction),
+    );
+  });
+export type SearchOptionsFormData = z.input<typeof zSearchOptions>;
+
+export function useSearchOptionsForm(
+  db: SfDatabase,
+  defaultOptions: SearchOptions,
+): FormHandle<z.input<typeof zSearchOptions>> {
+  const defaultFormData = useMemo(() => defaultOptions.toFormData(db), [defaultOptions, db]);
+  return useForm({
+    defaultValues: defaultFormData,
+    mode: 'all',
+    resolver: zodResolver(zSearchOptions),
+    criteriaMode: 'all',
+  });
 }

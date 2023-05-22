@@ -1,9 +1,8 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ShareIcon from '@mui/icons-material/Share';
 import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
 import React from 'react';
 
-export const makeGrayClickableIcon = (Icon: typeof SvgIcon) =>
+const makeGrayClickableIcon = (Icon: typeof SvgIcon) =>
   React.forwardRef((props: { onClick: (e: unknown) => void }, ref: React.ForwardedRef<SVGSVGElement>) => (
     <Icon
       ref={ref}
@@ -23,4 +22,3 @@ export const makeGrayClickableIcon = (Icon: typeof SvgIcon) =>
   ));
 
 export const GrayExpandMoreIcon = makeGrayClickableIcon(ExpandMoreIcon);
-export const GrayShareIcon = makeGrayClickableIcon(ShareIcon);

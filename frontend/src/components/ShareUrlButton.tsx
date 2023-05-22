@@ -15,16 +15,20 @@ async function shareUrl(shareData: ShareData): Promise<string | null> {
   }
 }
 
-export function ShareUrlButton(props: { makeShareData: () => { title: string; url: string } }): React.ReactElement {
+interface Props {
+  makeShareData: () => { title: string; url: string };
+}
+
+export function ShareUrlButton({ makeShareData }: Props): React.ReactElement {
   const [snackbarText, setSnackbarText] = useState('');
   const [snackbarShown, setSnackbarShown] = useState(false);
   const handleClick = useCallback(async () => {
-    const shareResult = await shareUrl(props.makeShareData());
+    const shareResult = await shareUrl(makeShareData());
     if (shareResult !== null) {
       setSnackbarText(shareResult);
       setSnackbarShown(true);
     }
-  }, [props.makeShareData]);
+  }, [makeShareData]);
   return (
     <>
       <Button variant="outlined" startIcon={<ShareIcon />} onClick={handleClick}>

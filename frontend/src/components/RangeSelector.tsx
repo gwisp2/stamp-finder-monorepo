@@ -61,7 +61,7 @@ export const RangeSelector = typedMemo(function RangeSelector<TFormData extends 
   useEffect(() => {
     formHandle.trigger(props.startPath);
     formHandle.trigger(props.endPath);
-  }, [startValue, endValue, isExact]);
+  }, [formHandle, props.startPath, props.endPath, startValue, endValue, isExact]);
 
   return (
     <>
