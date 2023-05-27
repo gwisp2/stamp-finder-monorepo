@@ -6,6 +6,7 @@ import (
 	"github.com/gocolly/colly"
 	"github.com/samber/lo"
 	"image"
+	_ "image/jpeg"
 	"image/png"
 	"io"
 	"log"
