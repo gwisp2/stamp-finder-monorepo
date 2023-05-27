@@ -40,7 +40,7 @@ func (collector *AdvancedCollyCollector) visitWithRetry(pageUrl string) error {
 		var urlErr *url.Error
 		if errors.As(err, &urlErr) {
 			if urlErr.Timeout() && nRetriesLeft > 0 {
-				log.Printf("Timeout fetching %s, waiting for 30 seconds", pageUrl)
+				log.Printf("Timeout fetching %s, waiting for 30 seconds\n", pageUrl)
 				time.Sleep(30 * time.Second)
 				nRetriesLeft -= 1
 				continue
