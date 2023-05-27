@@ -8,6 +8,7 @@ import (
 	"github.com/anthonynsimon/bild/transform"
 	mapset "github.com/deckarep/golang-set/v2"
 	"image"
+	"image/color"
 	"image/jpeg"
 	"os"
 	"path"
@@ -39,7 +40,23 @@ func makeThumbnail(image image.Image) *image.RGBA {
 		newWidth = size.Dx() * ThumbnailSize / imageSize
 		newHeight = size.Dy() * ThumbnailSize / imageSize
 	}
-	return transform.Resize(image, newWidth, newHeight, transform.Linear)
+	thumbnail := transform.Resize(image, newWidth, newHeight, transform.Linear)
+	replaceTransparentWithWhite(thumbnail)
+	return thumbnail
+}
+
+func replaceTransparentWithWhite(thumbnail *image.RGBA) {
+	if !thumbnail.Opaque() {
+		rect := thumbnail.Rect
+		for y := rect.Min.Y; y < rect.Max.Y; y++ {
+			for x := rect.Min.X; x < rect.Max.X; x++ {
+				pixelColor := thumbnail.RGBAAt(x, y)
+				if pixelColor.A != 0xFF {
+					thumbnail.SetRGBA(x, y, color.RGBA{R: 255, G: 255, B: 255, A: 255})
+				}
+			}
+		}
+	}
 }
 
 type ThumbnailTask struct {
