@@ -4,6 +4,7 @@ import { Controller, FieldPathByValue, FieldValues } from 'react-hook-form';
 import { FormHandle } from './FormHandle';
 
 export function RHFOutlinedInput<TFormData extends FieldValues>(props: {
+  id?: string;
   handle: FormHandle<TFormData>;
   path: FieldPathByValue<TFormData, string>;
   inputMode?: HTMLAttributes<unknown>['inputMode'];
@@ -19,6 +20,7 @@ export function RHFOutlinedInput<TFormData extends FieldValues>(props: {
         return (
           <OutlinedInput
             {...field}
+            id={props.id}
             inputRef={field.ref}
             fullWidth
             size="small"
@@ -50,6 +52,7 @@ export function RHFSwitch<TFormData extends FieldValues>(props: {
 }
 
 export function RHFSelect<TFormData extends FieldValues>(props: {
+  labelId?: string;
   handle: FormHandle<TFormData>;
   path: FieldPathByValue<TFormData, string>;
   values: { value: string; label: string }[];
@@ -67,7 +70,14 @@ export function RHFSelect<TFormData extends FieldValues>(props: {
     <Controller
       control={props.handle.control}
       render={({ field, fieldState }) => (
-        <Select {...field} inputRef={field.ref} error={fieldState.invalid} size="small" fullWidth>
+        <Select
+          {...field}
+          labelId={props.labelId}
+          inputRef={field.ref}
+          error={fieldState.invalid}
+          size="small"
+          fullWidth
+        >
           {menuItems}
         </Select>
       )}

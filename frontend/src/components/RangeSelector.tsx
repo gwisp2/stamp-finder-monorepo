@@ -22,6 +22,7 @@ export interface RangeSelectorProps<TFormData extends FieldValues> {
 }
 
 interface RangePointInputProps<TFormData extends FieldValues> {
+  id?: string;
   startAdornmentText?: string;
   endAdornmentText?: string;
   formHandle: FormHandle<TFormData>;
@@ -35,6 +36,7 @@ const RangePointInput = typedMemo(function RangePointInput<TFormData extends Fie
 ) {
   return (
     <RHFOutlinedInput
+      id={props.id}
       handle={props.formHandle}
       path={props.edgePath}
       inputMode="numeric"
@@ -63,11 +65,12 @@ export const RangeSelector = typedMemo(function RangeSelector<TFormData extends 
     formHandle.trigger(props.endPath);
   }, [formHandle, props.startPath, props.endPath, startValue, endValue, isExact]);
 
+  const startInputId = 'field-' + props.startPath;
   return (
     <>
       <Box display="flex" justifyContent="space-between">
         <div>
-          <InputLabel>{props.label}</InputLabel>
+          <InputLabel htmlFor={startInputId}>{props.label}</InputLabel>
         </div>
         <Box display="flex">
           <RHFSwitch handle={formHandle} path={props.isExactPath} />
@@ -90,6 +93,7 @@ export const RangeSelector = typedMemo(function RangeSelector<TFormData extends 
       {!isExact ? (
         <Box sx={{ display: 'flex', gap: '1em' }}>
           <RangePointInput
+            id={startInputId}
             formHandle={formHandle}
             edgePath={props.startPath}
             startAdornmentText="от"
@@ -104,6 +108,7 @@ export const RangeSelector = typedMemo(function RangeSelector<TFormData extends 
         </Box>
       ) : (
         <RangePointInput
+          id={startInputId}
           formHandle={formHandle}
           edgePath={props.startPath}
           lowerBound={props.lowerBound}

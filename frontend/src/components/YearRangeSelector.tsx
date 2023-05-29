@@ -8,6 +8,7 @@ import { RHFSelect } from './react-hook-form-mui';
 import { typedMemo } from './utilities';
 
 export interface YearRangeSelectorProps<TFormData extends FieldValues> {
+  labelId?: string;
   formHandle: FormHandle<TFormData>;
   startPath: FieldPathByValue<TFormData, string>;
   endPath: FieldPathByValue<TFormData, string>;
@@ -16,6 +17,7 @@ export interface YearRangeSelectorProps<TFormData extends FieldValues> {
 }
 
 interface YearSelectorProps<TFormData extends FieldValues> {
+  labelId?: string;
   formHandle: FormHandle<TFormData>;
   path: FieldPathByValue<TFormData, string>;
   prefix?: string;
@@ -41,7 +43,7 @@ const YearSelector = <TFormData extends FieldValues>(props: YearSelectorProps<TF
   } else {
     selectOptions = [{ value: '', label: '-' }];
   }
-  return <RHFSelect handle={props.formHandle} path={props.path} values={selectOptions} />;
+  return <RHFSelect labelId={props.labelId} handle={props.formHandle} path={props.path} values={selectOptions} />;
 };
 
 export const YearRangeSelector = typedMemo(function YearRangeSelector<TFormData extends FieldValues>(
@@ -63,6 +65,7 @@ export const YearRangeSelector = typedMemo(function YearRangeSelector<TFormData 
   return (
     <Box sx={{ display: 'flex', gap: '1em' }}>
       <YearSelector
+        labelId={props.labelId}
         formHandle={formHandle}
         path={props.startPath}
         lowerBound={props.lowerBound}

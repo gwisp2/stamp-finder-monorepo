@@ -7,6 +7,7 @@ import { FormHandle } from './FormHandle';
 import { RHFSelect } from './react-hook-form-mui';
 
 export interface SortSelectorProps<TFormData extends FieldValues> {
+  labelId?: string;
   formHandle: FormHandle<TFormData>;
   fieldIdPath: FieldPathByValue<TFormData, string>;
   directionPath: FieldPathByValue<TFormData, 'asc' | 'desc'>;
@@ -25,7 +26,7 @@ export function SortSelector<TFormData extends FieldValues>(props: SortSelectorP
   }));
   return (
     <Box display="flex">
-      <RHFSelect handle={props.formHandle} path={props.fieldIdPath} values={allFieldValues} />
+      <RHFSelect labelId={props.labelId} handle={props.formHandle} path={props.fieldIdPath} values={allFieldValues} />
       <IconButton
         sx={{ ml: '0' }}
         size="medium"

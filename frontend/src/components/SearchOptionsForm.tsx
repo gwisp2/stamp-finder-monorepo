@@ -83,8 +83,9 @@ export const SearchOptionsForm: React.FC<Props> = React.memo(function SearchOpti
         />
       </FormSection>
       <FormSection>
-        <InputLabel>Год выпуска:</InputLabel>
+        <InputLabel id="year-selector-label">Год выпуска:</InputLabel>
         <YearRangeSelector
+          labelId="year-selector-label"
           formHandle={handle}
           startPath="yearRange.min"
           endPath="yearRange.max"
@@ -93,12 +94,12 @@ export const SearchOptionsForm: React.FC<Props> = React.memo(function SearchOpti
         />
       </FormSection>
       <FormSection>
-        <InputLabel>Название содержит:</InputLabel>
-        <RHFOutlinedInput handle={handle} path="nameQuery" />
+        <InputLabel htmlFor="field-stamp-name-includes">Название содержит:</InputLabel>
+        <RHFOutlinedInput id="field-stamp-name-includes" handle={handle} path="nameQuery" />
       </FormSection>
       <FormSection>
-        <InputLabel>Рубрика:</InputLabel>
-        <RHFSelect handle={handle} path="category" values={categoryOptions} />
+        <InputLabel id="field-category-label">Рубрика:</InputLabel>
+        <RHFSelect labelId="field-category-label" handle={handle} path="category" values={categoryOptions} />
       </FormSection>
       <FormSection>
         <InputLabel>Наличие:</InputLabel>
@@ -111,8 +112,13 @@ export const SearchOptionsForm: React.FC<Props> = React.memo(function SearchOpti
         ))}
       </FormSection>
       <FormSection>
-        <InputLabel>Сортировка:</InputLabel>
-        <SortSelector formHandle={handle} directionPath="sort.direction" fieldIdPath="sort.fieldId" />
+        <InputLabel id="field-sort-label">Сортировка:</InputLabel>
+        <SortSelector
+          labelId="field-sort-label"
+          formHandle={handle}
+          directionPath="sort.direction"
+          fieldIdPath="sort.fieldId"
+        />
       </FormSection>
     </form>
   );
