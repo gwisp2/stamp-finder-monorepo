@@ -33,8 +33,13 @@ const ValueRangeShortcuts: RangeShortcut[] = [
   },
   {
     icons: [PublicIcon, PhotoSizeSelectActualIcon],
-    name: 'открытка в другие страны',
+    name: 'открытка в Беларусь или Казахстан',
     range: NumberRange.exact(65),
+  },
+  {
+    icons: [PublicIcon, PhotoSizeSelectActualIcon],
+    name: 'открытка в другие страны',
+    range: NumberRange.exact(75),
   },
 ];
 
