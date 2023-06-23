@@ -1,4 +1,4 @@
-import { Box, Menu, MenuItem } from '@mui/material';
+import { Box, Menu, MenuItem, Typography } from '@mui/material';
 import React, { useRef, useState } from 'react';
 import { NumberRange } from '../model';
 import { GrayExpandMoreIcon } from './GrayClickableIcon';
@@ -6,6 +6,7 @@ import { GrayExpandMoreIcon } from './GrayClickableIcon';
 export interface RangeShortcut {
   icons?: React.ComponentType[];
   name: string;
+  comment?: string;
   range: NumberRange;
 }
 
@@ -46,7 +47,10 @@ export function RangeShortcutsDropdown(props: RangeShortcutsDropdownProps) {
             <Box mr={2} minWidth="2em" textAlign="right">
               {formatRange(shortcut.range, props.unit)}
             </Box>
-            <Box flexGrow={1}>{shortcut.name}</Box>
+            <Box flexGrow={1}>
+              <Typography>{shortcut.name}</Typography>
+              <Typography color="text.secondary">{shortcut.comment ?? ''}</Typography>
+            </Box>
             <Box ml={2} minWidth="2em" textAlign="right">
               {shortcut.icons?.map((Icon, index) => (
                 <Icon key={index} />
