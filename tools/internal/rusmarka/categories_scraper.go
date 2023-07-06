@@ -78,8 +78,8 @@ func collectStampPageUrlsForCategory(cat category) ([]string, error) {
 		pageUrl := fmt.Sprintf("https://rusmarka.ru/catalog/marki/year/0/cat/%s/p/%d.aspx", cat.id, page)
 		stampPageUrls, err := CollectStampPageUrls(pageUrl)
 		if err != nil && err.Error() == http.StatusText(http.StatusNotFound) {
-			// treat 404 as empty list
-			return nil, nil
+			// 404 is returned after the last page
+			break
 		} else if err != nil {
 			return nil, err
 		}
