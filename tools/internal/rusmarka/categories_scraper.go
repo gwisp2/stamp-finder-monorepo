@@ -7,6 +7,7 @@ import (
 	"github.com/samber/lo"
 	"golang.org/x/exp/slices"
 	"log"
+	"net/http"
 	"regexp"
 	"sf/internal/data"
 	"sort"
@@ -64,6 +65,9 @@ func CollectStampPageUrls(catalogUrl string) ([]string, error) {
 		pages = append(pages, stampsPageUrl)
 	})
 	err := collector.visitWithRetry(catalogUrl)
+	if err != nil {
+		return nil, err
+	}
 	pages = lo.Uniq(pages)
 	return pages, err
 }
@@ -73,7 +77,10 @@ func collectStampPageUrlsForCategory(cat category) ([]string, error) {
 	for page := 0; page < maxPagesPerCategory; page++ {
 		pageUrl := fmt.Sprintf("https://rusmarka.ru/catalog/marki/year/0/cat/%s/p/%d.aspx", cat.id, page)
 		stampPageUrls, err := CollectStampPageUrls(pageUrl)
-		if err != nil {
+		if err != nil && err.Error() == http.StatusText(http.StatusNotFound) {
+			// treat 404 as empty list
+			return nil, nil
+		} else if err != nil {
 			return nil, err
 		}
 		if len(stampPageUrls) == 0 {
