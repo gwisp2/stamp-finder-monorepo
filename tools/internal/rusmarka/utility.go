@@ -59,6 +59,9 @@ func makeRangeSlice(min, max int) []int {
 }
 
 func parseStampIds(s string) []int {
+	// search for stamp ids only in the first 15 characters of a title
+	sr := []rune(s)
+	s = string(sr[:min(15, len(sr))])
 	if m := regexpIdRange.FindStringSubmatch(s); m != nil {
 		start, err1 := strconv.Atoi(m[1])
 		end, err2 := strconv.Atoi(m[2])
