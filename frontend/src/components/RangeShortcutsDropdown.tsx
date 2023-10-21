@@ -12,6 +12,7 @@ export interface RangeShortcut {
 
 export interface RangeShortcutsDropdownProps {
   shortcuts: RangeShortcut[];
+  shortcutsComment?: string;
   onSelect?: (range: NumberRange) => void;
   unit?: string;
 }
@@ -52,12 +53,13 @@ export function RangeShortcutsDropdown(props: RangeShortcutsDropdownProps) {
               <Typography color="text.secondary">{shortcut.comment ?? ''}</Typography>
             </Box>
             <Box ml={2} minWidth="2em" textAlign="right">
-              {shortcut.icons?.map((Icon, index) => (
-                <Icon key={index} />
-              ))}
+              {shortcut.icons?.map((Icon, index) => <Icon key={index} />)}
             </Box>
           </MenuItem>
         ))}
+        <Box sx={{ mb: '1', textAlign: 'center' }}>
+          <Typography color="text.secondary">{props.shortcutsComment}</Typography>
+        </Box>
       </Menu>
     </>
   );

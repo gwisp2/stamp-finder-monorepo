@@ -18,6 +18,7 @@ export interface RangeSelectorProps<TFormData extends FieldValues> {
   unit?: string;
 
   shortcuts?: RangeShortcut[];
+  shortcutsComment?: string;
   label?: React.ReactNode;
 }
 
@@ -78,6 +79,7 @@ export const RangeSelector = typedMemo(function RangeSelector<TFormData extends 
             <RangeShortcutsDropdown
               unit={props.unit}
               shortcuts={props.shortcuts}
+              shortcutsComment={props.shortcutsComment}
               onSelect={(range) => {
                 const values = range.toFormValuesWithSwitch();
                 setFormValue(formHandle, props.startPath, values.min);

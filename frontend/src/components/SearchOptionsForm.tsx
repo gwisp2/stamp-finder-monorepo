@@ -20,6 +20,7 @@ interface Props {
   onChange?: (options: SearchOptions) => void;
 }
 
+const ValueShortcutsComment = 'стоимость с 1 ноября 2023';
 const ValueRangeShortcuts: RangeShortcut[] = [
   {
     icons: [RestartAltIcon],
@@ -29,7 +30,7 @@ const ValueRangeShortcuts: RangeShortcut[] = [
   {
     icons: [PhotoSizeSelectActualIcon],
     name: 'открытка по России',
-    range: NumberRange.exact(19),
+    range: NumberRange.exact(20),
   },
   {
     icons: [PublicIcon, PhotoSizeSelectActualIcon],
@@ -81,6 +82,7 @@ export const SearchOptionsForm: React.FC<Props> = React.memo(function SearchOpti
         <RangeSelector
           formHandle={handle}
           shortcuts={ValueRangeShortcuts}
+          shortcutsComment={ValueShortcutsComment}
           label="Номинал:"
           startPath="valueRange.min"
           endPath="valueRange.max"
