@@ -62,7 +62,10 @@ export class SortOrder {
 }
 
 export class StampSort {
-  constructor(readonly field: StampField, readonly order: SortOrder) {}
+  constructor(
+    readonly field: StampField,
+    readonly order: SortOrder,
+  ) {}
 
   toString(): string {
     return `${this.field}-${this.order}`;

@@ -42,7 +42,11 @@ export const zNumberRangeWithSwitch = z
 export class NumberRange {
   exact: boolean;
 
-  constructor(readonly start: number | null, readonly end: number | null, exact?: boolean) {
+  constructor(
+    readonly start: number | null,
+    readonly end: number | null,
+    exact?: boolean,
+  ) {
     if (exact === true && start !== end) {
       throw new Error('exact === true && start !== end');
     }
