@@ -79,7 +79,7 @@ const StampListImpl = React.memo(function StampListImpl(props: {
   // Determine layout parameters
   const gutterHoriz = 16;
   const gutterVert = 16;
-  const nColumns = Math.floor(props.width / 270);
+  const nColumns = Math.max(1, Math.floor(props.width / 270));
   const nRows = Math.ceil(props.stamps.length / nColumns);
   const columnWidth = (props.width - gutterHoriz * (nColumns + 1)) / nColumns;
   const columnWidthPassedToGrid = props.width / nColumns; // does it affect anything?
