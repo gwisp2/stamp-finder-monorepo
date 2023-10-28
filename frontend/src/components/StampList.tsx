@@ -6,6 +6,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeGrid } from 'react-window';
 import NoStampsImage from './icons/no-stamps.svg';
+import { preloadImage } from '../tools/preload-image.ts';
 
 export interface StampListProps {
   stamps: Array<Stamp>;
@@ -39,6 +40,19 @@ const StampGridItem = (props: {
 }) => {
   const { data, columnIndex, rowIndex } = props;
   const { stamps, columnWidth, nColumns, gutterHoriz } = data;
+
+  // preload images for the next rows
+  if (columnIndex == 0) {
+    const nRowsToPreload = 4;
+    for (let i = 0; i < nRowsToPreload * nColumns; i++) {
+      const imageUrl = stamps[rowIndex * nColumns + i]?.imageUrl;
+      if (imageUrl) {
+        preloadImage(imageUrl);
+      }
+    }
+  }
+
+  // render a card
   return (
     <div
       ref={props.data.handleMountedItem}
