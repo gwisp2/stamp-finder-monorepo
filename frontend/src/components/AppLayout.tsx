@@ -1,7 +1,6 @@
 import MenuIcon from '@mui/icons-material/Menu';
 import { AppBar, Box, Divider, IconButton, SwipeableDrawer, Toolbar } from '@mui/material';
-import React, { useState } from 'react';
-import { useWindowSize } from 'react-use';
+import React, { useEffect, useState } from 'react';
 
 export interface AppLayoutProps {
   drawerTitle?: React.ReactNode;
@@ -10,9 +9,24 @@ export interface AppLayoutProps {
   mainContent?: React.ReactNode;
 }
 
+function useWindowWidth(): number {
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  useEffect((): (() => void) | void => {
+    const resizeObserver = new ResizeObserver((entries) => {
+      const newWidth = entries[0]?.contentBoxSize[0]?.inlineSize;
+      if (newWidth) {
+        setWindowWidth(newWidth);
+      }
+    });
+    resizeObserver.observe(document.body);
+    return () => resizeObserver.disconnect();
+  }, []);
+  return windowWidth;
+}
+
 export function AppLayout({ drawerContent, drawerTitle, mainContent, mainTitle }: AppLayoutProps): React.ReactElement {
-  const windowSize = useWindowSize();
-  const isScreenSmall = windowSize.width <= 600;
+  const windowWidth = useWindowWidth();
+  const isScreenSmall = windowWidth <= 600;
   const [drawerOpened, setDrawerOpened] = useState(false);
 
   const drawerWidth = 'min(360px, 90vw)';
