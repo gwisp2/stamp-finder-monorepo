@@ -80,6 +80,7 @@ export const StampCard = React.memo(function StampCard(props: { stamp: Stamp }) 
         <Divider sx={{ mb: 1 }} />
         <Box pb="100%" position="relative">
           <Box
+            key={s.id /* so that previous image is not used by new image is loading */}
             position="absolute"
             sx={{ objectFit: 'contain' }}
             component="img"
@@ -92,6 +93,7 @@ export const StampCard = React.memo(function StampCard(props: { stamp: Stamp }) 
       </CardContent>
       <CardActions>
         <Button
+          key={s.id /* to avoid color change animation when button is in a virtualized list  */}
           disableElevation
           color={s.shopItems.length !== 0 ? 'success' : 'info'}
           variant={s.shopItems.length !== 0 ? 'contained' : 'outlined'}
