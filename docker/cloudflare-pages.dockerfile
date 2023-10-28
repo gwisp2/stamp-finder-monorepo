@@ -17,7 +17,7 @@ RUN cd /frontend && npm install && npm run build
 # Backend
 # -----------------
 
-FROM golang:1.20.3-bullseye as builder
+FROM golang:1.21.3-bullseye as builder
 COPY tools/ /app
 RUN --mount=type=cache,target=/root/.cache/go-build \
     cd /app && go build -buildvcs=false ./cmd/sfwatch
