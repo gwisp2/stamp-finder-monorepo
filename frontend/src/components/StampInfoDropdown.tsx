@@ -20,6 +20,7 @@ const StampTextInfo: React.FC<{ stamp: Stamp }> = React.memo((props) => {
       {s.categories.length !== 0 && <KeyValueBox name="Категории" value={s.categories.join(', ')} />}
       {s.series && <KeyValueBox name="Серия" value={s.series} />}
       {s.name && <KeyValueBox name="Название" value={s.name} />}
+      {s.shape.originalText && <KeyValueBox name="Размер" value={s.shape.originalText} />}
     </div>
   );
 });

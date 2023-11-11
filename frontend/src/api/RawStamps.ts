@@ -3,6 +3,14 @@ export interface RawStamps {
   stamps: RawStamp[];
 }
 
+export interface RawStampShape {
+  readonly type: string;
+  readonly w?: number;
+  readonly h?: number;
+  readonly d?: number;
+  readonly originalText?: string;
+}
+
 export interface RawStamp {
   readonly id: string;
   readonly page: string;
@@ -12,4 +20,5 @@ export interface RawStamp {
   readonly categories: Array<string> | null;
   readonly series?: string;
   readonly name?: string;
+  readonly shape?: RawStampShape;
 }

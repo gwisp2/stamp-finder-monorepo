@@ -1,7 +1,12 @@
 import _ from 'lodash';
 import React from 'react';
 import { RawShops } from './RawShops';
-import { RawStamps } from './RawStamps';
+import { RawStamps, RawStampShape } from './RawStamps';
+
+export interface StampShape {
+  originalText?: string;
+  bboxArea?: number;
+}
 
 export interface Stamp {
   id: number;
@@ -13,6 +18,7 @@ export interface Stamp {
   categories: Array<string>;
   series: string | null;
   name: string | null;
+  shape: StampShape;
 
   shopItems: Item[];
   shopItemGroups: ItemGroup[];
@@ -66,6 +72,7 @@ export class SfDatabase {
         idNameAndSeries: (id + '|' + (rawStamp.name ?? '') + '|' + (rawStamp.series ?? '')).toLowerCase(),
         shopItems: [],
         shopItemGroups: [],
+        shape: SfDatabase.stampFromRaw(rawStamp.shape),
       };
       this._stamps.push(stamp);
       this._stampsById[id] = stamp;
@@ -116,6 +123,20 @@ export class SfDatabase {
     }
 
     this._stats = this.computeStats();
+  }
+
+  private static stampFromRaw(rawShape: RawStampShape | undefined) {
+    const shape: StampShape = {
+      originalText: rawShape?.originalText ?? '',
+    };
+    if (rawShape) {
+      if (rawShape.type === 'rect' || rawShape.type === 'oval') {
+        shape.bboxArea = rawShape.w! * rawShape.h!;
+      } else if (rawShape.type === 'circle') {
+        shape.bboxArea = rawShape.d! * rawShape.d!;
+      }
+    }
+    return shape;
   }
 
   get stats() {
