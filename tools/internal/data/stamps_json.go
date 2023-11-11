@@ -10,15 +10,24 @@ import (
 	"sort"
 )
 
+type StampShape struct {
+	Type         string  `json:"type,omitempty"`
+	W            float64 `json:"w,omitempty"`
+	H            float64 `json:"h,omitempty"`
+	D            float64 `json:"d,omitempty"`
+	OriginalText string  `json:"originalText,omitempty"`
+}
+
 type StampEntry struct {
-	Id         int      `json:"id"`
-	Image      *string  `json:"image"`
-	Value      *float64 `json:"value"`
-	Year       *int     `json:"year"`
-	Page       string   `json:"page"`
-	Categories []string `json:"categories"`
-	Series     string   `json:"series,omitempty"`
-	Name       string   `json:"name,omitempty"`
+	Id         int         `json:"id"`
+	Image      *string     `json:"image"`
+	Value      *float64    `json:"value"`
+	Year       *int        `json:"year"`
+	Page       string      `json:"page"`
+	Categories []string    `json:"categories"`
+	Series     string      `json:"series,omitempty"`
+	Name       string      `json:"name,omitempty"`
+	Shape      *StampShape `json:"shape,omitempty"`
 }
 
 type StampsJson struct {

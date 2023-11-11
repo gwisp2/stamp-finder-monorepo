@@ -2,7 +2,9 @@ package rusmarka
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
+	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly"
 	"github.com/samber/lo"
 	"image"
@@ -12,6 +14,7 @@ import (
 	"log"
 	"net/http"
 	"sf/internal/data"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -21,6 +24,11 @@ type ScrapedStamps struct {
 	Images  map[string][]byte
 }
 
+type scrapedPropertiesRow struct {
+	Id         int
+	Properties map[string]string
+}
+
 type scrapedPagePart struct {
 	title           string
 	titleWithoutIds string
@@ -28,9 +36,10 @@ type scrapedPagePart struct {
 	imagePngBytes   []byte
 }
 type scrapedPage struct {
-	title string
-	parts []scrapedPagePart
-	items []RusmarkaItem
+	title        string
+	parts        []scrapedPagePart
+	propertyRows []scrapedPropertiesRow
+	items        []RusmarkaItem
 }
 
 func downloadImage(url string) ([]byte, error) {
@@ -63,14 +72,55 @@ func downloadImage(url string) ([]byte, error) {
 	return pngImageBuffer.Bytes(), nil
 }
 
+func scrapePropertiesTable(table *goquery.Selection, idHint *int) []scrapedPropertiesRow {
+	var keys []string
+	var values [][]string
+	table.Find("thead").Find("th").Each(func(_ int, th *goquery.Selection) {
+		keys = append(keys, th.Text())
+	})
+	table.Find("tbody").Find("tr").Each(func(_ int, tr *goquery.Selection) {
+		var rowValues []string
+		tr.Find("td").Each(func(i int, td *goquery.Selection) {
+			rowValues = append(rowValues, td.Text())
+		})
+		values = append(values, rowValues)
+	})
+	var rows []scrapedPropertiesRow
+	if len(keys) != 0 {
+		for _, rowValues := range values {
+			var id int
+			var err error
+			if len(rowValues) != 1 || idHint == nil {
+				id, err = strconv.Atoi(rowValues[0])
+				if err != nil {
+					id = 0
+				}
+			} else {
+				id = *idHint
+			}
+			key2value := make(map[string]string)
+			for j := 0; j < min(len(keys), len(rowValues)); j++ {
+				key2value[keys[j]] = rowValues[j]
+			}
+			rows = append(rows, scrapedPropertiesRow{Id: id, Properties: key2value})
+		}
+	}
+	return rows
+}
+
 func scrapePageParts(pageUrl string) (*scrapedPage, error) {
 	var pageTitle string
 	var items []RusmarkaItem
+	var propertyRows []scrapedPropertiesRow
 	parts := make([]scrapedPagePart, 0)
 	collector := newAdvancedCollyCollector()
 	collector.OnHTML("html", func(html *colly.HTMLElement) {
 		pageTitle = strings.TrimSpace(html.DOM.Find("title").Text())
 		items = ExtractRusmarkaItems(html)
+		html.ForEach("div[aria-labelledby=profile-tab]", func(_ int, element *colly.HTMLElement) {
+			parsedRows := scrapePropertiesTable(element.DOM.Find("table"), nil)
+			propertyRows = append(propertyRows, parsedRows...)
+		})
 		html.ForEach("h2.marka-post-title", func(index int, h2 *colly.HTMLElement) {
 			stampIds := parseStampIds(h2.Text)
 			if len(stampIds) != 0 {
@@ -93,6 +143,13 @@ func scrapePageParts(pageUrl string) (*scrapedPage, error) {
 						part.imagePngBytes = imageBytes
 					}
 				}
+
+				if len(stampIds) == 1 {
+					id := stampIds[0]
+					propertiesTableAfterTitle := h2.DOM.Parent().Next().Next().Find("table")
+					propertyRows = append(propertyRows, scrapePropertiesTable(propertiesTableAfterTitle, &id)...)
+				}
+
 				parts = append(parts, part)
 			}
 		})
@@ -101,13 +158,14 @@ func scrapePageParts(pageUrl string) (*scrapedPage, error) {
 	if err != nil {
 		return nil, err
 	}
-	if pageTitle == "" || len(parts) == 0 {
-		return nil, nil
+	if pageTitle == "" {
+		return nil, errors.New("no title or parts found")
 	}
 	return &scrapedPage{
-		title: pageTitle,
-		parts: parts,
-		items: items,
+		title:        pageTitle,
+		parts:        parts,
+		propertyRows: propertyRows,
+		items:        items,
 	}, nil
 }
 
@@ -117,15 +175,28 @@ func ScrapeStampsFromNewPage(pageUrl string) (*ScrapedStamps, error) {
 		return nil, err
 	}
 
-	idsOnPage := lo.Uniq(lo.FlatMap(page.parts, func(part scrapedPagePart, index int) []int {
-		return part.ids
-	}))
+	var idsOnPage []int
+	for _, part := range page.parts {
+		idsOnPage = append(idsOnPage, part.ids...)
+	}
+	for _, row := range page.propertyRows {
+		if row.Id != 0 {
+			idsOnPage = append(idsOnPage, row.Id)
+		}
+	}
+	for _, item := range page.items {
+		idsOnPage = append(idsOnPage, item.ids...)
+	}
+	idsOnPage = lo.Uniq(idsOnPage)
 
 	var knownStampIds []int
 	scrapedStamps := &ScrapedStamps{
 		Entries: make([]*data.StampEntry, 0),
 		Images:  make(map[string][]byte),
 	}
+	currentYear := time.Now().Year()
+
+	/* Extract entries from page parts */
 	for _, part := range page.parts {
 		// Don't add the same stamp id multiple times
 		alreadyKnown := false
@@ -140,7 +211,6 @@ func ScrapeStampsFromNewPage(pageUrl string) (*ScrapedStamps, error) {
 		}
 		// Generate stamp Entries
 		for _, id := range part.ids {
-			currentYear := time.Now().Year()
 			name := page.title
 			if len(idsOnPage) != 1 {
 				name = fmt.Sprintf("%s. %s.", page.title, part.title)
@@ -172,8 +242,60 @@ func ScrapeStampsFromNewPage(pageUrl string) (*ScrapedStamps, error) {
 				entry.Image = &imageFileName
 				scrapedStamps.Images[imageFileName] = part.imagePngBytes
 			}
+
 			scrapedStamps.Entries = append(scrapedStamps.Entries, entry)
 		}
 	}
+
+	/* Add entries with shop items or property rows */
+	for _, id := range idsOnPage {
+		_, hasEntry := lo.Find(scrapedStamps.Entries, func(entry *data.StampEntry) bool {
+			return entry.Id == id
+		})
+		if !hasEntry {
+			var value float64 = 0
+			scrapedStamps.Entries = append(scrapedStamps.Entries, &data.StampEntry{
+				Id:         id,
+				Page:       pageUrl,
+				Value:      &value,
+				Year:       &currentYear,
+				Categories: []string{},
+				Name:       "",
+			})
+		}
+	}
+
+	/* Populate shape */
+	extractShapeText := func(row scrapedPropertiesRow) string {
+		for _, shapeKey := range []string{"Размер", "Формат марки", "Формат", "Формат марки в блоке",
+			"Размер марки в блоке", "Формат марок в блоке", "Формат марок", "Форматы марок"} {
+			if v, ok := row.Properties[shapeKey]; ok {
+				return v
+			}
+		}
+		return ""
+	}
+	shapeOriginalTextsWithoutId := lo.Uniq(lo.FilterMap(lo.Filter(page.propertyRows, func(row scrapedPropertiesRow, _ int) bool {
+		return row.Id == 0
+	}), func(row scrapedPropertiesRow, _ int) (string, bool) {
+		t := extractShapeText(row)
+		return extractShapeText(row), t != ""
+	}))
+
+	for _, entry := range scrapedStamps.Entries {
+		specificPropsRow, hasSpecificPropsRow := lo.Find(page.propertyRows, func(row scrapedPropertiesRow) bool {
+			return row.Id == entry.Id
+		})
+		var shapeText string
+		if hasSpecificPropsRow {
+			shapeText = extractShapeText(specificPropsRow)
+		} else if len(shapeOriginalTextsWithoutId) == 1 {
+			shapeText = shapeOriginalTextsWithoutId[0]
+		}
+		if shapeText != "" {
+			entry.Shape = ParseStampShape(shapeText)
+		}
+	}
+
 	return scrapedStamps, err
 }
