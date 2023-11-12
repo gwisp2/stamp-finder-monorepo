@@ -6,6 +6,7 @@ import { RawStamps, RawStampShape } from './RawStamps';
 export interface StampShape {
   text?: string;
   bboxArea?: number;
+  width?: number;
 }
 
 export interface Stamp {
@@ -133,15 +134,19 @@ export class SfDatabase {
     if (rawShape) {
       if (rawShape.type === 'rect') {
         shape.bboxArea = rawShape.w! * rawShape.h!;
+        shape.width = rawShape.w;
         shape.text = `${rawShape.w!}x${rawShape.h!} мм`;
       } else if (rawShape.type === 'oval') {
         shape.bboxArea = rawShape.w! * rawShape.h!;
+        shape.width = rawShape.w;
         shape.text = `овал ${rawShape.w!}x${rawShape.h!} мм`;
       } else if (rawShape.type === 'circle') {
         shape.bboxArea = rawShape.d! * rawShape.d!;
+        shape.width = rawShape.d;
         shape.text = `круг ${rawShape.d!} мм`;
       } else if (rawShape.type === 'triangle45') {
         shape.bboxArea = (rawShape.w! * rawShape.w!) / 1.41;
+        shape.width = rawShape.w;
         shape.text = `треугольник, длинная сторона ${rawShape.w!} мм`;
       } else {
         return null;
