@@ -11,7 +11,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 export class StampField {
   static Id = new StampField('id', 'По номеру', (s) => s.id);
   static Value = new StampField('value', 'По номиналу', (s) => s.value);
-  static AllValues = [StampField.Id, StampField.Value];
+  static BoxArea = new StampField('boxarea', 'По занимаемому месту', (s) => s.shape?.bboxArea ?? null);
+  static AllValues = [StampField.Id, StampField.Value, StampField.BoxArea];
 
   private constructor(
     public readonly id: string,
@@ -24,14 +25,11 @@ export class StampField {
   }
 
   static fromString(id: string): StampField {
-    switch (id) {
-      case StampField.Id.id:
-        return StampField.Id;
-      case StampField.Value.id:
-        return StampField.Value;
-      default:
-        throw new Error('Invalid id');
+    const field = StampField.AllValues.find((f) => f.id === id);
+    if (!field) {
+      throw new Error(`Invalid id: ${id}`);
     }
+    return field;
   }
 }
 
@@ -79,25 +77,25 @@ export class StampSort {
   }
 
   compare(a: Stamp, b: Stamp): number {
-    return (
-      this.reverseMultiplier() * this.compareNullableNumber(this.field.extractValue(a), this.field.extractValue(b))
-    );
+    const aValue = this.field.extractValue(a);
+    const bValue = this.field.extractValue(b);
+    if (aValue !== null && bValue !== null) {
+      const cmp = aValue > bValue ? -1 : aValue === bValue ? 0 : 1;
+      return this.reverseMultiplier() * cmp;
+    } else if (aValue !== null) {
+      // nulls are last
+      return -1;
+    } else if (bValue !== null) {
+      // nulls are last
+      return 1;
+    } else {
+      // both are null
+      return 0;
+    }
   }
 
   private reverseMultiplier(): number {
-    return this.order === SortOrder.Desc ? -1 : 1;
-  }
-
-  private compareNullableNumber(a: number | null, b: number | null): number {
-    if (b !== null && a !== null) {
-      return a > b ? 1 : a === b ? 0 : -1;
-    } else if (b === null && a !== null) {
-      return -1;
-    } else if (b !== null && a === null) {
-      return 1;
-    } else {
-      return 0;
-    }
+    return this.order === SortOrder.Desc ? 1 : -1;
   }
 }
 
