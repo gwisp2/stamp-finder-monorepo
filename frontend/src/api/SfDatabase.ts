@@ -4,7 +4,7 @@ import { RawShops } from './RawShops';
 import { RawStamps, RawStampShape } from './RawStamps';
 
 export interface StampShape {
-  originalText?: string;
+  text?: string;
   bboxArea?: number;
 }
 
@@ -18,7 +18,7 @@ export interface Stamp {
   categories: Array<string>;
   series: string | null;
   name: string | null;
-  shape: StampShape;
+  shape: StampShape | null;
 
   shopItems: Item[];
   shopItemGroups: ItemGroup[];
@@ -125,15 +125,26 @@ export class SfDatabase {
     this._stats = this.computeStats();
   }
 
-  private static stampFromRaw(rawShape: RawStampShape | undefined) {
-    const shape: StampShape = {
-      originalText: rawShape?.originalText ?? '',
-    };
+  private static stampFromRaw(rawShape: RawStampShape | undefined): StampShape | null {
+    if (!rawShape) {
+      return null;
+    }
+    const shape: StampShape = {};
     if (rawShape) {
-      if (rawShape.type === 'rect' || rawShape.type === 'oval') {
+      if (rawShape.type === 'rect') {
         shape.bboxArea = rawShape.w! * rawShape.h!;
+        shape.text = `${rawShape.w!}x${rawShape.h!} мм`;
+      } else if (rawShape.type === 'oval') {
+        shape.bboxArea = rawShape.w! * rawShape.h!;
+        shape.text = `овал ${rawShape.w!}x${rawShape.h!} мм`;
       } else if (rawShape.type === 'circle') {
         shape.bboxArea = rawShape.d! * rawShape.d!;
+        shape.text = `круг ${rawShape.d!} мм`;
+      } else if (rawShape.type === 'triangle45') {
+        shape.bboxArea = (rawShape.w! * rawShape.w!) / 1.41;
+        shape.text = `треугольник, длинная сторона ${rawShape.w!} мм`;
+      } else {
+        return null;
       }
     }
     return shape;

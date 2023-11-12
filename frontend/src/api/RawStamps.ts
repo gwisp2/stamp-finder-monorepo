@@ -8,7 +8,6 @@ export interface RawStampShape {
   readonly w?: number;
   readonly h?: number;
   readonly d?: number;
-  readonly originalText?: string;
 }
 
 export interface RawStamp {
