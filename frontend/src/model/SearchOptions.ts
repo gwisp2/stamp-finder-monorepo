@@ -237,7 +237,7 @@ export const zSearchOptions = z
   .transform((val) => {
     const selectedShops = val.shops.filter((s) => s.selected);
     let shopRequirement: ShopRequirement = selectedShops.map((s) => s.shopId);
-    if (shopRequirement.length === val.shops.length) {
+    if (shopRequirement.length === val.shops.length && shopRequirement.length !== 0) {
       shopRequirement = ANY;
     }
     return new SearchOptions(
