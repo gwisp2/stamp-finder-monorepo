@@ -10,6 +10,7 @@ import Button from '@mui/material/Button';
 import { RestartAlt } from '@mui/icons-material';
 import { useAppStore } from '../state/app.store.ts';
 import { StampList } from '../components/StampList.tsx';
+import { useSetDrawerContent } from '../state/drawer.tsx';
 
 function ShareSearchUrlButton() {
   const options = useAppStore((s) => s.searchOptions);
@@ -58,6 +59,7 @@ function SearchPageDrawerContent() {
 }
 
 function SearchPageMainContent() {
+  useSetDrawerContent(<SearchPageDrawerContent />);
   const foundStamps = useAppStore((s) => s.foundStamps);
   return <StampList stamps={foundStamps}></StampList>;
 }

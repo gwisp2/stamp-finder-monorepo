@@ -12,7 +12,7 @@ function FavoritesPageMainContent() {
 }
 
 export const Favorites: Page = {
-  key: 'favourites',
+  key: 'favorites',
   navIcon: <StarIcon />,
   navText: 'Избранное',
   renderContent(): React.ReactNode {

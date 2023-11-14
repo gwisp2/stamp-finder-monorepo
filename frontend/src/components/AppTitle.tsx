@@ -1,15 +1,15 @@
-import { Page } from '../pages/page.ts';
 import React from 'react';
 import { Box, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import pages from '../pages';
-
-export function AppTitle(props: { switchPage: (p: Page) => void }): React.ReactNode {
+import { useNavigate } from 'react-router-dom';
+export function AppTitle(): React.ReactNode {
+  const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const closeNav = () => setAnchorElNav(null);
-  const handleNavItem = (target: Page) => {
-    props.switchPage(target);
+  const handleNavItem = (pageId: string) => {
     closeNav();
+    navigate(pageId);
   };
   return (
     <>
@@ -29,7 +29,7 @@ export function AppTitle(props: { switchPage: (p: Page) => void }): React.ReactN
         </IconButton>
         <Menu anchorEl={anchorElNav} keepMounted open={Boolean(anchorElNav)} onClose={closeNav}>
           {pages.map((page) => (
-            <MenuItem key={page.key} onClick={() => handleNavItem(page)}>
+            <MenuItem key={page.key} onClick={() => handleNavItem(page.key)}>
               <ListItemIcon>{page.navIcon}</ListItemIcon>
               <ListItemText>{page.navText}</ListItemText>
             </MenuItem>
