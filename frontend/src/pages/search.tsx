@@ -1,5 +1,5 @@
 import { Page } from './page.ts';
-import React, { useCallback } from 'react';
+import React, { createRef, useCallback, useEffect } from 'react';
 import { Box, InputLabel } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { SearchOptionsForm } from '../components/SearchOptionsForm.tsx';
@@ -11,6 +11,8 @@ import { RestartAlt } from '@mui/icons-material';
 import { useAppStore } from '../state/app.store.ts';
 import { StampList } from '../components/StampList.tsx';
 import { useSetDrawerContent } from '../state/drawer.tsx';
+import { FixedSizeGrid } from 'react-window';
+import { Stamp } from '../api/SfDatabase.ts';
 
 function ShareSearchUrlButton() {
   const options = useAppStore((s) => s.searchOptions);
@@ -61,7 +63,11 @@ function SearchPageDrawerContent() {
 function SearchPageMainContent() {
   useSetDrawerContent(<SearchPageDrawerContent />);
   const foundStamps = useAppStore((s) => s.foundStamps);
-  return <StampList stamps={foundStamps}></StampList>;
+  const gridRef = createRef<FixedSizeGrid<Stamp[]>>();
+  useEffect(() => {
+    gridRef.current?.scrollTo({ scrollTop: 0 });
+  }, [foundStamps]);
+  return <StampList stamps={foundStamps} innerRef={gridRef}></StampList>;
 }
 
 export const Search: Page = {
