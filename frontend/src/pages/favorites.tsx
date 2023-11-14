@@ -7,9 +7,8 @@ import { useFavoritesStore } from '../state/favorites.store.ts';
 
 function FavoritesPageMainContent() {
   const database = useAppStore((s) => s.database);
-  const filterFavorites = useFavoritesStore((s) => s.filterFavorites);
-  const favoriteStamps = filterFavorites(database.stamps);
-  return <StampList stamps={favoriteStamps}></StampList>;
+  const favorites = useFavoritesStore((s) => s.filterFavorites(database.stamps));
+  return <StampList stamps={favorites}></StampList>;
 }
 
 export const Favorites: Page = {
