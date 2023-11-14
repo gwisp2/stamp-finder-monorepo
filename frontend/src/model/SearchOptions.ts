@@ -5,7 +5,7 @@ import z from 'zod';
 import { zNullableInputString } from './utility.ts';
 import { FormHandle } from '../components/FormHandle.ts';
 import { useMemo } from 'react';
-import { useForm } from 'react-hook-form';
+import { useFieldArray, UseFieldArrayReturn, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 export class StampField {
@@ -250,16 +250,19 @@ export const zSearchOptions = z
     );
   });
 export type SearchOptionsFormData = z.input<typeof zSearchOptions>;
+export type SearchFormHandle = FormHandle<SearchOptionsFormData>;
 
 export function useSearchOptionsForm(
   db: SfDatabase,
   defaultOptions: SearchOptions,
-): FormHandle<z.input<typeof zSearchOptions>> {
+): [SearchFormHandle, UseFieldArrayReturn<SearchOptionsFormData, 'shops'>] {
   const defaultFormData = useMemo(() => defaultOptions.toFormData(db), [defaultOptions, db]);
-  return useForm({
+  const handle = useForm({
     defaultValues: defaultFormData,
     mode: 'all',
     resolver: zodResolver(zSearchOptions),
     criteriaMode: 'all',
   });
+  const shopFieldArray = useFieldArray({ name: 'shops', control: handle.control });
+  return [handle, shopFieldArray];
 }

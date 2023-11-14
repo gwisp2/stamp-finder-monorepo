@@ -1,5 +1,5 @@
-import MenuIcon from '@mui/icons-material/Menu';
 import { AppBar, Box, Divider, IconButton, SwipeableDrawer, Toolbar } from '@mui/material';
+import ViewSidebarIcon from '@mui/icons-material/ViewSidebar';
 import React, { useEffect, useState } from 'react';
 
 export interface AppLayoutProps {
@@ -56,7 +56,7 @@ export function AppLayout({ drawerContent, drawerTitle, mainContent, mainTitle }
           <Toolbar sx={{ alignItems: 'center' }}>
             {isScreenSmall && (
               <IconButton color="inherit" edge="start" onClick={() => setDrawerOpened(true)}>
-                <MenuIcon />
+                <ViewSidebarIcon />
               </IconButton>
             )}
             {mainTitle}

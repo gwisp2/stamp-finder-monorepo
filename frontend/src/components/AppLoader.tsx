@@ -1,13 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useAsync } from 'react-use';
-import { startSyncFavoritesBetweenTabs } from '../api/FavoritesManager.ts';
-import { StampApi, StampApiProvider } from '../api/StampApi.ts';
-import { SfDatabaseProvider } from '../api/SfDatabase.ts';
+import { StampApi } from '../api/StampApi.ts';
 import { GAWrapper } from './GAWrapper.tsx';
 import App from './App.tsx';
 import { Alert, AlertTitle, Box } from '@mui/material';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { ApiError } from '../api/fetch-helper.ts';
+import { AppInitializer } from './AppInitializer.tsx';
 
 async function loadEverything() {
   const stampApi = new StampApi();
@@ -16,21 +15,18 @@ async function loadEverything() {
 }
 
 export const AppLoader: React.FC = () => {
-  // If you are wondering why everything is loaded twice in development
-  // https://stackoverflow.com/questions/72238175/why-useeffect-running-twice-and-how-to-handle-it-well-in-react
-  const asyncData = useAsync(loadEverything, []);
-  // Sync favorites between tabs
-  useEffect(() => startSyncFavoritesBetweenTabs(), []);
+  // Load data
+  const asyncData = useAsync(loadEverything);
+
   if (asyncData.value) {
+    // Data loaded: initialize & start the app
     const gaTag = import.meta.env.VITE_SF_GA_TAG;
     return (
-      <StampApiProvider value={asyncData.value.stampApi}>
-        <SfDatabaseProvider value={asyncData.value.database}>
-          <GAWrapper tag={gaTag}>
-            <App />
-          </GAWrapper>
-        </SfDatabaseProvider>
-      </StampApiProvider>
+      <GAWrapper tag={gaTag}>
+        <AppInitializer database={asyncData.value.database}>
+          <App />
+        </AppInitializer>
+      </GAWrapper>
     );
   }
   return (

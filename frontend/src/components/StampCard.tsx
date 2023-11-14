@@ -6,13 +6,13 @@ import { yellow } from '@mui/material/colors';
 import { SxProps, Theme } from '@mui/material/styles';
 import { Stamp } from 'api/SfDatabase';
 import React from 'react';
-import { useFavoritesStore } from '../api/FavoritesManager';
 import { StampInfoDropdown } from './StampInfoDropdown';
 import EmptyImage from './icons/no-stamps.svg';
+import { useFavoritesStore } from '../state/favorites.store.ts';
 
 function FavouriteButton(props: { sx?: SxProps<Theme>; stampId: number }) {
-  const isFavorite = useFavoritesStore((state) => state.isFavorite(props.stampId));
-  const setFavorite = useFavoritesStore((state) => state.setFavorite);
+  const isFavorite = useFavoritesStore((s) => s.isFavorite(props.stampId));
+  const setFavorite = useFavoritesStore((s) => s.setFavorite);
   const sx = props.sx;
   const sxArr = [...(Array.isArray(sx) ? sx : [sx])];
   const outlineColor = '#000';

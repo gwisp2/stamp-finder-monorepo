@@ -1,6 +1,7 @@
-import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import { Stamp } from './SfDatabase';
+import { Stamp } from '../api/SfDatabase.ts';
+import { create } from 'zustand';
+import { useEffect } from 'react';
 
 const LOCAL_STORAGE_KEY = 'favorites';
 
@@ -11,8 +12,8 @@ export interface FavoritesStore {
   filterFavorites: (stamps: Stamp[]) => Stamp[];
 }
 
-export const useFavoritesStore = create<FavoritesStore>()(
-  persist(
+export const useFavoritesStore = create(
+  persist<FavoritesStore>(
     (set, get) => ({
       favorites: {},
       isFavorite: (stampId: number): boolean => {
@@ -40,12 +41,14 @@ export const useFavoritesStore = create<FavoritesStore>()(
   ),
 );
 
-export function startSyncFavoritesBetweenTabs() {
-  const listener = (e: StorageEvent) => {
-    if (e.key === LOCAL_STORAGE_KEY) {
-      useFavoritesStore.persist.rehydrate();
-    }
-  };
-  window.addEventListener('storage', listener);
-  return () => window.removeEventListener('storage', listener);
+export function useFavoritesStoreSyncBetweenTabs() {
+  useEffect(() => {
+    const listener = (e: StorageEvent) => {
+      if (e.key === LOCAL_STORAGE_KEY) {
+        useFavoritesStore.persist.rehydrate();
+      }
+    };
+    window.addEventListener('storage', listener);
+    return () => window.removeEventListener('storage', listener);
+  }, []);
 }

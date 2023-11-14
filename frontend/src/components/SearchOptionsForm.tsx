@@ -3,9 +3,9 @@ import PublicIcon from '@mui/icons-material/Public';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import { Box, FormControlLabel, InputLabel } from '@mui/material';
 import { SfDatabase } from 'api/SfDatabase';
-import { NumberRange, SearchOptions, zSearchOptions } from 'model';
+import { NumberRange, SearchOptions, SearchOptionsFormData, zSearchOptions } from 'model';
 import React, { useMemo, useRef } from 'react';
-import { useFieldArray } from 'react-hook-form';
+import { UseFieldArrayReturn } from 'react-hook-form';
 import z from 'zod';
 import { FormHandle } from './FormHandle';
 import { RangeSelector } from './RangeSelector';
@@ -17,6 +17,7 @@ import { RHFOutlinedInput, RHFSelect, RHFSwitch } from './react-hook-form-mui';
 interface Props {
   db: SfDatabase;
   handle: FormHandle<z.input<typeof zSearchOptions>>;
+  shopFieldArray: UseFieldArrayReturn<SearchOptionsFormData, 'shops'>;
   onChange?: (options: SearchOptions) => void;
 }
 
@@ -50,9 +51,12 @@ function FormSection(props: { children?: React.ReactNode }) {
   return <Box mb={2}>{props.children}</Box>;
 }
 
-export const SearchOptionsForm: React.FC<Props> = React.memo(function SearchOptionsForm({ db, handle, onChange }) {
-  // Initialize react-hook-form
-  const shopFieldArray = useFieldArray({ name: 'shops', control: handle.control });
+export const SearchOptionsForm: React.FC<Props> = React.memo(function SearchOptionsForm({
+  db,
+  handle,
+  shopFieldArray,
+  onChange,
+}) {
   // Prepare some data for rendering
   const categoriesWithEmpty = useMemo(() => ['', ...db.stats.categories], [db]);
   const categoryOptions = useMemo(
