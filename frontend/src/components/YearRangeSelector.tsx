@@ -1,33 +1,29 @@
 import { Box } from '@mui/material';
 import _ from 'lodash';
-import { useEffect } from 'react';
-import { FieldPathByValue, FieldValues, useWatch } from 'react-hook-form';
+import { memo, useEffect } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { maxOf, minOf, parseNumberFromInput } from '../model';
-import { FormHandle } from './FormHandle';
 import { RHFSelect } from './react-hook-form-mui';
-import { typedMemo } from './utilities';
 
-export interface YearRangeSelectorProps<TFormData extends FieldValues> {
+export interface YearRangeSelectorProps {
   labelId?: string;
-  formHandle: FormHandle<TFormData>;
-  startPath: FieldPathByValue<TFormData, string>;
-  endPath: FieldPathByValue<TFormData, string>;
+  path: string;
   lowerBound?: number;
   upperBound?: number;
 }
 
-interface YearSelectorProps<TFormData extends FieldValues> {
+interface YearSelectorProps {
   labelId?: string;
-  formHandle: FormHandle<TFormData>;
-  path: FieldPathByValue<TFormData, string>;
+  path: string;
   prefix?: string;
   lowerBound?: number | null;
   upperBound?: number | null;
 }
 
-const YearSelector = <TFormData extends FieldValues>(props: YearSelectorProps<TFormData>) => {
+const YearSelector = (props: YearSelectorProps) => {
+  const context = useFormContext();
   let selectOptions: { value: string; label: string }[];
-  const currentValue = useWatch({ control: props.formHandle.control, name: props.path });
+  const currentValue = useWatch({ control: context.control, name: props.path });
   if (props.lowerBound != undefined && props.upperBound != undefined) {
     const availableValues = _.range(props.lowerBound, props.upperBound + 1);
     if (currentValue && !availableValues.includes(Number(currentValue))) {
@@ -43,42 +39,34 @@ const YearSelector = <TFormData extends FieldValues>(props: YearSelectorProps<TF
   } else {
     selectOptions = [{ value: '', label: '-' }];
   }
-  return <RHFSelect labelId={props.labelId} handle={props.formHandle} path={props.path} values={selectOptions} />;
+  return <RHFSelect labelId={props.labelId} path={props.path} values={selectOptions} />;
 };
 
-export const YearRangeSelector = typedMemo(function YearRangeSelector<TFormData extends FieldValues>(
-  props: YearRangeSelectorProps<TFormData>,
-) {
-  // Extract some props
-  const formHandle = props.formHandle;
+export const YearRangeSelector = memo(function YearRangeSelector(props: YearRangeSelectorProps) {
+  const context = useFormContext();
+  const minPath = `${props.path}.min`;
+  const maxPath = `${props.path}.max`;
   // Compute bounds
-  const startValue = parseNumberFromInput(useWatch({ control: formHandle.control, name: props.startPath }));
-  const endValue = parseNumberFromInput(useWatch({ control: formHandle.control, name: props.endPath }));
+  const startValue = parseNumberFromInput(useWatch({ control: context.control, name: minPath }));
+  const endValue = parseNumberFromInput(useWatch({ control: context.control, name: maxPath }));
   const upperBoundOfStart = minOf([endValue, props.upperBound]);
   const lowerBoundOfEnd = maxOf([startValue, props.lowerBound]);
   // Trigger other fields so that validation errors are shown all fields
   useEffect(() => {
-    formHandle.trigger(props.startPath);
-    formHandle.trigger(props.endPath);
-  }, [formHandle, props.startPath, props.endPath, startValue, endValue]);
+    context.trigger(minPath);
+    context.trigger(maxPath);
+  }, [context, minPath, maxPath, startValue, endValue]);
 
   return (
     <Box sx={{ display: 'flex', gap: '1em' }}>
       <YearSelector
         labelId={props.labelId}
-        formHandle={formHandle}
-        path={props.startPath}
+        path={minPath}
         lowerBound={props.lowerBound}
         upperBound={upperBoundOfStart}
         prefix="с "
       />
-      <YearSelector
-        formHandle={formHandle}
-        path={props.endPath}
-        lowerBound={lowerBoundOfEnd}
-        upperBound={props.upperBound}
-        prefix="по "
-      />
+      <YearSelector path={maxPath} lowerBound={lowerBoundOfEnd} upperBound={props.upperBound} prefix="по " />
     </Box>
   );
 });

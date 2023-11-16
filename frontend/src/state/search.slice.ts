@@ -1,19 +1,15 @@
-import { SearchFormHandle, SearchOptions, SearchOptionsFormData } from '../model';
+import { SearchFormHandle, SearchOptions, zSearchOptions } from '../model';
 import { SfDatabase, Stamp } from '../api/SfDatabase.ts';
 import { StateCreator } from 'zustand';
 import { SfDatabaseSlice } from './database.slice.ts';
-import { UseFieldArrayReturn } from 'react-hook-form';
 
 export interface SearchPageSliceProps {
   database: SfDatabase;
   searchFormHandle: SearchFormHandle;
-  searchFormShopFieldArray: UseFieldArrayReturn<SearchOptionsFormData, 'shops'>;
-  searchOptions: SearchOptions;
 }
 
 export interface SearchPageSlice {
   searchFormHandle: SearchFormHandle;
-  searchFormShopFieldArray: UseFieldArrayReturn<SearchOptionsFormData, 'shops'>;
   searchOptions: SearchOptions;
   foundStamps: Stamp[];
 
@@ -22,14 +18,19 @@ export interface SearchPageSlice {
 
 export const createStampSearchSlice: (
   props: SearchPageSliceProps,
-) => StateCreator<SfDatabaseSlice & SearchPageSlice, [], [], SearchPageSlice> = (props) => (set) => ({
-  searchFormHandle: props.searchFormHandle,
-  searchFormShopFieldArray: props.searchFormShopFieldArray,
-  searchOptions: props.searchOptions,
-  foundStamps: props.searchOptions.filterAndSort(props.database.stamps),
-  setSearchOptions: (options: SearchOptions) =>
-    set((state) => ({
-      searchOptions: options,
-      foundStamps: options.filterAndSort(state.database.stamps),
-    })),
-});
+) => StateCreator<SfDatabaseSlice & SearchPageSlice, [], [], SearchPageSlice> = (props) => {
+  // Build SearchOptions from initial form data
+  const initialOptionsResult = zSearchOptions.safeParse(props.searchFormHandle.context.getValues());
+  const initialOptions = initialOptionsResult.success ? initialOptionsResult.data : SearchOptions.Default;
+  // Initialize slice data
+  return (set) => ({
+    searchFormHandle: props.searchFormHandle,
+    searchOptions: initialOptions,
+    foundStamps: initialOptions.filterAndSort(props.database.stamps),
+    setSearchOptions: (options: SearchOptions) =>
+      set((state) => ({
+        searchOptions: options,
+        foundStamps: options.filterAndSort(state.database.stamps),
+      })),
+  });
+};

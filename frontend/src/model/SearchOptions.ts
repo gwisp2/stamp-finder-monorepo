@@ -3,9 +3,8 @@ import _ from 'lodash';
 import { NumberRange, zNumberRange, zNumberRangeWithSwitch } from './NumberRange';
 import z from 'zod';
 import { zNullableInputString } from './utility.ts';
-import { FormHandle } from '../components/FormHandle.ts';
 import { useMemo } from 'react';
-import { useFieldArray, UseFieldArrayReturn, useForm } from 'react-hook-form';
+import { useFieldArray, UseFieldArrayReturn, useForm, UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 export class StampField {
@@ -250,19 +249,19 @@ export const zSearchOptions = z
     );
   });
 export type SearchOptionsFormData = z.input<typeof zSearchOptions>;
-export type SearchFormHandle = FormHandle<SearchOptionsFormData>;
+export type SearchFormHandle = {
+  context: UseFormReturn<SearchOptionsFormData>;
+  shopFieldArray: UseFieldArrayReturn<SearchOptionsFormData, 'shops'>;
+};
 
-export function useSearchOptionsForm(
-  db: SfDatabase,
-  defaultOptions: SearchOptions,
-): [SearchFormHandle, UseFieldArrayReturn<SearchOptionsFormData, 'shops'>] {
+export function useSearchOptionsForm(db: SfDatabase, defaultOptions: SearchOptions): SearchFormHandle {
   const defaultFormData = useMemo(() => defaultOptions.toFormData(db), [defaultOptions, db]);
-  const handle = useForm({
+  const context = useForm({
     defaultValues: defaultFormData,
     mode: 'all',
     resolver: zodResolver(zSearchOptions),
     criteriaMode: 'all',
   });
-  const shopFieldArray = useFieldArray({ name: 'shops', control: handle.control });
-  return [handle, shopFieldArray];
+  const shopFieldArray = useFieldArray({ name: 'shops', control: context.control });
+  return { context, shopFieldArray };
 }

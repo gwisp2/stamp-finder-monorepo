@@ -2,21 +2,19 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import { Box, IconButton } from '@mui/material';
 import { StampField } from 'model';
-import { FieldPathByValue, FieldValues, useController } from 'react-hook-form';
-import { FormHandle } from './FormHandle';
+import { useController, useFormContext } from 'react-hook-form';
 import { RHFSelect } from './react-hook-form-mui';
 
-export interface SortSelectorProps<TFormData extends FieldValues> {
+export interface SortSelectorProps {
   labelId?: string;
-  formHandle: FormHandle<TFormData>;
-  fieldIdPath: FieldPathByValue<TFormData, string>;
-  directionPath: FieldPathByValue<TFormData, 'asc' | 'desc'>;
+  path: string;
 }
 
-export function SortSelector<TFormData extends FieldValues>(props: SortSelectorProps<TFormData>) {
+export function SortSelector(props: SortSelectorProps) {
+  const context = useFormContext();
   const dirController = useController({
-    control: props.formHandle.control,
-    name: props.directionPath,
+    control: context.control,
+    name: props.path + '.direction',
   });
   const flippedDirection = dirController.field.value === 'asc' ? 'desc' : 'asc';
   const ArrowComponent = dirController.field.value === 'asc' ? ArrowUpwardIcon : ArrowDownwardIcon;
@@ -26,7 +24,7 @@ export function SortSelector<TFormData extends FieldValues>(props: SortSelectorP
   }));
   return (
     <Box display="flex">
-      <RHFSelect labelId={props.labelId} handle={props.formHandle} path={props.fieldIdPath} values={allFieldValues} />
+      <RHFSelect labelId={props.labelId} path={props.path + '.fieldId'} values={allFieldValues} />
       <IconButton
         sx={{ ml: '0' }}
         size="medium"

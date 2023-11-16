@@ -1,17 +1,13 @@
 import { Box, InputAdornment, InputLabel } from '@mui/material';
 import { parseNumberFromInput } from 'model';
 import React, { useEffect } from 'react';
-import { FieldPathByValue, FieldValues, useWatch } from 'react-hook-form';
-import { FormHandle } from './FormHandle';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { RangeShortcut, RangeShortcutsDropdown } from './RangeShortcutsDropdown';
 import { RHFOutlinedInput, RHFSwitch } from './react-hook-form-mui';
 import { setFormValue, typedMemo } from './utilities';
 
-export interface RangeSelectorProps<TFormData extends FieldValues> {
-  formHandle: FormHandle<TFormData>;
-  isExactPath: FieldPathByValue<TFormData, boolean>;
-  startPath: FieldPathByValue<TFormData, string>;
-  endPath: FieldPathByValue<TFormData, string>;
+export interface RangeSelectorProps {
+  path: string;
 
   lowerBound?: number;
   upperBound?: number;
@@ -22,23 +18,19 @@ export interface RangeSelectorProps<TFormData extends FieldValues> {
   label?: React.ReactNode;
 }
 
-interface RangePointInputProps<TFormData extends FieldValues> {
+interface RangePointInputProps {
   id?: string;
   startAdornmentText?: string;
   endAdornmentText?: string;
-  formHandle: FormHandle<TFormData>;
-  edgePath: FieldPathByValue<TFormData, string>;
+  edgePath: string;
   lowerBound?: number | null;
   upperBound?: number | null;
 }
 
-const RangePointInput = typedMemo(function RangePointInput<TFormData extends FieldValues>(
-  props: RangePointInputProps<TFormData>,
-) {
+const RangePointInput = typedMemo(function RangePointInput(props: RangePointInputProps) {
   return (
     <RHFOutlinedInput
       id={props.id}
-      handle={props.formHandle}
       path={props.edgePath}
       inputMode="numeric"
       pattern="[0-9]*"
@@ -52,21 +44,23 @@ const RangePointInput = typedMemo(function RangePointInput<TFormData extends Fie
   );
 });
 
-export const RangeSelector = typedMemo(function RangeSelector<TFormData extends FieldValues>(
-  props: RangeSelectorProps<TFormData>,
-) {
-  // Extract some props
-  const formHandle = props.formHandle;
-  // Handle changes: trigger other fields so that validation errors are shown all fields
-  const isExact: boolean = useWatch({ control: formHandle.control, name: props.isExactPath });
-  const startValue = parseNumberFromInput(useWatch({ control: formHandle.control, name: props.startPath }));
-  const endValue = parseNumberFromInput(useWatch({ control: formHandle.control, name: props.endPath }));
-  useEffect(() => {
-    formHandle.trigger(props.startPath);
-    formHandle.trigger(props.endPath);
-  }, [formHandle, props.startPath, props.endPath, startValue, endValue, isExact]);
+export const RangeSelector = typedMemo(function RangeSelector(props: RangeSelectorProps) {
+  const context = useFormContext();
+  const isExactPath = `${props.path}.isExact`;
+  const startPath = `${props.path}.min`;
+  const endPath = `${props.path}.max`;
 
-  const startInputId = 'field-' + props.startPath;
+  // Handle changes: trigger other fields so that validation errors are shown all fields
+  const isExact: boolean = useWatch({ control: context.control, name: isExactPath });
+  const startValue = parseNumberFromInput(useWatch({ control: context.control, name: startPath }));
+  const endValue = parseNumberFromInput(useWatch({ control: context.control, name: endPath }));
+  useEffect(() => {
+    context.trigger(startPath);
+    context.trigger(endPath);
+  }, [context, startValue, endValue, isExact]);
+
+  const startInputId = 'field-' + startPath;
+  const endInputId = 'field-' + endPath;
   return (
     <>
       <Box display="flex" justifyContent="space-between">
@@ -74,7 +68,7 @@ export const RangeSelector = typedMemo(function RangeSelector<TFormData extends 
           <InputLabel htmlFor={startInputId}>{props.label}</InputLabel>
         </div>
         <Box display="flex">
-          <RHFSwitch handle={formHandle} path={props.isExactPath} />
+          <RHFSwitch path={isExactPath} />
           {props.shortcuts && (
             <RangeShortcutsDropdown
               unit={props.unit}
@@ -82,10 +76,10 @@ export const RangeSelector = typedMemo(function RangeSelector<TFormData extends 
               shortcutsComment={props.shortcutsComment}
               onSelect={(range) => {
                 const values = range.toFormValuesWithSwitch();
-                setFormValue(formHandle, props.startPath, values.min);
-                setFormValue(formHandle, props.endPath, values.max);
+                setFormValue(context, startPath, values.min);
+                setFormValue(context, endPath, values.max);
                 if (!values.isExact) {
-                  setFormValue(formHandle, props.isExactPath, false);
+                  setFormValue(context, isExactPath, false);
                 }
               }}
             />
@@ -96,23 +90,16 @@ export const RangeSelector = typedMemo(function RangeSelector<TFormData extends 
         <Box sx={{ display: 'flex', gap: '1em' }}>
           <RangePointInput
             id={startInputId}
-            formHandle={formHandle}
-            edgePath={props.startPath}
+            edgePath={startPath}
             startAdornmentText="от"
             endAdornmentText={props.unit}
           />
-          <RangePointInput
-            formHandle={formHandle}
-            edgePath={props.endPath}
-            startAdornmentText="до"
-            endAdornmentText={props.unit}
-          />
+          <RangePointInput id={endInputId} edgePath={endPath} startAdornmentText="до" endAdornmentText={props.unit} />
         </Box>
       ) : (
         <RangePointInput
           id={startInputId}
-          formHandle={formHandle}
-          edgePath={props.startPath}
+          edgePath={startPath}
           lowerBound={props.lowerBound}
           upperBound={props.upperBound}
           startAdornmentText="ровно"

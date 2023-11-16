@@ -1,21 +1,20 @@
 import { MenuItem, OutlinedInput, Select, Switch } from '@mui/material';
-import React, { HTMLAttributes, useMemo } from 'react';
-import { Controller, FieldPathByValue, FieldValues } from 'react-hook-form';
-import { FormHandle } from './FormHandle';
+import React, { HTMLAttributes } from 'react';
+import { Controller, FieldPathByValue, FieldValues, useFormContext } from 'react-hook-form';
 
 export function RHFOutlinedInput<TFormData extends FieldValues>(props: {
   id?: string;
-  handle: FormHandle<TFormData>;
   path: FieldPathByValue<TFormData, string>;
   inputMode?: HTMLAttributes<unknown>['inputMode'];
   pattern?: string;
   startAdornment?: React.ReactNode;
   endAdornment?: React.ReactNode;
 }): React.ReactElement {
+  const handle = useFormContext();
   return (
     <Controller
       name={props.path}
-      control={props.handle.control}
+      control={handle.control}
       render={({ field, fieldState }) => {
         return (
           <OutlinedInput
@@ -37,13 +36,13 @@ export function RHFOutlinedInput<TFormData extends FieldValues>(props: {
 }
 
 export function RHFSwitch<TFormData extends FieldValues>(props: {
-  handle: FormHandle<TFormData>;
   path: FieldPathByValue<TFormData, boolean>;
 }): React.ReactElement {
+  const context = useFormContext();
   return (
     <Controller
       name={props.path}
-      control={props.handle.control}
+      control={context.control}
       render={({ field }) => {
         return <Switch {...field} inputRef={field.ref} checked={!!field.value} size="small" />;
       }}
@@ -51,24 +50,16 @@ export function RHFSwitch<TFormData extends FieldValues>(props: {
   );
 }
 
-export function RHFSelect<TFormData extends FieldValues>(props: {
+export function RHFSelect(props: {
   labelId?: string;
-  handle: FormHandle<TFormData>;
-  path: FieldPathByValue<TFormData, string>;
+  path: string;
   values: { value: string; label: string }[];
 }): React.ReactElement {
-  const menuItems = useMemo(
-    () =>
-      props.values.map(({ value, label }) => (
-        <MenuItem key={value || '-'} value={value}>
-          {label}
-        </MenuItem>
-      )),
-    [props.values],
-  );
+  const context = useFormContext();
   return (
     <Controller
-      control={props.handle.control}
+      control={context.control}
+      name={props.path}
       render={({ field, fieldState }) => (
         <Select
           {...field}
@@ -78,10 +69,13 @@ export function RHFSelect<TFormData extends FieldValues>(props: {
           size="small"
           fullWidth
         >
-          {menuItems}
+          {props.values.map(({ value, label }) => (
+            <MenuItem key={value || '-'} value={value}>
+              {label}
+            </MenuItem>
+          ))}
         </Select>
       )}
-      name={props.path}
     />
   );
 }
