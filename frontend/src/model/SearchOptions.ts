@@ -1,4 +1,4 @@
-import { Item, SfDatabase, Stamp } from 'api/SfDatabase';
+import { SfDatabase, Stamp } from 'api/SfDatabase';
 import _ from 'lodash';
 import { NumberRange, zNumberRange, zNumberRangeWithSwitch } from './NumberRange';
 import z from 'zod';
@@ -6,6 +6,7 @@ import { zNullableInputString } from './utility.ts';
 import { useMemo } from 'react';
 import { useFieldArray, UseFieldArrayReturn, useForm, UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { StampAvailabilityRequirement } from './StampAvailabilityRequirement.ts';
 
 export class StampField {
   static Id = new StampField('id', 'По номеру', (s) => s.id);
@@ -99,15 +100,12 @@ export class StampSort {
   }
 }
 
-export const ANY = 'any';
-export type ShopRequirement = string[] | typeof ANY;
-
 export class SearchOptions {
   static Default = new SearchOptions(
     new NumberRange(null, null),
     new NumberRange(1998, null),
     null,
-    [],
+    StampAvailabilityRequirement.NO_REQUIREMENT,
     '',
     new StampSort(StampField.Id, SortOrder.Desc),
   );
@@ -117,7 +115,7 @@ export class SearchOptions {
     readonly value: NumberRange,
     readonly year: NumberRange,
     readonly category: string | null,
-    readonly availabilityRequired: ShopRequirement,
+    readonly availabilityRequirement: StampAvailabilityRequirement,
     readonly contains: string,
     readonly sort: StampSort,
   ) {}
@@ -130,20 +128,10 @@ export class SearchOptions {
     return (
       this.year.contains(s.year) &&
       this.value.contains(s.value) &&
-      this.availabilityMatches(s.shopItems) &&
+      this.availabilityRequirement.matches(s) &&
       (this.category === null || s.categories.includes(this.category)) &&
       (this.contains.length === 0 || s.idNameAndSeries.indexOf(this.contains.toLowerCase()) >= 0)
     );
-  }
-
-  private availabilityMatches(shopItems: Item[]): boolean {
-    if (this.availabilityRequired === ANY) {
-      return shopItems.length !== 0;
-    } else if (this.availabilityRequired.length === 0) {
-      return true;
-    } else {
-      return _.some(shopItems, (item) => _.includes(this.availabilityRequired || [], item.shop.id));
-    }
   }
 
   static fromUrlParams(params: URLSearchParams): SearchOptions {
@@ -155,19 +143,10 @@ export class SearchOptions {
       NumberRange.fromString(stringMap['value']),
       NumberRange.fromString(stringMap['year']),
       stringMap['category'] ? stringMap['category'] : null,
-      SearchOptions.parseListOfShopsFromString(stringMap['available']),
+      StampAvailabilityRequirement.decodeFromString(stringMap['available']),
       stringMap['contains'],
       StampSort.fromString(stringMap['sort']),
     );
-  }
-
-  private static parseListOfShopsFromString(str: string): string[] | typeof ANY {
-    if (str === ANY) {
-      return ANY;
-    } else if (!str) {
-      return [];
-    }
-    return str.split(',');
   }
 
   asStringMap(): Record<string, string> {
@@ -175,7 +154,7 @@ export class SearchOptions {
       value: this.value.toString(),
       year: this.year.toString(),
       category: this.category ?? '',
-      available: this.availabilityRequired === ANY ? ANY : this.availabilityRequired.join(','),
+      available: this.availabilityRequirement.encodeToString(),
       sort: this.sort.toString(),
       contains: this.contains,
     };
@@ -201,11 +180,7 @@ export class SearchOptions {
       yearRange: this.year.toFormValues(),
       nameQuery: this.contains,
       category: this.category ?? '',
-      shops: db.shops.map((shop) => ({
-        shopId: shop.id,
-        displayLabel: `${shop.displayName} [${shop.reportDate}]`,
-        selected: this.availabilityRequired === ANY || (this.availabilityRequired?.includes(shop.id) ?? false),
-      })),
+      shops: this.availabilityRequirement.toFormData(db.shops),
       sort: {
         fieldId: this.sort.field.id,
         direction: this.sort.order.id,
@@ -234,16 +209,11 @@ export const zSearchOptions = z
     }),
   })
   .transform((val) => {
-    const selectedShops = val.shops.filter((s) => s.selected);
-    let shopRequirement: ShopRequirement = selectedShops.map((s) => s.shopId);
-    if (shopRequirement.length === val.shops.length && shopRequirement.length !== 0) {
-      shopRequirement = ANY;
-    }
     return new SearchOptions(
       val.valueRange,
       val.yearRange,
       val.category,
-      shopRequirement,
+      StampAvailabilityRequirement.fromFormData(val.shops),
       val.nameQuery,
       new StampSort(val.sort.fieldId, val.sort.direction),
     );
