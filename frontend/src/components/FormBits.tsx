@@ -44,13 +44,13 @@ export function FormSection(props: { children?: React.ReactNode }) {
   return <Box mb={2}>{props.children}</Box>;
 }
 
-export function StampValueSection(props: { path: string }) {
+export function StampValueSection(props: { label?: string; path: string }) {
   return (
     <FormSection>
       <RangeSelector
         shortcuts={ValueRangeShortcuts}
         shortcutsComment={ValueShortcutsComment}
-        label="Номинал:"
+        label={props.label ?? 'Номинал:'}
         path={props.path}
         lowerBound={0}
         unit="₽"
@@ -102,11 +102,11 @@ export function StampNameSection(props: { path: string }) {
   );
 }
 
-export function StampSortSection(props: { path: string }) {
+export function SortSection(props: { path: string; fields: { id: string; displayName: string }[] }) {
   return (
     <FormSection>
       <InputLabel id="field-sort-label">Сортировка:</InputLabel>
-      <SortSelector labelId="field-sort-label" path={props.path} />
+      <SortSelector labelId="field-sort-label" path={props.path} fields={props.fields} />
     </FormSection>
   );
 }

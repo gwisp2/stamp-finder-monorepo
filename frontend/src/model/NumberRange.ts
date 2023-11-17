@@ -68,6 +68,14 @@ export class NumberRange {
     return this.start === null && this.end === null;
   }
 
+  shift(delta: number): NumberRange {
+    return new NumberRange(
+      this.start !== null ? this.start + delta : null,
+      this.end !== null ? this.end + delta : null,
+      this.exact,
+    );
+  }
+
   contains(n: number | null): boolean {
     if (n === null) {
       return this.start === null && this.end === null;

@@ -4,6 +4,7 @@ import { SearchOptions, useSearchOptionsForm, zSearchOptions } from '../model';
 import { AppStoreContext, createAppStore } from '../state/app.store.ts';
 import { useFavoritesStoreSyncBetweenTabs } from '../state/favorites.store.ts';
 import { useStore } from 'zustand';
+import { ComboOptions, useComboOptionsForm, zComboOptions } from '../model/ComboOptions.ts';
 
 export const AppInitializer = (props: { database: SfDatabase; children: ReactNode }): ReactNode => {
   // Initialize search form state
@@ -12,6 +13,7 @@ export const AppInitializer = (props: { database: SfDatabase; children: ReactNod
     [],
   );
   const searchFormHandle = useSearchOptionsForm(props.database, initialSearchOptions);
+  const comboFormHandle = useComboOptionsForm(props.database, ComboOptions.Default);
 
   // Synchronize favorites with other tabs
   useFavoritesStoreSyncBetweenTabs();
@@ -21,7 +23,8 @@ export const AppInitializer = (props: { database: SfDatabase; children: ReactNod
     () =>
       createAppStore({
         database: props.database,
-        searchFormHandle: searchFormHandle,
+        searchFormHandle,
+        comboFormHandle,
       }),
     [],
   );
@@ -32,6 +35,15 @@ export const AppInitializer = (props: { database: SfDatabase; children: ReactNod
     const parsedOptions = zSearchOptions.safeParse(value);
     if (parsedOptions.success) {
       setSearchOptions(parsedOptions.data);
+    }
+  });
+
+  // Sync combo form data and comboOptions
+  const setComboOptions = useStore(appStore, (s) => s.setComboOptions);
+  comboFormHandle.context.watch((value) => {
+    const parsedOptions = zComboOptions.safeParse(value);
+    if (parsedOptions.success) {
+      setComboOptions(parsedOptions.data);
     }
   });
 

@@ -1,6 +1,17 @@
 import { isString } from 'lodash';
 import z from 'zod';
 
+export const zInputNumber = z.string().transform((val, ctx) => {
+  const n = parseNumberFromInput(val);
+  if (n === undefined || n === null) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Not set or not a number',
+    });
+    return z.NEVER;
+  }
+  return n;
+});
 export const zNullableInputNumber = z.string().transform((val, ctx) => {
   const n = parseNumberFromInput(val);
   if (n === undefined) {

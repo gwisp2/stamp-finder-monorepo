@@ -1,11 +1,11 @@
-import { SearchFormHandle } from 'model';
+import { SearchFormHandle, StampField } from 'model';
 import React from 'react';
 import { FormProvider } from 'react-hook-form';
 import {
   ShopListSection,
+  SortSection,
   StampCategoryChooserSection,
   StampNameSection,
-  StampSortSection,
   StampValueSection,
   StampYearSection,
 } from './FormBits.tsx';
@@ -24,7 +24,7 @@ export const SearchOptionsForm: React.FC<Props> = React.memo(function SearchOpti
         <StampNameSection path="nameQuery" />
         <StampCategoryChooserSection path="category" />
         <ShopListSection fieldArray={handle.shopFieldArray} />
-        <StampSortSection path="sort" />
+        <SortSection path="sort" fields={StampField.AllValues} />
       </form>
     </FormProvider>
   );
