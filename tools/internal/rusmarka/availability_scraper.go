@@ -39,7 +39,7 @@ func (result *AvailabilityScrapeResult) AreVisitedPagesEqual(pages []string) boo
 }
 
 func (result *AvailabilityScrapeResult) ToShopsJsonShop() *data.ShopsJsonShop {
-	var items []data.ShopsJsonItem
+	var items []data.ShopsJsonItem = make([]data.ShopsJsonItem, 0)
 	for _, id := range result.AvailableStampIds {
 		items = append(items, data.ShopsJsonItem{
 			Name: strconv.Itoa(id),
