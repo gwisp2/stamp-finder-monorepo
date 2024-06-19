@@ -14,7 +14,7 @@ import { FieldValues, UseFieldArrayReturn, UseFormReturn } from 'react-hook-form
 import Button from '@mui/material/Button';
 import { RestartAlt } from '@mui/icons-material';
 
-const ValueShortcutsComment = 'стоимость с 1 января 2024';
+const ValueShortcutsComment = 'стоимость с 1 июля 2024';
 const ValueRangeShortcuts: RangeShortcut[] = [
   {
     icons: [RestartAltIcon],
@@ -24,7 +24,7 @@ const ValueRangeShortcuts: RangeShortcut[] = [
   {
     icons: [PhotoSizeSelectActualIcon],
     name: 'открытка по России',
-    range: NumberRange.exact(20),
+    range: NumberRange.exact(22),
   },
   {
     icons: [PublicIcon, PhotoSizeSelectActualIcon],
