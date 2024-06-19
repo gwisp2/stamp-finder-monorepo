@@ -36,7 +36,7 @@ const ValueRangeShortcuts: RangeShortcut[] = [
     icons: [PublicIcon, PhotoSizeSelectActualIcon],
     name: 'открытка за границу',
     comment: 'другие страны',
-    range: NumberRange.exact(85),
+    range: NumberRange.exact(90),
   },
 ];
 
