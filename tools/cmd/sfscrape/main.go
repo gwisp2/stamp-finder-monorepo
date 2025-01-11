@@ -81,7 +81,7 @@ func scrapeNewPages(stampsJson *data.StampsJson, stampsJsonPath string) bool {
 	// Find links to new pages
 	knownPages := mapset.NewSet[string]()
 	knownPages.Append(stampsJson.AllPages()...)
-	urls, err := rusmarka.CollectStampPageUrls("https://rusmarka.ru/catalog/marki.aspx")
+	urls, err := rusmarka.CollectStampPageUrls("https://rusmarka.ru/catalog/marki/year/0.aspx")
 	if err != nil {
 		log.Fatal("Failed to fetch url with links to new pages: %w", err)
 	}
